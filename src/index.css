@@ -1,0 +1,157 @@
+@import url('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.3.0/css/flag-icon.min.css');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
+
+@import 'admin-lte/plugins/fontawesome-free/css/all.min.css';
+@import 'admin-lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css';
+@import 'admin-lte/dist/css/adminlte.min.css';
+
+@import 'react-toastify/dist/ReactToastify.min.css';
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+.main-header .navbar-nav .nav-item .nav-link {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.upload-button-green{
+  border: 1px solid #a8e4c1;
+  background-color: #b8f9d3;
+  color: black;
+  width:300px;
+  height:150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+}
+
+.upload-button-blue{
+  border: 1px solid #bdc8db;
+  background-color: #dce9ff;
+  color: black;   
+  width:300px;
+  height:150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+}
+
+/* .upload-button-blue:hover {
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  width:300px;
+  height:150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+} */
+
+/* .upload-button-green:hover {
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  width:300px;
+  height:150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+} */
+
+.transparent-color{
+  color: rgba(0, 0, 0, .15);
+}
+
+
+.box {
+  /* position: relative;
+  display: inline-block; */
+  /* width: 100px;
+  height: 100px; */
+  /* background-color: #fff; */
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  -webkit-transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  cursor: pointer !important;
+}
+
+.box::after {
+  content: "";
+  border-radius: 5px;
+  position: absolute;
+  z-index: -1;
+  /* top: 0;
+  left: 0; */
+  /* width: 100%;
+  height: 100%; */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  -webkit-transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.box:hover {
+  -webkit-transform: scale(1.05, 1.05);
+  transform: scale(1.05, 1).05;
+}
+
+.box:hover::after {
+    opacity: 1;
+}
+
+#overlay {
+  background: #c9c9c9;
+  color: #666666;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 5000;
+  top: 0;
+  left: 0;
+  float: left;
+  text-align: center;
+  opacity: .5;
+}
+.spinner {
+    margin: 0 auto;
+    height: 64px;
+    width: 64px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0.9;
+    transform: translate(-50%, -50%);
+    animation: rotate 0.8s infinite linear;
+    border: 5px solid rgb(34, 92, 178);
+    border-right-color: transparent;
+    border-radius: 50%;
+    z-index: 5001;
+}
+
+.react-datepicker-wrapper
+{
+  width: 100%;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
