@@ -9,6 +9,7 @@ import ApiService from '@app/services/Api.service';
 import { AxiosResponse } from 'axios';
 import ClientService from '@app/services/clientservice';
 import { useNavigate } from "react-router-dom";
+import { Button } from 'react-bootstrap';
 interface State {
     title: string;
     subTitle: string;
@@ -25,6 +26,7 @@ const ClientsList = () => {
     const dispatch = useDispatch();
     const [reactGrid, setGrid] = useState<SlickgridReactInstance>();
     const [dataset, setData] = useState<any[]>([]);
+    console.log(dataset)
     let data=dataset.map(item=>{
       return {...item,id:item.Id,clientName:item.ClientName,lastName:item.LastName,firstName:item.FirstName,email:item.Email,loginName:item.LoginName,createdDateTime:item.CreatedDateTime,defaultTAT:item.DefaultTAT}
     })
@@ -91,8 +93,8 @@ const ClientsList = () => {
       const loadData = (isreload:boolean) => {
         setLoader(true);
         ClientService.getClients().then((response: any) => {
-          if (response.isSuccess) {
-            let data = response.data;
+          if (response) {
+            let data = response;
             console.log(data);
             setData(data);
           }
@@ -114,9 +116,13 @@ const ClientsList = () => {
         <section className="content">
           <div className="container-fluid">
             <div className="card">
-              <div className="card-header">
+            <div className="card-header d-flex justify-content-between align-items-center">
                 <h3 className="card-title">Clients</h3>
+                <Button variant="primary" onClick={() => navigate("/client-registration")}>
+                  Add Clients
+                </Button>
               </div>
+
               <div className="card-body">
               <div className='row pt-4'>
                   <div className='col-md-12' style={{ zIndex: '0' }}>

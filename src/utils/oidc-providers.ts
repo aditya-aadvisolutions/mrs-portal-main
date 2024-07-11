@@ -99,6 +99,23 @@ export const getAuthStatus = () => {
   });
 };
 
+export const RegisterUser = (user: any) => {
+  return new Promise(async (res, rej) => {
+    ApiService.requests.post('client/register', user)
+    .then((response) => {
+      console.log(response,'response');
+      if(response)
+      {
+        return res(response);
+      }
+      else
+      {
+        return rej({ message: response.message });
+      }
+    })
+  });
+};
+
 
 export const refreshToken = (user: User) => {
   
