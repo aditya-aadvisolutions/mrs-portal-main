@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/5211fe14-cc86-466f-9977-c4d779877dac/resourceGroups/MainResourceGroup/providers/Microsoft.Web/sites/mrs-app-portal",
+    "appService.deploySubpath": "."
+}
