@@ -73,11 +73,11 @@ export default function Upload(){
     const validationSchema = Yup.object({
         uploadfiles: Yup.mixed().required('Please select a file'),
         //tat: Yup.string().required('TAT is required'),
-        //comment: Yup.string().required('Comment is required'),
-        mergeFilename: Yup.string().when('uploadtype', {
-            is: false,
-            then: () => Yup.string().required('Merge file name is required')
-            })
+        //comment: Yup.string().required('Comment is required'),       
+        // mergeFilename: Yup.string().when('uploadtype', {
+        //     is: false,
+        //     then: () => Yup.string().required('Merge file name is required')
+        //     })
     });
     
 
@@ -97,11 +97,21 @@ export default function Upload(){
                     navigate('/client-jobs');
                 }
                 else
-                {
-                    toast.error((response as AxiosResponse).data);
+                {           
+                    const error:any = new Error(response.data);
+                    error.response = response;
+                    throw error;
+                    // toast.error((response as AxiosResponse).data);
                 }
                 setSubmitting(false);
-            });
+            })
+            .catch((error) => {
+                console.log(error, 'error');
+                toast.error('Corrupted file uploaded. Please try again.');
+                setSubmitting(false);
+                formik.resetForm();
+                navigate('/client-jobs');
+              });
 
             
         }
@@ -175,7 +185,7 @@ export default function Upload(){
                             value={formik.values.tat}
                              onChange={formik.handleChange}>
                                 {
-                                    tatLookup.map((opt: any) => <option value={opt.value}>{opt.label}</option>)
+                                    tatLookup.map((opt: any) => <option  key={opt.value} value={opt.value}>{opt.label}</option>)
                                 }
                             </FormControl>
                             </Col>
