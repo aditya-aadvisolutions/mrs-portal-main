@@ -15,6 +15,7 @@ import "tailwindcss/tailwind.css";
 import { countryList } from "@app/constants/countries.constants";
 import { statesList } from "@app/constants/states.constants";
 import PhoneNumberInput from "react-phone-number-input";
+import { PatternFormat } from "react-number-format";
 
 const RegistrationForm = () => {
   const [t] = useTranslation();
@@ -48,13 +49,13 @@ const RegistrationForm = () => {
   ) => {
     try {
       setIsAuthLoading(true);
-
+      const numericPhoneNumber = phoneNo.replace(/^\+1|[\D]+/g, '');
       const user = {
         firstName,
         middleName,
         lastName,
         email,
-        phoneNo: parseInt(phoneNo, 10),
+        phoneNo: parseInt(numericPhoneNumber, 10),
         address1,
         address2,
         city,
@@ -97,55 +98,60 @@ const RegistrationForm = () => {
 
       validationSchema: Yup.object().shape({
         // First name is required and must be a string
-        firstName: Yup.string().required('First name is a required field'),
-      
+        firstName: Yup.string().required("First name is a required field"),
+
         // Middle name is optional and can be any string
         middleName: Yup.string(),
-      
+
         // Last name is required and must be a string
-        lastName: Yup.string().required('Last name is a required field'),
-      
+        lastName: Yup.string().required("Last name is a required field"),
+
         // Email is required, must be a valid email address, and must be a string
         email: Yup.string()
-          .email('Invalid email address. Please enter a valid email address.')
-          .required('Email address is a required field'),
-      
+          .email("Invalid email address. Please enter a valid email address.")
+          .required("Email address is a required field"),
+
         // Phone number is required, must be a string, and must be exactly 10 characters long
         phone: Yup.string()
-          .length(10, 'Invalid phone number. Please enter a 10-digit phone number.')
-          .required('Phone number is a required field'),
-      
+        .test('phone', 'Invalid phone number. Please enter a valid 10-digit phone number.', 
+          function(value: any) {
+            const phoneRegex = /^\+1 \(\d{3}\) \d{3}-\d{4}$/;
+            return phoneRegex.test(value);
+          }
+        )
+        .required("Phone number is a required field"),
+
         // Address line 1 is required and must be a string
-        address1: Yup.string().required('Address line 1 is a required field'),
-      
+        address1: Yup.string().required("Address line 1 is a required field"),
+
         // Address line 2 is optional and can be any string
         address2: Yup.string(),
-      
+
         // City is required and must be a string
-        city: Yup.string().required('City is a required field'),
-      
+        city: Yup.string().required("City is a required field"),
+
         // State is required and must be a string
-        state: Yup.string().required('State is a required field'),
-      
+        state: Yup.string().required("State is a required field"),
+
         // Country is required and must be a string
-        country: Yup.string().required('Country is a required field'),
-      
+        country: Yup.string().required("Country is a required field"),
+
         // Password is required, must be a string, and must be between 5 and 30 characters long
         password: Yup.string()
-          .min(5, 'Password must be at least 5 characters long.')
-          .max(30, 'Password must be at most 30 characters long.')
-          .required('Password is a required field'),
-      
+          .min(5, "Password must be at least 5 characters long.")
+          .max(30, "Password must be at most 30 characters long.")
+          .required("Password is a required field"),
+
         // Password retype is required, must be a string, and must match the password field
         passwordRetype: Yup.string()
-          .oneOf([Yup.ref('password')], 'Passwords must match.')
-          .required('Password retype is a required field'),
-      
+          .oneOf([Yup.ref("password")], "Passwords must match.")
+          .required("Password retype is a required field"),
+
         // File preference is required, must be an array, and must have at least one item
         filePreference: Yup.array()
-          .min(1, 'Select at least one document type.')
-          .required('File preference is a required field'),
-      
+          .min(1, "Select at least one document type.")
+          .required("File preference is a required field"),
+
         // Logo is required (commented out for now)
         // logo: Yup.mixed().required('Logo is a required field'),
       }),
@@ -176,7 +182,9 @@ const RegistrationForm = () => {
         <div className="row">
           <div className="col-md-6">
             <div className="mb-3">
-              <label className="form-label">First Name<span className="text-danger">*</span></label>
+              <label className="form-label">
+                First Name<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="firstName"
@@ -190,18 +198,20 @@ const RegistrationForm = () => {
                   tabIndex={1}
                 />
                 {touched.firstName && errors.firstName && (
-                <div
-                className="position-absolute top-100 start-0 text-danger small"
-                style={{ marginTop: '2.30rem' }}
-              >
-                {errors.firstName}
-              </div>
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.firstName}
+                  </div>
                 )}
               </InputGroup>
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Last Name<span className="text-danger">*</span></label>
+              <label className="form-label">
+                Last Name<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="lastName"
@@ -215,18 +225,20 @@ const RegistrationForm = () => {
                   tabIndex={3}
                 />
                 {touched.lastName && errors.lastName && (
-                 <div
-                 className="position-absolute top-100 start-0 text-danger small"
-                 style={{ marginTop: '2.30rem' }}
-               >
-                 {errors.lastName}
-               </div>
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.lastName}
+                  </div>
                 )}
               </InputGroup>
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Email<span className="text-danger">*</span></label>
+              <label className="form-label">
+                Email<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="email"
@@ -241,11 +253,11 @@ const RegistrationForm = () => {
                 />
                 {touched.email && errors.email ? (
                   <div
-                  className="position-absolute top-100 start-0 text-danger small"
-                  style={{ marginTop: '2.30rem' }}
-                >
-                  {errors.email}
-                </div>
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.email}
+                  </div>
                 ) : (
                   <InputGroup.Append>
                     <InputGroup.Text>
@@ -267,20 +279,22 @@ const RegistrationForm = () => {
                   value={values.address2}
                   isValid={touched.address2 && !errors.address2}
                   isInvalid={touched.address2 && !!errors.address2}
-                  tabIndex={10}
+                  tabIndex={7}
                 />
                 {touched.address2 && errors.address2 && (
-                   <div
-                   className="position-absolute top-100 start-0 text-danger small"
-                   style={{ marginTop: '2.30rem' }}
-                 >
-                   {errors.address2}
-                 </div>
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.address2}
+                  </div>
                 )}
               </InputGroup>
             </div>
             <div className="mb-3">
-              <label className="form-label">State<span className="text-danger">*</span></label>
+              <label className="form-label">
+                State<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   as="select"
@@ -290,7 +304,7 @@ const RegistrationForm = () => {
                   value={values.state}
                   isValid={touched.state && !errors.state}
                   isInvalid={touched.state && !!errors.state}
-                  tabIndex={7}
+                  tabIndex={9}
                 >
                   <option value="" label="Select state" />
                   {statesList.map((state, index) => (
@@ -301,18 +315,19 @@ const RegistrationForm = () => {
                 </Form.Control>
                 {touched.state && errors.state && (
                   <div
-                  className="position-absolute top-100 start-0 text-danger small"
-                  style={{ marginTop: '2.30rem' }}
-                >
-                  {errors.state}
-                </div>
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.state}
+                  </div>
                 )}
               </InputGroup>
             </div>
 
-
             <div className="mb-3">
-              <label className="form-label">Password<span className="text-danger">*</span></label>
+              <label className="form-label">
+                Password<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="password"
@@ -326,12 +341,12 @@ const RegistrationForm = () => {
                   tabIndex={11}
                 />
                 {touched.password && errors.password ? (
-                   <div
-                   className="position-absolute top-100 start-0 text-danger small"
-                   style={{ marginTop: '2.30rem' }}
-                 >
-                   {errors.password}
-                 </div>
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.password}
+                  </div>
                 ) : (
                   <InputGroup.Append>
                     <InputGroup.Text>
@@ -343,9 +358,11 @@ const RegistrationForm = () => {
             </div>
 
             <div className="mb-3">
-              <label>Select Document Type<span className="text-danger">*</span></label>
+              <label>
+                Select Document Type<span className="text-danger">*</span>
+              </label>
               <div>
-                {['.pdf','.docx','.pdflnk'].map((type) => (
+                {[".pdf", ".docx", ".pdflnk"].map((type) => (
                   <div key={type} className="form-check form-check-inline">
                     <input
                       className="form-check-input"
@@ -383,42 +400,48 @@ const RegistrationForm = () => {
                   tabIndex={2}
                 />
                 {touched.middleName && errors.middleName && (
-                   <div
-                   className="position-absolute top-100 start-0 text-danger small"
-                   style={{ marginTop: '2.30rem' }}
-                 >
-                   {errors.middleName}
-                 </div>
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.middleName}
+                  </div>
                 )}
               </InputGroup>
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Phone<span className="text-danger">*</span></label>
+              <label className="form-label">
+                Phone<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
-                <Form.Control
+                <PatternFormat
+                  format="+1 (###) ###-####"
                   id="phone"
                   name="phone"
-                  type="number"
+                  type="tel"
                   placeholder="Phone Number"
                   onChange={handleChange}
                   value={values.phone}
-                  isValid={touched.phone && !errors.phone}
-                  isInvalid={touched.phone && !!errors.phone}
+                  //isValid={touched.phone && !errors.phone}
+                 // isInvalid={touched.phone && !!errors.phone}
                   tabIndex={4}
+                  style={{ height: '38px', width: '100%', padding: '10px', fontSize: '16px' }}
                 />
                 {touched.phone && errors.phone && (
-                   <div
-                   className="position-absolute top-100 start-0 text-danger small"
-                   style={{ marginTop: '2.30rem' }}
-                 >
-                   {errors.phone}
-                 </div>
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.phone}
+                  </div>
                 )}
               </InputGroup>
             </div>
             <div className="mb-3">
-              <label className="form-label">Address 1<span className="text-danger">*</span></label>
+              <label className="form-label">
+                Address 1<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="address1"
@@ -429,20 +452,22 @@ const RegistrationForm = () => {
                   value={values.address1}
                   isValid={touched.address1 && !errors.address1}
                   isInvalid={touched.address1 && !!errors.address1}
-                  tabIndex={9}
+                  tabIndex={6}
                 />
                 {touched.address1 && errors.address1 && (
                   <div
-                  className="position-absolute top-100 start-0 text-danger small"
-                  style={{ marginTop: '2.30rem' }}
-                >
-                  {errors.address1}
-                </div>
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.address1}
+                  </div>
                 )}
               </InputGroup>
             </div>
             <div className="mb-3">
-              <label className="form-label">City<span className="text-danger">*</span></label>
+              <label className="form-label">
+                City<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="city"
@@ -453,21 +478,23 @@ const RegistrationForm = () => {
                   value={values.city}
                   isValid={touched.city && !errors.city}
                   isInvalid={touched.city && !!errors.city}
-                  tabIndex={6}
+                  tabIndex={8}
                 />
                 {touched.city && errors.city && (
                   <div
-                  className="position-absolute top-100 start-0 text-danger small"
-                  style={{ marginTop: '2.30rem' }}
-                >
-                  {errors.city}
-                </div>
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.city}
+                  </div>
                 )}
               </InputGroup>
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Country<span className="text-danger">*</span></label>
+              <label className="form-label">
+                Country<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   as="select"
@@ -477,7 +504,7 @@ const RegistrationForm = () => {
                   value={values.country}
                   isValid={touched.country && !errors.country}
                   isInvalid={touched.country && !!errors.country}
-                  tabIndex={7}
+                  tabIndex={10}
                 >
                   <option value="" label="Select country" />
                   {countryList.map((state, index) => (
@@ -488,17 +515,19 @@ const RegistrationForm = () => {
                 </Form.Control>
                 {touched.country && errors.country && (
                   <div
-                  className="position-absolute top-100 start-0 text-danger small"
-                  style={{ marginTop: '2.30rem' }}
-                >
-                  {errors.country}
-                </div>
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.country}
+                  </div>
                 )}
               </InputGroup>
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Retype Password<span className="text-danger">*</span></label>
+              <label className="form-label">
+                Retype Password<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="passwordRetype"
@@ -512,12 +541,12 @@ const RegistrationForm = () => {
                   tabIndex={12}
                 />
                 {touched.passwordRetype && errors.passwordRetype ? (
-                   <div
-                   className="position-absolute top-100 start-0 text-danger small"
-                   style={{ marginTop: '2.30rem' }}
-                 >
-                   {errors.passwordRetype}
-                 </div>
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.passwordRetype}
+                  </div>
                 ) : (
                   <InputGroup.Append>
                     <InputGroup.Text>
@@ -543,11 +572,11 @@ const RegistrationForm = () => {
                 />
                 {touched.logo && errors.logo && (
                   <div
-                  className="position-absolute top-100 start-0 text-danger small"
-                  style={{ marginTop: '2.30rem' }}
-                >
-                  {errors.logo}
-                </div>
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.logo}
+                  </div>
                 )}
               </InputGroup>
             </div>
