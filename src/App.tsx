@@ -11,7 +11,7 @@ import { calculateWindowSize } from '@app/utils/helpers';
 import { useDispatch, useSelector } from 'react-redux';
 import { setWindowSize } from '@app/store/reducers/ui';
 import ReactGA from 'react-ga4';
-
+import RegistrationForm from './pages/admin/AddClients';
 import Dashboard from '@pages/Dashboard';
 import Blank from '@pages/Blank';
 import JobsList from '@app/pages/admin/JobsList';
@@ -117,6 +117,7 @@ const App = () => {
             <Route path="/intake" element={<Intake />} />
             {/* <Route path="/blank" element={<Blank />} /> */}
             <Route path="/profile" element={<Profile />} />
+            <Route path="/client-registration" element={<RegistrationForm />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/jobslist/:status" element={<JobList/>} />
 
