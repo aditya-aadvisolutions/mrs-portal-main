@@ -50,7 +50,9 @@ const JobList = () => {
   const handleShow = () => setShow(true);
   const path=window.location.pathname.split("/").pop();
   const user = useSelector((state: IUser) => store.getState().auth);
-  let selectedClient: string = '';
+  const authData = localStorage.getItem('authentication');
+  const username= authData ? JSON.parse(authData) : { loginName: '' };
+  let selectedClient=username?.roleName==="Client" ? user.id : "";
 
   const status = "FAB98251-70C2-410B-BC09-9B66F9234E30"
   const completedStatus= "12F5B379-A6E9-48A2-81E2-6E7249B4895E"
