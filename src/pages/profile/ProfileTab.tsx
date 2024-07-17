@@ -1,185 +1,150 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
-import { Form, InputGroup } from "react-bootstrap";
-import { Checkbox, Select } from "@profabric/react-components";
-
-import { RegisterUser, authLogin } from "@app/utils/oidc-providers";
-import { setAuthentication } from "@app/store/reducers/auth";
-import { Button } from "@app/styles/common";
-import "tailwindcss/tailwind.css";
+import { Form, InputGroup, Button } from "react-bootstrap";
+import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { countryList } from "@app/constants/countries.constants";
 import { statesList } from "@app/constants/states.constants";
-import PhoneNumberInput from "react-phone-number-input";
 import { PatternFormat } from "react-number-format";
 
-const RegistrationForm = () => {
-  const [t] = useTranslation();
+import ApiService from '@app/services/Api.service';
+
+import { updateUserDetails } from "@app/utils/oidc-providers"; // Adjust the import according to your API setup
+
+const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string }) => {
+  const { t } = useTranslation();
   const [isAuthLoading, setIsAuthLoading] = useState(false);
-  const [isGoogleAuthLoading, setIsGoogleAuthLoading] = useState(false);
-  const [isFacebookAuthLoading, setIsFacebookAuthLoading] = useState(false);
-  const [phone, setPhone] = useState("");
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  let createdBy = localStorage.getItem("authentication")
-    ? JSON.parse(localStorage.getItem("authentication") as string).id
-    : "";
-  let companyId = localStorage.getItem("authentication")
-    ? JSON.parse(localStorage.getItem("authentication") as string).companyId
-    : "";
-  const register = async (
-    email: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    loginName: string,
-    address1: string,
-    address2: string,
-    city: string,
-    state: string,
-    country: string,
-    phoneNo: string,
-    filePreference: string,
-    createdBy: string,
-    companyId: string
-  ) => {
-    try {
-      setIsAuthLoading(true);
-      const numericPhoneNumber = phoneNo.replace(/^\+1|[\D]+/g, '');
-      const user = {
-        firstName,
-        loginName,
-        lastName,
-        email,
-        phoneNo: parseInt(numericPhoneNumber, 10),
-        address1,
-        address2,
-        city,
-        state,
-        country,
-        password,
-        filePreference,
-        createdBy,
-        companyId,
-      };
+  const [initialValues, setInitialValues] = useState({
+    firstName: "",
+    loginName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address1: "",
+    address2: "",
+    city: "",
+    state: "",
+    country: "",
+    filePreference: [''],
+    logo: null,
+  });
 
-      const response = await RegisterUser(user);
+  const modifyedBy = localStorage.getItem("authentication")
+  ? JSON.parse(localStorage.getItem("authentication") as string).id
+  : "";
 
-      toast.success("Registration is success");
-      navigate("/client-list");
-    } catch (error: any) {
-      toast.error(error.message || "Failed");
-      setIsAuthLoading(false);
+  const userprofileId = localStorage.getItem("authentication")
+  ? JSON.parse(localStorage.getItem("authentication") as string).id
+  : "";
+
+  const Role = localStorage.getItem("authentication") ? JSON.parse(localStorage.getItem("authentication") as string).roleName : "";
+  const validationSchema = Yup.object().shape({
+    firstName: Yup.string().required("First name is a required field"),
+    loginName: Yup.string().required("Login name is a required field"),
+    lastName: Yup.string().required("Last name is a required field"),
+    email: Yup.string()
+      .email("Invalid email address. Please enter a valid email address.")
+      .required("Email address is a required field"),
+    phone: Yup.string()
+    //   .test("phone", "Invalid phone number. Please enter a valid 10-digit phone number.", function (value) {
+    //     const phoneRegex = /^\+1 \(\d{3}\) \d{3}-\d{4}$/;
+    //     return phoneRegex.test(value);
+    //   })
+      .required("Phone number is a required field"),
+    address1: Yup.string().required("Address line 1 is a required field"),
+    address2: Yup.string(),
+    city: Yup.string().required("City is a required field"),
+    state: Yup.string().required("State is a required field"),
+    country: Yup.string().required("Country is a required field"),
+    filePreference: Yup.array().min(1, "Select at least one document type."),
+  });
+
+  const { handleChange, values, handleSubmit, touched, errors, setFieldValue } = useFormik({
+    initialValues,
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      try {
+        setIsAuthLoading(true);
+        const numericPhoneNumber = values.phone.replace(/^\+1|[\D]+/g, "");
+        const updatedUser = {
+          ...values,
+          modifyedBy:modifyedBy,
+          userId: userId,
+          phone: parseInt(numericPhoneNumber, 10),
+        };
+         await updateUserDetails(updatedUser); // Adjust according to your API call
+        toast.success("Profile updated successfully.");
+      } catch (error : any) {
+        toast.error(error.message || "Failed to update profile.");
+      } finally {
+        setIsAuthLoading(false);
+      }
+    },
+  });
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await ApiService.requests.get(`client/clientdata?userId=${userId}`);
+        if (response) {
+          setInitialValues({
+            firstName: response.User.FirstName,
+            loginName: response.User.LoginName, // Set this if applicable
+            lastName: response.User.LastName,
+            email: response.User.Email,
+            phone: response.User.PhoneNo,
+            address1: response.Address1,
+            address2: response.Address2,
+            city: response.City,
+            state: response.State || "", // Adjust if necessary
+            country: response.Country || "", // Adjust if necessary
+            filePreference: response.FilePreference.split(','), // Convert string to array
+            logo: null, // Handle file uploads if necessary
+          });
+        }
+      } catch (error) {
+        toast.error("Failed to fetch user details.");
+      }
+    };
+    const fetchDetails = async () => {
+      try {
+        const response = await ApiService.requests.get(`client/clientdata?userId=${userprofileId}`);
+        if (response) {
+          setInitialValues({
+            firstName: response.User.FirstName,
+            loginName: response.User.LoginName, // Set this if applicable
+            lastName: response.User.LastName,
+            email: response.User.Email,
+            phone: response.User.PhoneNo,
+            address1: response.Address1,
+            address2: response.Address2,
+            city: response.City,
+            state: response.State || "", // Adjust if necessary
+            country: response.Country || "", // Adjust if necessary
+            filePreference: response.FilePreference.split(','), // Convert string to array
+            logo: null, // Handle file uploads if necessary
+          });
+        }
+      } catch (error) {
+        toast.error("Failed to fetch user details.");
+      }
+    };
+  
+    if (userId && Role === "Admin") {
+      fetchUserDetails();
+    }else if(Role === "Client"){
+      fetchDetails();
     }
-  };
+  }, [userId]);
 
-  const { handleChange, values, handleSubmit, touched, errors, setFieldValue } =
-    useFormik({
-      initialValues: {
-        firstName: "",
-        loginName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        address1: "",
-        address2: "",
-        city: "",
-        state: "",
-        country: "",
-        password: "",
-        passwordRetype: "",
-        filePreference: "",
-        logo: null,
-      },
 
-      validationSchema: Yup.object().shape({
-        // First name is required and must be a string
-        firstName: Yup.string().required("First Name is a required field"),
 
-        // Middle name is optional and can be any string
-        loginName: Yup.string().required("Login Name is a required field"),
-
-        // Last name is required and must be a string
-        lastName: Yup.string().required("Last Name is a required field"),
-
-        // Email is required, must be a valid email address, and must be a string
-        email: Yup.string()
-          .email("Please enter a valid Email address.")
-          .required("Email address is a required field"),
-
-        // Phone number is required, must be a string, and must be exactly 10 characters long
-        phone: Yup.string()
-        .test('phone', 'Invalid phone number. Please enter a valid 10-digit phone number.', 
-          function(value: any) {
-            const phoneRegex = /^\+1 \(\d{3}\) \d{3}-\d{4}$/;
-            return phoneRegex.test(value);
-          }
-        )
-        .required("Phone Number is a required field"),
-
-        // Address line 1 is required and must be a string
-        address1: Yup.string().required("Address line 1 is a required field"),
-
-        // Address line 2 is optional and can be any string
-        address2: Yup.string(),
-
-        // City is required and must be a string
-        city: Yup.string().required("City is a required field"),
-
-        // State is required and must be a string
-        state: Yup.string().required("State is a required field"),
-
-        // Country is required and must be a string
-        country: Yup.string().required("Country is a required field"),
-
-        // Password is required, must be a string, and must be between 5 and 30 characters long
-        password: Yup.string()
-          .min(5, "Password must be at least 5 characters long.")
-          .max(30, "Password must be at most 30 characters long.")
-          .required("Password is a required field"),
-
-        // Password retype is required, must be a string, and must match the password field
-        passwordRetype: Yup.string()
-          .oneOf([Yup.ref("password")], "Passwords must match.")
-          .required("Password retype is a required field"),
-
-        // File preference is required, must be an array, and must have at least one item
-        filePreference: Yup.array()
-          .min(1, "Select at least one document type.")
-          .required("File preference is a required field"),
-
-        // Logo is required (commented out for now)
-        // logo: Yup.mixed().required('Logo is a required field'),
-      }),
-      onSubmit: (values) => {
-        register(
-          values.email,
-          values.password,
-          values.firstName,
-          values.lastName,
-          values.loginName,
-          values.address1,
-          values.address2,
-          values.city,
-          values.state,
-          values.country,
-          values.phone,
-          values.filePreference,
-          createdBy,
-          companyId
-        );
-      },
-    });
-  console.log(values);
   return (
-    <div className="max-w-4xl mx-auto p-4 border rounded shadow-lg bg-white">
-      <h2 className="text-2xl font-bold mb-4">Add Client</h2>
+    <div className="">
+      <h2 className="text-2xl font-bold mb-4">Profile</h2>
       <form onSubmit={handleSubmit}>
-        <div className="row">
+      <div className="row">
           <div className="col-md-6">
             <div className="mb-3">
               <label className="form-label">
@@ -249,6 +214,7 @@ const RegistrationForm = () => {
                   value={values.email}
                   isValid={touched.email && !errors.email}
                   isInvalid={touched.email && !!errors.email}
+                  disabled
                   tabIndex={5}
                 />
                 {touched.email && errors.email ? (
@@ -324,38 +290,6 @@ const RegistrationForm = () => {
               </InputGroup>
             </div>
 
-            <div className="mb-3">
-              <label className="form-label">
-                Password<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  onChange={handleChange}
-                  value={values.password}
-                  isValid={touched.password && !errors.password}
-                  isInvalid={touched.password && !!errors.password}
-                  tabIndex={11}
-                />
-                {touched.password && errors.password ? (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.password}
-                  </div>
-                ) : (
-                  <InputGroup.Append>
-                    <InputGroup.Text>
-                      <i className="fas fa-lock" />
-                    </InputGroup.Text>
-                  </InputGroup.Append>
-                )}
-              </InputGroup>
-            </div>
 
             <div className="mb-3">
               <label>
@@ -418,6 +352,7 @@ const RegistrationForm = () => {
                 <PatternFormat
                   format="+1 (###) ###-####"
                   id="phone"
+                  disabled
                   name="phone"
                   type="tel"
                   placeholder="Phone Number"
@@ -525,39 +460,6 @@ const RegistrationForm = () => {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">
-                Retype Password<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="passwordRetype"
-                  name="passwordRetype"
-                  type="password"
-                  placeholder="Retype password"
-                  onChange={handleChange}
-                  value={values.passwordRetype}
-                  isValid={touched.passwordRetype && !errors.passwordRetype}
-                  isInvalid={touched.passwordRetype && !!errors.passwordRetype}
-                  tabIndex={12}
-                />
-                {touched.passwordRetype && errors.passwordRetype ? (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.passwordRetype}
-                  </div>
-                ) : (
-                  <InputGroup.Append>
-                    <InputGroup.Text>
-                      <i className="fas fa-lock" />
-                    </InputGroup.Text>
-                  </InputGroup.Append>
-                )}
-              </InputGroup>
-            </div>
-
-            <div className="mb-3">
               <label htmlFor="logo">Logo</label>
               <InputGroup className="mb-3">
                 <Form.Control
@@ -583,22 +485,14 @@ const RegistrationForm = () => {
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-3">
-            <div className="mb-3">
-              <Button
-                loading={isAuthLoading}
-                disabled={isGoogleAuthLoading || isFacebookAuthLoading}
-                onClick={handleSubmit as any}
-              >
-                Submit
-              </Button>
-            </div>
-          </div>
+        <div className="d-flex justify-content-end">
+          <Button type="submit" variant="primary" disabled={isAuthLoading}>
+            {isAuthLoading ? "Updating..." : "Update"}
+          </Button>
         </div>
       </form>
     </div>
   );
 };
 
-export default RegistrationForm;
+export default ProfileTab;

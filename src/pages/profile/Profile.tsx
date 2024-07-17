@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ContentHeader } from '@components';
 import { Image } from '@profabric/react-components';
 import styled from 'styled-components';
-
+import ProfileTab from  './ProfileTab';
 import ActivityTab from './ActivityTab';
 import TimelineTab from './TimelineTab';
 import SettingsTab from './SettingsTab';
@@ -60,6 +60,17 @@ const Profile = () => {
               <div className="card">
                 <div className="card-header p-2">
                   <ul className="nav nav-pills">
+                  <li className="nav-item">
+                      <button
+                        type="button"
+                        className={`nav-link ${
+                          activeTab === 'PROFILE' ? 'active' : ''
+                        }`}
+                        onClick={() => toggle('PROFILE')}
+                      >
+                        Profile
+                      </button>
+                    </li>
                     <li className="nav-item">
                       <button
                         type="button"
@@ -82,12 +93,14 @@ const Profile = () => {
                         {t('main.label.changepassword')}
                       </button>
                     </li>
+                    
                   </ul>
                 </div>
                 <div className="card-body">
                   <div className="tab-content">
                     {/* <ActivityTab isActive={activeTab === 'ACTIVITY'} />
                     <TimelineTab isActive={activeTab === 'TIMELINE'} /> */}
+                    { activeTab === 'PROFILE' && <ProfileTab isActive={activeTab === 'PROFILE'} userId={userId}/> }
                     { activeTab === 'PREFERENCES' && <SettingsTab isActive={activeTab === 'PREFERENCES'} userId={userId}/> }
                     { activeTab === 'CHANGEPASSWORD' && <ChagePasswordTab isActive={activeTab == 'CHANGEPASSWORD'} userId={userId}/> }
                   </div>

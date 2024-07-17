@@ -8,7 +8,7 @@ import {
   SlickGrid,
   MenuCommandItem,
 } from "slickgrid-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import PageLoader from "@app/utils/loading";
 import ConfigSettings from "@app/utils/config";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,6 +19,7 @@ import { AxiosResponse } from "axios";
 import ClientService from "@app/services/clientservice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
+
 interface State {
   title: string;
   subTitle: string;
@@ -26,7 +27,6 @@ interface State {
   columnDefinitions1: Column[];
 }
 
-//let reactGrid!: SlickgridReactInstance;
 let grid1!: SlickGrid;
 
 const ClientsList = () => {
@@ -35,7 +35,7 @@ const ClientsList = () => {
   const dispatch = useDispatch();
   const [reactGrid, setGrid] = useState<SlickgridReactInstance>();
   const [dataset, setData] = useState<any[]>([]);
-  console.log(dataset);
+
   let data = dataset.map((item) => {
     return {
       ...item,
@@ -49,6 +49,10 @@ const ClientsList = () => {
       defaultTAT: item.DefaultTAT,
     };
   });
+
+  // Sort the data by createdDateTime in descending order
+  data.sort((a, b) => new Date(b.createdDateTime).getTime() - new Date(a.createdDateTime).getTime());
+
   const navigate = useNavigate();
   const MenuCommandItems: MenuCommandItem[] = Array<MenuCommandItem>();
 
@@ -79,7 +83,7 @@ const ClientsList = () => {
       name: "Email",
       field: "email",
       sortable: true,
-      maxWidth: 150, // Use the email formatter
+      maxWidth: 150,
     },
     {
       id: "loginName",
@@ -119,7 +123,7 @@ const ClientsList = () => {
             positionOrder: 66,
             action: (_e, args) => {
               navigate("/profile", {
-                state: { userId: args.dataContext.userId, tab: "PREFERENCES" },
+                state: { userId: args.dataContext.UserId, tab: "PROFILE"  },
               });
             },
           },
@@ -132,7 +136,7 @@ const ClientsList = () => {
               console.log(args.dataContext);
               navigate("/profile", {
                 state: {
-                  userId: args.dataContext.userId,
+                  userId: args.dataContext.UserId,
                   tab: "CHANGEPASSWORD",
                 },
               });
@@ -165,7 +169,8 @@ const ClientsList = () => {
       .then((response: any) => {
         if (response) {
           let data = response;
-          console.log(data);
+          // Sort data by createdDateTime in descending order
+          data.sort((a: { CreatedDateTime: string | number | Date; }, b: { CreatedDateTime: string | number | Date; }) => new Date(b.CreatedDateTime).getTime() - new Date(a.CreatedDateTime).getTime());
           setData(data);
         }
       })
@@ -201,7 +206,7 @@ const ClientsList = () => {
               </div>
 
               <div className="card-body">
-                <div className="row pt-4">
+                <div className="row">
                   <div className="col-md-12" style={{ zIndex: "0" }}>
                     <SlickgridReact
                       gridId="grid1"
