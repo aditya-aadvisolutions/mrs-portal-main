@@ -65,16 +65,16 @@ const ClientsList = () => {
       maxWidth: 150,
     },
     {
-      id: "lastName",
-      name: "Last Name",
-      field: "lastName",
+      id: "firstName",
+      name: "First Name",
+      field: "firstName",
       sortable: true,
       maxWidth: 150,
     },
     {
-      id: "firstName",
-      name: "First Name",
-      field: "firstName",
+      id: "lastName",
+      name: "Last Name",
+      field: "lastName",
       sortable: true,
       maxWidth: 150,
     },
@@ -84,6 +84,7 @@ const ClientsList = () => {
       field: "email",
       sortable: true,
       maxWidth: 150,
+      formatter: (row, cell, value) => `<div title="${value}">${value}</div>`,
     },
     {
       id: "loginName",
@@ -112,8 +113,7 @@ const ClientsList = () => {
       name: "",
       field: "id",
       maxWidth: 130,
-      formatter: () =>
-        `<div class="btn btn-default btn-xs">Action <i class="fa fa-caret-down"></i></div>`,
+      formatter: () => `<div class="btn btn-default btn-xs">Action <i class="fa fa-caret-down"></i></div>`,
       cellMenu: {
         commandItems: [
           {
