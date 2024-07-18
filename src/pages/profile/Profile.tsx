@@ -17,7 +17,7 @@ const StyledUserImage = styled(Image)`
 `;
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState('PREFERENCES');
+  const [activeTab, setActiveTab] = useState('PROFILE');
   const [userId, setUserId] = useState('');
   const [t] = useTranslation();
   const location = useLocation();
