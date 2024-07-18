@@ -68,13 +68,25 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
       try {
         setIsAuthLoading(true);
         const numericPhoneNumber = values.phone.replace(/^\+1|[\D]+/g, "");
-        const updatedUser = {
-          ...values,
-          modifyedBy:modifyedBy,
-          userId: userId,
-          phone: parseInt(numericPhoneNumber, 10),
-        };
-         await updateUserDetails(updatedUser); // Adjust according to your API call
+        if(Role === "Admin") {
+          const updatedUser = {
+            ...values,
+            modifyedBy:modifyedBy,
+            userId: userId,
+            phone: parseInt(numericPhoneNumber, 10),
+          };
+           await updateUserDetails(updatedUser);
+          
+        }else if(Role === "Client") {
+          const updatedUser = {
+            ...values,
+            modifyedBy:modifyedBy,
+            userId: userprofileId,
+            phone: parseInt(numericPhoneNumber, 10),
+          };
+           await updateUserDetails(updatedUser);
+        }
+         // Adjust according to your API call
         toast.success("Profile updated successfully.");
       } catch (error : any) {
         toast.error(error.message || "Failed to update profile.");
