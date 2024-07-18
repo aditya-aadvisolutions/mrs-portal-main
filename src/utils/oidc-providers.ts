@@ -115,7 +115,22 @@ export const RegisterUser = (user: any) => {
     })
   });
 };
-
+export const updateUserDetails = (user: any) => {
+  return new Promise(async (res, rej) => {
+    ApiService.requests.patch('client/update', user)
+    .then((response) => {
+      console.log(response,'response');
+      if(response)
+      {
+        return res(response);
+      }
+      else
+      {
+        return rej({ message: response });
+      }
+    })
+  })
+}
 
 export const refreshToken = (user: User) => {
   
