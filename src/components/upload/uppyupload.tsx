@@ -67,6 +67,38 @@ export default function UppyUpload(props: any) {
       )
       //.use(XHRUpload, { endpoint: 'http://localhost:5107/api/Upload/Upload', formData: true, bundle: true, fieldName:'fileupload' })
       
+     
+
+      .on("complete", (result: UploadResult) => {
+        console.log(result);
+
+        let files = result.successful.filter(function (item) {
+          return uploadedFiles.filter((x) => x.filename !== item.name);
+        });
+
+        for (let i = 0; i < files.length; i++) {
+          const extension = '.' + files[i].name.split('.')[1];
+          let filenameWithOutFolder
+
+          if(Role==='Admin'){
+             filenameWithOutFolder = (files[i].name).split('/admin/')[1];
+          }else{
+             filenameWithOutFolder = (files[i].name).split('/client/')[1];
+          }
+          console.log("filenameWithOutFolder...."+filenameWithOutFolder);
+          dispatch(
+            setUploadedFiles({
+              fileId: files[i].id,
+              filename: filenameWithOutFolder,
+              size: files[i].size,
+              fileextension: props.filePreference && props.filePreference != '' ? props.filePreference : extension,
+              filepath: files[i].uploadURL
+            })
+          );
+        }
+        props.onCompleteCallback();
+      })
+
       .on('files-added', (files:any) => {
 
         if(Role==='Admin'){
@@ -84,28 +116,6 @@ export default function UppyUpload(props: any) {
         }
        
     })
-
-      .on("complete", (result: UploadResult) => {
-        console.log(result);
-
-        let files = result.successful.filter(function (item) {
-          return uploadedFiles.filter((x) => x.filename !== item.name);
-        });
-
-        for (let i = 0; i < files.length; i++) {
-          const extension = '.' + files[i].name.split('.')[1];
-          dispatch(
-            setUploadedFiles({
-              fileId: files[i].id,
-              filename: files[i].name,
-              size: files[i].size,
-              fileextension: props.filePreference && props.filePreference != '' ? props.filePreference : extension,
-              filepath: files[i].uploadURL
-            })
-          );
-        }
-        props.onCompleteCallback();
-      })
 
       
       .setOptions({
