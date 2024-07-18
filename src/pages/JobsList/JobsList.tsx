@@ -65,10 +65,12 @@ const JobList = () => {
     {
       id: 'files', name: 'FILE NAME <i class="fa fa-upload text-success ml-1" aria-hidden="true"></i>', field: 'files', sortable: true,
       formatter: (row, cell, value, colDef, dataContext) => {
-        if (dataContext.isSingleJob)
-          return value.length > 0 ? `<i class="fa fa-file-archive-o text-info" aria-hidden="true"></i> <a href="#" class="pointer" title="${dataContext.name}">${dataContext.name}.zip</a>` : '';
-        else{
-          let icon =  getFileIcon(value[0].FileExtension);
+        if (dataContext.isSingleJob) {
+          let title = dataContext.name ? dataContext.name : dataContext.jobId;
+          let fileName = dataContext.name ? dataContext.name : dataContext.jobId + '.zip';
+          return value.length > 0 ? `<i class="fa fa-file-archive-o text-info" aria-hidden="true"></i> <a href="#" class="pointer" title=${title}>${fileName}</a>` : '';
+        } else {
+          let icon = getFileIcon(value[0].FileExtension);
           return value.length > 0 ? `<i class="fa ${icon}" aria-hidden="true"></i> <a href="#" class="pointer" title="${value[0].FileName}">${value[0].FileName}</a>` : '';
         }
       },
