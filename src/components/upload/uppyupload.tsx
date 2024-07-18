@@ -19,6 +19,7 @@ import LookupService from "@app/services/lookupService";
 export default function UppyUpload(props: any) {
   let uppy: any;
   const uploadUrl = import.meta.env.VITE_S3_URL;
+  const Role = localStorage.getItem("authentication") ? JSON.parse(localStorage.getItem("authentication") as string).roleName : "";
 
   const [ fileTypes, setFileTypes ] = useState([]);
   const dispatch = useDispatch();
@@ -65,6 +66,25 @@ export default function UppyUpload(props: any) {
         },
       )
       //.use(XHRUpload, { endpoint: 'http://localhost:5107/api/Upload/Upload', formData: true, bundle: true, fieldName:'fileupload' })
+      
+      .on('files-added', (files:any) => {
+
+        if(Role==='Admin'){
+
+          for (var prop in files) {
+  
+            files[prop].name = "/admin"+'/' + files[prop].name;
+        }
+
+        }else{
+          for (var prop in files) {
+  
+            files[prop].name = "/client"+'/' + files[prop].name;
+        }
+        }
+       
+    })
+
       .on("complete", (result: UploadResult) => {
         console.log(result);
 
@@ -86,6 +106,8 @@ export default function UppyUpload(props: any) {
         }
         props.onCompleteCallback();
       })
+
+      
       .setOptions({
         restrictions: {
           allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',')  : ['.pdf','.doc','.docx','.*'],
@@ -94,6 +116,8 @@ export default function UppyUpload(props: any) {
         },
       }));
   }, []);
+
+ 
 
   useEffect(() => {
     return () => {
