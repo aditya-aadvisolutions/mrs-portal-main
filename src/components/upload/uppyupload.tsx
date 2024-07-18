@@ -41,6 +41,11 @@ export default function UppyUpload(props: any) {
       id: "uppyloader",
       autoProceed: false,
       debug: true,
+      locale: {
+        strings: {
+          noDuplicates: "File with same name already exists, if you would like to continue uploading please rename and try again",
+        },
+      },
       onBeforeUpload: (files:any) => {
         if (props.onBeforeUpload){
           props.onBeforeUpload();
