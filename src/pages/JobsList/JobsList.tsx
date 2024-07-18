@@ -41,6 +41,7 @@ const JobList = () => {
   const [initialLoad, setInitialLoad] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [jobStatus, setJobStatus] = useState<string>('Pending');
+  const [selectedJobId, setSelectedJobId] = useState<string>('');
   
 //  const [mergeFileName, setMergeFileName] = useState('');
   // const [defaultStatus, setDefaultStatus] = useState([]);
@@ -81,11 +82,14 @@ const JobList = () => {
           //setFiles(args.dataContext.files);
           downloadZip(args.dataContext.files, args.dataContext.name);
           //handleShow();
+          setSelectedJobId(args.dataContext.id);
+          updateJobStatus(args.dataContext.id, 'In Progress');
         }
         else {
           let fileInfo: any = args.dataContext.files[0];
           //window.open(fileInfo.SourceFilePath,'_blank');
           downloadFile(fileInfo);
+          updateJobStatus(args.dataContext.id, 'In Progress');
         }
        
       }
@@ -125,12 +129,15 @@ const JobList = () => {
           
       },
       onCellClick: (e: any, args: OnEventArgs) => {
-        let fileid = e.target.attributes['data-id'];
-        if(fileid.value){
-          let fileinfo = args.dataContext.uploadFiles.find((item:any) => item.Id == fileid.value);
-          downloadFile(fileinfo);
+        if (args.dataContext.isSingleJob) {
+          downloadZip(args.dataContext.files, args.dataContext.name);
+          setSelectedJobId(args.dataContext.id);
         }
-        //updateJobStatus(args.dataContext.id,'Downloaded');
+        else {
+          let fileInfo: any = args.dataContext.files[0];
+          downloadFile(fileInfo);
+          setSelectedJobId(args.dataContext.id);
+        }
       }
     },
  
@@ -315,6 +322,7 @@ const JobList = () => {
     setLoader(true);
     DownloadZipService.downlodFile(fileInfo, function(){
       setLoader(false);
+      updateJobStatus(fileInfo.jobId, 'In Progress');
     });
   };
 
@@ -322,6 +330,7 @@ const JobList = () => {
       setLoader(true);
       DownloadZipService.createZip(mergeFileList, mergeFileName, function() {
         setLoader(false);
+        updateJobStatus(mergeFileList[0].jobId, 'In Progress');
       });
   }
 
