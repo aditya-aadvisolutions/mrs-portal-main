@@ -82,15 +82,25 @@ export default function UppyUpload(props: any) {
         });
 
         for (let i = 0; i < files.length; i++) {
-          const extension = '.' + files[i].name.split('.')[1];
+          // const extension = '.' + files[i].name.split('.')[1];
           let filenameWithOutFolder
+          let extension = '';
+          if (files[i].name.includes('.pdf')) {
+            extension = '.pdf';
+          } else if (files[i].name.includes('.docx')) {
+            extension = '.docx';
+          } else if (files[i].name.includes('.pdflnk')) {
+            extension = '.pdflnk';
+          }
+          else {
+            extension = '.' + files[i].name.split('.').pop();
+          }
 
           if(Role==='Admin'){
              filenameWithOutFolder = (files[i].name).split('/admin/')[1];
           }else{
              filenameWithOutFolder = (files[i].name).split('/client/')[1];
           }
-          console.log("filenameWithOutFolder...."+filenameWithOutFolder);
           dispatch(
             setUploadedFiles({
               fileId: files[i].id,
@@ -105,21 +115,28 @@ export default function UppyUpload(props: any) {
       })
 
       .on('files-added', (files:any) => {
+        let clientName = localStorage.getItem('username');
+        const date = new Date();
+        let folderStructure;
+        if (clientName !== null) {
+          const isoString = date.toISOString();
+          const year = isoString.slice(0, 4);
+          const month = isoString.slice(5, 7);
+          const day = isoString.slice(8, 10);
+          folderStructure = clientName.concat(" - ").concat(`${year}-${month}-${day}`);
+        } else {
+          folderStructure = "Client name is not available";
+        }
 
         if(Role==='Admin'){
-
           for (var prop in files) {
-  
             files[prop].name = "/admin"+'/' + files[prop].name;
         }
-
         }else{
           for (var prop in files) {
-  
-            files[prop].name = "/client"+'/' + files[prop].name;
+            files[prop].name = "/client"+'/' + files[prop].name + " - " + folderStructure;
         }
         }
-       
     })
 
       
