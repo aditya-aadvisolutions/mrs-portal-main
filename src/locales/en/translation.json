@@ -83,7 +83,8 @@
       "adminjobs": "Jobs",
       "clientjobs": "Jobs",
       "upload": "Upload",
-      "clientlist": "Clients"
+      "clientlist": "Clients",
+      "employees": "Employees"
     }
   },
   "footer": {
