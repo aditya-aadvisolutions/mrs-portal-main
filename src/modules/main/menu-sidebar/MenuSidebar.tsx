@@ -34,6 +34,11 @@ export const ADMIN_MENU: IMenuItem[] = [
     name: i18n.t('menusidebar.label.adminjobs'),
     icon: 'fas fa-file-alt nav-icon',
     path: '/admin-jobs',
+  },
+  {
+    name: i18n.t('menusidebar.label.employees'),
+    icon: 'fas fa-users nav-icon',
+    path: '/employee',
   }
 ];
 
