@@ -50,6 +50,12 @@ const ClientJobList = () => {
   const navigate = useNavigate();
   let selectedClient: string = user.id;
 
+  localStorage.setItem('roleName', user.roleName);
+  localStorage.setItem('username', user.firstName);
+
+  localStorage.getItem('roleName');
+  const file = localStorage.getItem('username');
+
   const columns: Column[] = [
     { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
     // { id: 'notes', name: 'Notes', field: 'notes', sortable: true },

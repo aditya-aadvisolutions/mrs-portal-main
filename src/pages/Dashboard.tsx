@@ -27,6 +27,11 @@ const Dashboard: React.FC = () => {
   const role=username.roleName
   console.log(username, "username");
 
+  localStorage.setItem('roleName', role);
+  localStorage.getItem('roleName');
+
+  localStorage.setItem('userName', username.loginName);
+  localStorage.getItem('userName');
   useEffect(() => {
     const fetchData = async () => {
       try {
