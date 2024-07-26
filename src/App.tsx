@@ -30,6 +30,7 @@ import ClientJobList from './pages/client/ClientJobList';
 import ClientsList from './pages/admin/clients';
 import SessionTimeout from './components/session-timeout/SessionTimeout';
 import JobList from './pages/JobsList/JobsList';
+import EmployeesJobs from './pages/employee/joblist';
 import Employees from './pages/admin/Employees';
 import AddEmployees from './pages/admin/AddEmployees';
 import SplitJob from './pages/admin/SplitJob';
@@ -119,6 +120,7 @@ const App = () => {
             <Route path="/employee" element={<Employees />} />
             <Route path="/client-jobs" element={<ClientJobList />} />
             <Route path="/client-list" element={<ClientsList />} />
+            <Route path="/employee-jobs" element={<EmployeesJobs />} />
             <Route path="/intake" element={<Intake />} />
             {/* <Route path="/blank" element={<Blank />} /> */}
             <Route path="/profile" element={<Profile />} />
