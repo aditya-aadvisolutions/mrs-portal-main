@@ -43,6 +43,8 @@ const UserDropdown = () => {
     navigate('/profile');
   };
 
+  const RoleName = localStorage.getItem("authentication") ? JSON.parse(localStorage.getItem("authentication") as string).roleName : null
+
   return (
     <UserMenuDropdown isOpen={dropdownOpen} hideArrow>
       <StyledSmallUserImage
@@ -86,13 +88,13 @@ const UserDropdown = () => {
           </div>
         </UserBody> */}
         <UserFooter>
-          <button
+         {RoleName === 'Client' &&<button
             type="button"
             className="btn btn-default btn-flat"
             onClick={navigateToProfile}
           >
             {t('header.user.profile')}
-          </button>
+          </button>}
           <button
             type="button"
             className="btn btn-default btn-flat float-right"
