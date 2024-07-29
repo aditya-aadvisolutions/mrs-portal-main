@@ -59,7 +59,13 @@ export const CLIENT_MENU: IMenuItem[] = [
     path: '/intake',
   },
 ];
-export const EMPLOYEE_MENU: IMenuItem[] = [];
+export const EMPLOYEE_MENU: IMenuItem[] = [
+  {
+    name: i18n.t('menusidebar.label.employeesjobs'),
+    icon: 'fas fa-file-alt nav-icon',
+    path: '/employee-jobs',
+  }
+];
 
 // export const MENU: IMenuItem[] = [];
 

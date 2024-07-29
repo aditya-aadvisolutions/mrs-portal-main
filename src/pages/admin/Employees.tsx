@@ -1,38 +1,24 @@
 import {
     Column,
-    Formatters,
     GridOption,
-    OnEventArgs,
     SlickgridReact,
     SlickgridReactInstance,
-    SlickGrid,
     MenuCommandItem,
+    Formatters,
   } from "slickgrid-react";
   import { useEffect, useState } from "react";
   import PageLoader from "@app/utils/loading";
   import ConfigSettings from "@app/utils/config";
-  import { useSelector, useDispatch } from "react-redux";
+  import { useSelector } from "react-redux";
   import store from "../../store/store";
   import IUser from "../../store/Models/User";
-  import ApiService from "@app/services/Api.service";
-  import { AxiosResponse } from "axios";
-  import ClientService from "@app/services/clientservice";
+  import EmployeesService from "@app/services/employeeservice";
   import { useNavigate } from "react-router-dom";
   import { Button } from "react-bootstrap";
-  
-  interface State {
-    title: string;
-    subTitle: string;
-    gridOptions2?: GridOption;
-    columnDefinitions1: Column[];
-  }
-  
-  let grid1!: SlickGrid;
   
   const Employees = () => {
     const user = useSelector((state: IUser) => store.getState().auth);
     const [showloader, setLoader] = useState(true);
-    const dispatch = useDispatch();
     const [reactGrid, setGrid] = useState<SlickgridReactInstance>();
     const [dataset, setData] = useState<any[]>([]);
   
@@ -58,45 +44,39 @@ import {
   
     const columns: Column[] = [
       {
-        id: "clientName",
+        id: "EmployeeName",
         name: "Employee Name",
-        field: "clientName",
+        field: "EmployeeName",
         sortable: true,
         maxWidth: 150,
       },
       {
-        id: "firstName",
+        id: "FirstName",
         name: "First Name",
-        field: "firstName",
+        field: "FirstName",
         sortable: true,
         maxWidth: 150,
       },
       {
-        id: "lastName",
+        id: "LastName",
         name: "Last Name",
-        field: "lastName",
-        sortable: true,
-        maxWidth: 150,
-      },
-      {
-        id: "email",
-        name: "Email",
-        field: "email",
+        field: "LastName",
         sortable: true,
         maxWidth: 150,
         formatter: (row, cell, value) => `<div title="${value}">${value}</div>`,
       },
+     
       {
-        id: "loginName",
-        name: "User Name",
-        field: "loginName",
+        id: "Email",
+        name: "Email",
+        field: "Email",
         sortable: true,
         maxWidth: 150,
       },
       {
         id: "createdDateTime",
         name: "Date",
-        field: "createdDateTime",
+        field: "CreatedDateTime",
         sortable: true,
         formatter: Formatters.dateIso,
         maxWidth: 150,
@@ -120,34 +100,20 @@ import {
                 });
               },
             },
-            {
-              command: "changePassword",
-              title: "Change Password",
-              iconCssClass: "fa fa-key text-success",
-              positionOrder: 66,
-              action: (_e, args) => {
-                console.log(args.dataContext);
-                navigate("/profile", {
-                  state: {
-                    userId: args.dataContext.UserId,
-                    tab: "CHANGEPASSWORD",
-                  },
-                });
-              },
-            },
           ],
         },
       },
+
     ];
   
     const gridOptions: GridOption = {
       ...ConfigSettings.gridOptions,
       ...{
-        datasetIdPropertyName: "id",
+        datasetIdPropertyName: "UserId", // Ensure this matches the unique identifier in your data
         enableCellMenu: true,
         cellMenu: {
-          onCommand: (_e, args) => function () {},
-          onOptionSelected: (_e, args) => {},
+          onCommand: (_e, args) => function () { },
+          onOptionSelected: (_e, args) => { },
         },
       },
     };
@@ -158,7 +124,7 @@ import {
   
     const loadData = (isreload: boolean) => {
       setLoader(true);
-      ClientService.getClients()
+      EmployeesService.getEmployees()
         .then((response: any) => {
           if (response) {
             let data = response;
@@ -181,7 +147,7 @@ import {
   
     return (
       <>
-        {showloader && <PageLoader></PageLoader>}
+        {showloader && <PageLoader />}
         <div>
           <section className="content">
             <div className="container-fluid">

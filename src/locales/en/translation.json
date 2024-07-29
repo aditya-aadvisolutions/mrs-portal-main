@@ -84,7 +84,8 @@
       "clientjobs": "Jobs",
       "upload": "Upload",
       "clientlist": "Clients",
-      "employees": "Employees"
+      "employees": "Employees",
+      "employeesjobs": "Jobs"
     }
   },
   "footer": {

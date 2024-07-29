@@ -132,6 +132,23 @@ export const updateUserDetails = (user: any) => {
   })
 }
 
+export const CreateEmployee = (user: any) => {
+  return new Promise(async (res, rej) => {
+    ApiService.requests.post('employee/register', user)
+    .then((response) => {
+      console.log(response,'response');
+      if(response)
+      {
+        return res(response);
+      }
+      else
+      {
+        return rej({ message: response.message });
+      }
+    })
+  })
+}
+
 export const refreshToken = (user: User) => {
   
   return new Promise(async (res, rej) => {

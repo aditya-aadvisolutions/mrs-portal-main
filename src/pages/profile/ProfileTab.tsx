@@ -184,34 +184,31 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
                 )}
               </InputGroup>
             </div>
-
             <div className="mb-3">
-              <label className="form-label">
-                Last Name<span className="text-danger">*</span>
-              </label>
+              <label className="form-label">Login Name<span className="text-danger">*</span></label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="lastName"
-                  name="lastName"
+                  id="loginName"
+                  name="loginName"
                   type="text"
-                  placeholder="Last Name"
+                  placeholder="Login Name"
                   onChange={handleChange}
-                  value={values.lastName}
-                  isValid={touched.lastName && !errors.lastName}
-                  isInvalid={touched.lastName && !!errors.lastName}
+                  value={values.loginName}
+                  isValid={touched.loginName && !errors.loginName}
+                  isInvalid={touched.loginName && !!errors.loginName}
                   tabIndex={3}
                 />
-                {touched.lastName && errors.lastName && (
+                {touched.loginName && errors.loginName && (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.lastName}
+                    {errors.loginName}
                   </div>
                 )}
               </InputGroup>
             </div>
-
+           {/* loginName */}
             <div className="mb-3">
               <label className="form-label">
                 Email<span className="text-danger">*</span>
@@ -331,26 +328,29 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
           </div>
 
           <div className="col-md-6">
+           
             <div className="mb-3">
-              <label className="form-label">Login Name<span className="text-danger">*</span></label>
+              <label className="form-label">
+                Last Name<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="loginName"
-                  name="loginName"
+                  id="lastName"
+                  name="lastName"
                   type="text"
-                  placeholder="Login Name"
+                  placeholder="Last Name"
                   onChange={handleChange}
-                  value={values.loginName}
-                  isValid={touched.loginName && !errors.loginName}
-                  isInvalid={touched.loginName && !!errors.loginName}
+                  value={values.lastName}
+                  isValid={touched.lastName && !errors.lastName}
+                  isInvalid={touched.lastName && !!errors.lastName}
                   tabIndex={2}
                 />
-                {touched.loginName && errors.loginName && (
+                {touched.lastName && errors.lastName && (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.loginName}
+                    {errors.lastName}
                   </div>
                 )}
               </InputGroup>

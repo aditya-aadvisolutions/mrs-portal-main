@@ -8,7 +8,7 @@ import * as Yup from "yup";
 import { Form, InputGroup } from "react-bootstrap";
 import { Checkbox, Select } from "@profabric/react-components";
 
-import { RegisterUser, authLogin } from "@app/utils/oidc-providers";
+import { CreateEmployee, RegisterUser, authLogin } from "@app/utils/oidc-providers";
 import { setAuthentication } from "@app/store/reducers/auth";
 import { Button } from "@app/styles/common";
 import "tailwindcss/tailwind.css";
@@ -67,7 +67,7 @@ const AddEmployees = () => {
         companyId,
       };
 
-      const response = await RegisterUser(user);
+      const response = await CreateEmployee(user);
 
       toast.success("Registration is success");
       navigate("/employee");
@@ -121,19 +121,18 @@ const AddEmployees = () => {
         .required("Phone Number is a required field"),
 
         // Address line 1 is required and must be a string
-        address1: Yup.string().required("Address line 1 is a required field"),
-
+        address1: Yup.string(),
         // Address line 2 is optional and can be any string
         address2: Yup.string(),
 
         // City is required and must be a string
-        city: Yup.string().required("City is a required field"),
+        city: Yup.string(),
 
         // State is required and must be a string
-        state: Yup.string().required("State is a required field"),
+        state: Yup.string(),
 
         // Country is required and must be a string
-        country: Yup.string().required("Country is a required field"),
+        country: Yup.string(),
 
         // Password is required, must be a string, and must be between 5 and 30 characters long
         password: Yup.string()
@@ -205,29 +204,26 @@ const AddEmployees = () => {
                 )}
               </InputGroup>
             </div>
-
             <div className="mb-3">
-              <label className="form-label">
-                Last Name<span className="text-danger">*</span>
-              </label>
+              <label className="form-label">Login Name<span className="text-danger">*</span></label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="lastName"
-                  name="lastName"
+                  id="loginName"
+                  name="loginName"
                   type="text"
-                  placeholder="Last Name"
+                  placeholder="Login Name"
                   onChange={handleChange}
-                  value={values.lastName}
-                  isValid={touched.lastName && !errors.lastName}
-                  isInvalid={touched.lastName && !!errors.lastName}
+                  value={values.loginName}
+                  isValid={touched.loginName && !errors.loginName}
+                  isInvalid={touched.loginName && !!errors.loginName}
                   tabIndex={3}
                 />
-                {touched.lastName && errors.lastName && (
+                {touched.loginName && errors.loginName && (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.lastName}
+                    {errors.loginName}
                   </div>
                 )}
               </InputGroup>
@@ -291,7 +287,7 @@ const AddEmployees = () => {
             </div>
             <div className="mb-3">
               <label className="form-label">
-                State<span className="text-danger">*</span>
+                State
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
@@ -406,30 +402,33 @@ const AddEmployees = () => {
           </div>
 
           <div className="col-md-6">
-            <div className="mb-3">
-              <label className="form-label">Login Name<span className="text-danger">*</span></label>
+          <div className="mb-3">
+              <label className="form-label">
+                Last Name<span className="text-danger">*</span>
+              </label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="loginName"
-                  name="loginName"
+                  id="lastName"
+                  name="lastName"
                   type="text"
-                  placeholder="Login Name"
+                  placeholder="Last Name"
                   onChange={handleChange}
-                  value={values.loginName}
-                  isValid={touched.loginName && !errors.loginName}
-                  isInvalid={touched.loginName && !!errors.loginName}
+                  value={values.lastName}
+                  isValid={touched.lastName && !errors.lastName}
+                  isInvalid={touched.lastName && !!errors.lastName}
                   tabIndex={2}
                 />
-                {touched.loginName && errors.loginName && (
+                {touched.lastName && errors.lastName && (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.loginName}
+                    {errors.lastName}
                   </div>
                 )}
               </InputGroup>
             </div>
+           
 
             <div className="mb-3">
               <label className="form-label">
@@ -461,7 +460,7 @@ const AddEmployees = () => {
             </div>
             <div className="mb-3">
               <label className="form-label">
-                Address 1<span className="text-danger">*</span>
+                Address 1
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
@@ -487,7 +486,7 @@ const AddEmployees = () => {
             </div>
             <div className="mb-3">
               <label className="form-label">
-                City<span className="text-danger">*</span>
+                City
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
@@ -514,7 +513,7 @@ const AddEmployees = () => {
 
             <div className="mb-3">
               <label className="form-label">
-                Country<span className="text-danger">*</span>
+                Country
               </label>
               <InputGroup className="mb-3">
                 <Form.Control

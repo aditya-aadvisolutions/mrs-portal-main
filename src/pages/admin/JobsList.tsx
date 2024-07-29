@@ -699,7 +699,7 @@ const JobsList = () => {
             <div className="card">
             <div className="card-header d-flex">
                 <div className='col-md-4'>
-                  <h3 className="card-title">Jobs</h3>
+                  <h3 className="card-title" style={{ fontSize: "1.8rem" }}><strong>Jobs</strong></h3>
                 </div>
                 <div className='col-md-8 d-flex flex-row-reverse'>
                   {/* <Button className='btn-sm btn-success'>
@@ -712,7 +712,7 @@ const JobsList = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                      <label>Select Status </label>
+                      <label>Select Status</label>
                       <Select options={statusList} isClearable={true} onChange={onStatusChange} isMulti={true}  closeMenuOnSelect={false}/>
                   </div>
                 </div>  
