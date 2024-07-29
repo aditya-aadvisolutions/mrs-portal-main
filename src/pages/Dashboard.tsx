@@ -38,7 +38,7 @@ const Dashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await APIService.requests.get(`dashboard?username=${username.loginName}`);
-        const { ClientsCount, CompletedJobsCount, PendingJobsCount } = response.data.data;
+        const { ClientsCount, CompletedJobsCount, PendingJobsCount,EmployeesCount } = response.data.data;
         console.log(response.data.ata)
         setDashboardData({
           pendingJobsCount: PendingJobsCount,
