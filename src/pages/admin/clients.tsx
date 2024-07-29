@@ -194,7 +194,7 @@ const ClientsList = () => {
           <div className="container-fluid">
             <div className="card">
               <div className="card-header d-flex justify-content-between align-items-center">
-                <h3 className="card-title" style={{ fontSize: "30px" }}>Clients</h3>
+                <h3 className="card-title" style={{ fontSize: "1.8rem" }}><strong>Clients</strong></h3>
                 <div className="ml-auto">
                   <Button
                     variant="primary"

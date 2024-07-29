@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ContentHeader } from '@components';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import APIService from '@app/services/Api.service';
 
 // interface DashboardData {
 //   pendingJobsCount: number;
@@ -36,8 +37,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/dashboard?username=${username.loginName}`);
-        const { ClientsCount, CompletedJobsCount, PendingJobsCount,EmployeesCount } = response.data.data;
+        const response = await APIService.requests.get(`dashboard?username=${username.loginName}`);
+        const { ClientsCount, CompletedJobsCount, PendingJobsCount } = response.data.data;
         console.log(response.data.ata)
         setDashboardData({
           pendingJobsCount: PendingJobsCount,
