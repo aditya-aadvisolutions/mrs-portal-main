@@ -127,7 +127,7 @@ const App = () => {
             <Route path="/" element={<Dashboard />} />
             <Route path="/jobslist/:status" element={<JobList/>} />
             <Route path="/split-job" element={<SplitJob />} />
-            <Route path="/employeeSplitJob" element={<EmployeeSplitJob />} />
+            {/* <Route path="/employeeSplitJob" element={<EmployeeSplitJob />} /> */}
 
           </Route>
         </Route>
