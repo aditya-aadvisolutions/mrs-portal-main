@@ -133,7 +133,9 @@ const JobsList = () => {
       minWidth: 30,
       onCellClick: (e: Event, args: OnEventArgs) => {
         navigate("/employeeSplitJob", {
-          state: { submittedValues: submittedValues },
+          state: { submittedValues: submittedValues ,
+            emp : args.dataContext.jobId
+          },
         });
       }
     },
@@ -440,8 +442,12 @@ const JobsList = () => {
             positionOrder: 66,
             itemVisibilityOverride: (args) => true,
             action: (_e, args) => {
+              let arr = JSON.parse(args.dataContext.jobFiles);
               navigate("/split-job", {
-                state: { jobId : args.dataContext.jobId},
+                state: { jobId : args.dataContext.jobId,
+                  pagecount: arr.JobFiles[0].PageCount || '',
+                  name:args.dataContext.name
+                },
               });
             }
           },
