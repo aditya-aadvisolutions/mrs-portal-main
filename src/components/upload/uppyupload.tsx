@@ -128,14 +128,26 @@ export default function UppyUpload(props: any) {
           folderStructure = "Client name is not available";
         }
 
-        if(Role==='Admin'){
-          for (var prop in files) {
-            files[prop].name = "/admin"+'/' + files[prop].name;
-        }
-        }else{
-          for (var prop in files) {
-            files[prop].name = "/client"+'/' + files[prop].name + " - " + folderStructure;
-        }
+        // if(Role==='Admin'){
+        //   for (var prop in files) {
+        //     files[prop].name = "/admin"+'/' + files[prop].name;
+        // }
+        // }else{
+        //   for (var prop in files) {
+        //     files[prop].name = "/client"+'/' + files[prop].name + " - " + folderStructure;
+        // }
+        for (const prop in files) {
+          const file = files[prop];
+          const originalName = file.name;
+          const extension = originalName.slice(originalName.lastIndexOf('.'));
+          const nameWithoutExtension = originalName.slice(0, originalName.lastIndexOf('.'));
+          const newFileName = `${folderStructure}_${nameWithoutExtension}${extension}`;
+
+          if (Role === 'Admin') {
+            file.name = "/admin" + '/' + newFileName;
+          } else {
+            file.name = "/client" + '/' + newFileName;
+          }
         }
     })
 
