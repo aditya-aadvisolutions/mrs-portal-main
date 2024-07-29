@@ -21,6 +21,7 @@ const Dashboard: React.FC = () => {
     pendingJobsCount: 0,
     completedJobsCount: 0,
     totalClientsCount: 0,
+    totalEmployeesCount: 0
   });
   const authData = localStorage.getItem('authentication');
   const username: Authentication = authData ? JSON.parse(authData) : { loginName: '' };
@@ -36,12 +37,13 @@ const Dashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/dashboard?username=${username.loginName}`);
-        const { ClientsCount, CompletedJobsCount, PendingJobsCount } = response.data.data;
+        const { ClientsCount, CompletedJobsCount, PendingJobsCount,EmployeesCount } = response.data.data;
         console.log(response.data.ata)
         setDashboardData({
           pendingJobsCount: PendingJobsCount,
           completedJobsCount: CompletedJobsCount,
-          totalClientsCount: ClientsCount
+          totalClientsCount: ClientsCount,
+          totalEmployeesCount: EmployeesCount
         });
         
       } catch (error: any) {
@@ -65,6 +67,10 @@ const Dashboard: React.FC = () => {
   const handleClientsClick = () => {
     // setJobStatus('All');
     navigate('/client-list');
+  };
+
+  const handleEmployeesClick = () => {
+    navigate('/employee');
   };
 
     
@@ -122,13 +128,13 @@ const Dashboard: React.FC = () => {
             <div className="col-lg-3 col-6">
               <div className="small-box bg-danger">
                 <div className="inner">
-                  <h3>1</h3>
+                <h3>{dashboardData.totalEmployeesCount}</h3>
                   <p>Employees</p>
                 </div>
                 <div className="icon">
                   <i className="ion ion-person-stalker" />
                 </div>
-                <a href="/" className="small-box-footer">
+                <a href="" className="small-box-footer" onClick={handleEmployeesClick}>
                   More info <i className="fas fa-arrow-circle-right" />
                 </a>
               </div>
