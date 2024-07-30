@@ -58,8 +58,8 @@ const Profile = () => {
             </div>
             <div className="col-md-9">
               <div className="card">
-                <div className="card-header p-2">
-                  <ul className="nav nav-pills">
+                {/* <div className="card-header p-2"> */}
+                  {/* <ul className="nav nav-pills">
                   <li className="nav-item">
                       <button
                         type="button"
@@ -94,15 +94,17 @@ const Profile = () => {
                       </button>
                     </li>
                     
-                  </ul>
-                </div>
+                  </ul> */}
+                {/* </div> */}
                 <div className="card-body">
                   <div className="tab-content">
                     {/* <ActivityTab isActive={activeTab === 'ACTIVITY'} />
                     <TimelineTab isActive={activeTab === 'TIMELINE'} /> */}
-                    { activeTab === 'PROFILE' && <ProfileTab isActive={activeTab === 'PROFILE'} userId={userId}/> }
-                    { activeTab === 'PREFERENCES' && <SettingsTab isActive={activeTab === 'PREFERENCES'} userId={userId}/> }
-                    { activeTab === 'CHANGEPASSWORD' && <ChagePasswordTab isActive={activeTab == 'CHANGEPASSWORD'} userId={userId}/> }
+                    <ProfileTab isActive={activeTab === 'TIMELINE'} userId={userId}/>
+
+                    {/* { activeTab === 'PROFILE' && <ProfileTab isActive={activeTab === 'PROFILE'} userId={userId}/> } */}
+                    {/* { activeTab === 'PREFERENCES' && <SettingsTab isActive={activeTab === 'PREFERENCES'} userId={userId}/> }
+                    { activeTab === 'CHANGEPASSWORD' && <ChagePasswordTab isActive={activeTab == 'CHANGEPASSWORD'} userId={userId}/> } */}
                   </div>
                 </div>
               </div>

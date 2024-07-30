@@ -177,7 +177,14 @@ const RegistrationForm = () => {
   console.log(values);
   return (
     <div className="max-w-4xl mx-auto p-4 border rounded shadow-lg bg-white">
-      <h2 className="text-2xl font-bold mb-4">Add Client</h2>
+<div style={{display:"flex",justifyContent:'space-between'}}>
+  <div className="col-6">
+    <h2 className="text-2xl font-bold">Add Client</h2>
+  </div>
+  <div className="col-3 text-right">
+    <Button>Active</Button>
+  </div>
+</div>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-md-6">
@@ -233,6 +240,39 @@ const RegistrationForm = () => {
               </InputGroup>
             </div>
             {/* loginName */}
+
+            <div className="mb-3">
+              <label className="form-label">
+                Retype Password<span className="text-danger">*</span>
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  id="passwordRetype"
+                  name="passwordRetype"
+                  type="password"
+                  placeholder="Retype password"
+                  onChange={handleChange}
+                  value={values.passwordRetype}
+                  isValid={touched.passwordRetype && !errors.passwordRetype}
+                  isInvalid={touched.passwordRetype && !!errors.passwordRetype}
+                  tabIndex={12}
+                />
+                {touched.passwordRetype && errors.passwordRetype ? (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.passwordRetype}
+                  </div>
+                ) : (
+                  <InputGroup.Append>
+                    <InputGroup.Text>
+                      <i className="fas fa-lock" />
+                    </InputGroup.Text>
+                  </InputGroup.Append>
+                )}
+              </InputGroup>
+            </div>
 
             <div className="mb-3">
               <label className="form-label">
@@ -324,39 +364,6 @@ const RegistrationForm = () => {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">
-                Password<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  onChange={handleChange}
-                  value={values.password}
-                  isValid={touched.password && !errors.password}
-                  isInvalid={touched.password && !!errors.password}
-                  tabIndex={11}
-                />
-                {touched.password && errors.password ? (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.password}
-                  </div>
-                ) : (
-                  <InputGroup.Append>
-                    <InputGroup.Text>
-                      <i className="fas fa-lock" />
-                    </InputGroup.Text>
-                  </InputGroup.Append>
-                )}
-              </InputGroup>
-            </div>
-
-            <div className="mb-3">
               <label>
                 Select Document Type<span className="text-danger">*</span>
               </label>
@@ -408,6 +415,39 @@ const RegistrationForm = () => {
                   >
                     {errors.lastName}
                   </div>
+                )}
+              </InputGroup>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">
+                Password<span className="text-danger">*</span>
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  onChange={handleChange}
+                  value={values.password}
+                  isValid={touched.password && !errors.password}
+                  isInvalid={touched.password && !!errors.password}
+                  tabIndex={11}
+                />
+                {touched.password && errors.password ? (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.password}
+                  </div>
+                ) : (
+                  <InputGroup.Append>
+                    <InputGroup.Text>
+                      <i className="fas fa-lock" />
+                    </InputGroup.Text>
+                  </InputGroup.Append>
                 )}
               </InputGroup>
             </div>
@@ -522,39 +562,6 @@ const RegistrationForm = () => {
                   >
                     {errors.country}
                   </div>
-                )}
-              </InputGroup>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">
-                Retype Password<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="passwordRetype"
-                  name="passwordRetype"
-                  type="password"
-                  placeholder="Retype password"
-                  onChange={handleChange}
-                  value={values.passwordRetype}
-                  isValid={touched.passwordRetype && !errors.passwordRetype}
-                  isInvalid={touched.passwordRetype && !!errors.passwordRetype}
-                  tabIndex={12}
-                />
-                {touched.passwordRetype && errors.passwordRetype ? (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.passwordRetype}
-                  </div>
-                ) : (
-                  <InputGroup.Append>
-                    <InputGroup.Text>
-                      <i className="fas fa-lock" />
-                    </InputGroup.Text>
-                  </InputGroup.Append>
                 )}
               </InputGroup>
             </div>
