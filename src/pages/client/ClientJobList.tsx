@@ -11,7 +11,7 @@ import PageLoader from '@app/utils/loading';
 import ConfigSettings from '@app/utils/config';
 import IUser from '@app/store/Models/User';
 import store from '@app/store/store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DownloadZipService from '@app/services/downloadZipService';
 import { saveAs } from 'file-saver';
 import { useNavigate } from "react-router-dom";
@@ -39,6 +39,8 @@ const ClientJobList = () => {
   const [toDate, setToDate] = useState<Date>();
   const [initialLoad, setInitialLoad] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
+  const [fileNames, setFileNames] = useState([]);
+
 //  const [mergeFileName, setMergeFileName] = useState('');
   // const [defaultStatus, setDefaultStatus] = useState([]);
   // Files Modal 
@@ -48,6 +50,8 @@ const ClientJobList = () => {
 
   const user = useSelector((state: IUser) => store.getState().auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   let selectedClient: string = user.id;
 
   localStorage.setItem('roleName', user.roleName);
@@ -77,9 +81,8 @@ const ClientJobList = () => {
       onCellClick: (e: Event, args: OnEventArgs) => {
         console.log(args.dataContext);
         if (args.dataContext.isSingleJob) {
-          //setMergeFileName(args.dataContext.name);
-          //setFiles(args.dataContext.files);
-          downloadZip(args.dataContext.files, args.dataContext.name);
+          let fileName = args.dataContext.name ? args.dataContext.name : args.dataContext.jobId;
+          downloadZip(args.dataContext.files, fileName);
           //handleShow();
         }
         else {
@@ -237,14 +240,39 @@ const ClientJobList = () => {
     setLoader(true);
     let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : '';
     let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : '';
-    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
+    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {      
       if (response.isSuccess) {
         let data = response.data.map((item: any) => {
           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];
           item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => item.IsUploadFile) : [];
           item.uid = crypto.randomUUID();
+      
           return item;
         });
+        // const fileNames = response.data.map((job:any) => {
+        //   const jobFiles = JSON.parse(job.jobFiles);
+        //   return jobFiles.JobFiles.map((file:any) => file.FileName);
+        // }).flat();
+        
+        const fileNames = response.data.map((job:any) => {
+          const jobFiles = JSON.parse(job.jobFiles);
+          return jobFiles.JobFiles.map((file:any) => file.FileName);
+        }).flat().map((filename:any) => filename.split(' - ').slice(2).join(' - '));
+        
+        setFileNames(fileNames)
+
+        const fiveMinutesAgo = moment().subtract(48, 'hours');
+        if (!selectedStatus.includes('Completed' || 'Downloaded')) {
+          data = data.filter((item: any) => {
+            if (item.statusName === 'Completed' || item.statusName === 'Downloaded') {
+              const modifiedTime = moment(item.modifiedDateTime);
+              return modifiedTime.isAfter(fiveMinutesAgo);
+            }
+            return true;
+          });
+        }
+        data.sort((a: any, b: any) => b.jobId - a.jobId);
+
         console.log(data);
         if(reactGrid && isreload)
           reactGrid.dataView.setItems(data)
@@ -260,6 +288,7 @@ const ClientJobList = () => {
     JobService.deleteJob(jobId, user.id, status).then((response: any) => {
       if (response.isSuccess) {
         toast.success(`Job ${status} successfully.`);
+
         reloadGridData();
       }
     }).finally(() => {
@@ -412,10 +441,14 @@ const ClientJobList = () => {
                   <h3 className="card-title">Jobs</h3>
                 </div>
                 <div className='col-md-8 d-flex flex-row-reverse'>
-                  <Button style={{ backgroundColor:'#b8f9d3', color:'black', marginLeft:'5px'}} className='btn-sm' onClick={(e) => navigate('/intake', { state: { isSingle: true } })}>
+                  <Button style={{ backgroundColor:'#b8f9d3', color:'black', marginLeft:'5px'}} className='btn-sm' onClick={(e) => navigate('/intake', 
+                    { state: 
+                    { 
+                      isSingle: true,
+                      fileNames:fileNames} })}>
                     Merge Upload
                   </Button>
-                  <Button  style={{ backgroundColor:'#dce9ff', color:'black' }} className='btn-sm' onClick={(e) => navigate('/intake', { state: { isSingle: false } })}>
+                  <Button  style={{ backgroundColor:'#dce9ff', color:'black' }} className='btn-sm' onClick={(e) => navigate('/intake', { state: { isSingle: false, fileNames:fileNames } })}>
                     Single Upload
                   </Button>
                 </div>
