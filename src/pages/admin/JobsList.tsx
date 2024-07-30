@@ -523,9 +523,9 @@ const JobsList = () => {
  
   const loadData = (isreload:boolean) => {
     setLoader(true);
-    let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : '';
-    let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : '';
-    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
+    let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : null;
+    let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : null;
+    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, jobId, fDate, tDate, initialLoad).then((response: any) => {
       if (response.isSuccess) {
         let data = response.data.map((item: any) => {
           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];
@@ -731,7 +731,7 @@ const JobsList = () => {
               <div className="card-body">
                 <div className='row'>
 
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <div className="form-group">
                       <label>Select Status</label>
                       <Select options={statusList} isClearable={true} onChange={onStatusChange} isMulti={true}  closeMenuOnSelect={false}/>
@@ -744,6 +744,7 @@ const JobsList = () => {
                       <Select options={usersList} isClearable={true} onChange={onClientChange} isMulti={true} closeMenuOnSelect={false}/>
                   </div>
                 </div>  
+                
 
                 <div className="col-md-2">
                   <div className="form-group">
@@ -751,6 +752,20 @@ const JobsList = () => {
                       <input  className="form-control" type='text' name='txtFilename' onChange={(e) => setFilename(e.target.value)} value={filename} />
                   </div>
                 </div>  
+
+                <div className="col-md-1">
+                    <div className="form-group">
+                      <label>Job Id</label>
+                      <input
+                        className="form-control"
+                        type='text'
+                        name='jobId' 
+                        onChange={(e) => setJobId(e.target.value)}
+                        value={jobId} 
+                      />
+                    </div>
+                  </div>
+
 
                 <div className="col-md-2">
                   <div className="form-group">
