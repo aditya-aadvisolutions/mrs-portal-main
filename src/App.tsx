@@ -30,8 +30,11 @@ import ClientJobList from './pages/client/ClientJobList';
 import ClientsList from './pages/admin/clients';
 import SessionTimeout from './components/session-timeout/SessionTimeout';
 import JobList from './pages/JobsList/JobsList';
+import EmployeesJobs from './pages/employee/joblist';
 import Employees from './pages/admin/Employees';
 import AddEmployees from './pages/admin/AddEmployees';
+import SplitJob from './pages/admin/SplitJob';
+import EmployeeSplitJob from './pages/admin/EmployeeSplitJob';
 
 const { VITE_NODE_ENV } = import.meta.env;
 
@@ -117,6 +120,7 @@ const App = () => {
             <Route path="/employee" element={<Employees />} />
             <Route path="/client-jobs" element={<ClientJobList />} />
             <Route path="/client-list" element={<ClientsList />} />
+            <Route path="/employee-jobs" element={<EmployeesJobs />} />
             <Route path="/intake" element={<Intake />} />
             {/* <Route path="/blank" element={<Blank />} /> */}
             <Route path="/profile" element={<Profile />} />
@@ -124,6 +128,7 @@ const App = () => {
             <Route path="/add-employees" element={<AddEmployees />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/jobslist/:status" element={<JobList/>} />
+            <Route path="/split-job" element={<SplitJob />} />
 
           </Route>
         </Route>

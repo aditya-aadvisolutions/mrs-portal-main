@@ -24,6 +24,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from 'path';
 import moment from 'moment';
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 interface Props { }
@@ -61,6 +62,7 @@ const JobsList = () => {
   const [toDate, setToDate] = useState<Date>();
   const [initialLoad, setInitialLoad] = useState(true);
   const [showNotification, setShowNotification] = useState();
+  const location = useLocation();
 
   const MenuCommandItems: MenuCommandItem[] = Array<MenuCommandItem>();
   // Files Modal 
@@ -70,10 +72,14 @@ const JobsList = () => {
 
   // upload modal
   const [ jobId, setJobId ] = useState('');
+  const [ clientJobId, setclientJobId ] = useState('');
   const [ fileType, setFileType] = useState('');
   const [showUpload, setShowUpload] = useState(false);
   const handleUploadClose = () => { setShowUpload(false); setJobId(''); dispatch(removeUploadedFiles()); }
   const handleUploadShow = () => setShowUpload(true);
+  const navigate = useNavigate();
+  const { submittedValues } = location.state || { submittedValues: [] };
+
 
   const uploadFiles = () => {
     const files = {
@@ -110,6 +116,30 @@ const JobsList = () => {
     }
      },
     { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
+    {
+      id: 'expandCollapse',
+      field: 'expandCollapse',
+      excludeFromColumnPicker: true,
+      excludeFromGridMenu: true,
+      excludeFromHeaderMenu: true,
+      formatter: (row, cell, value, colDef, dataContext) => {
+        const isExpanded = dataContext.isExpanded;
+        const iconClass = isExpanded ? 'fa-chevron-up' : 'fa-chevron-down';
+    
+        return `<div>
+                  <i class="fa ${iconClass} pointer" data-row="${row}"></i>
+                </div>`;
+      },
+      minWidth: 30,
+      onCellClick: (e: Event, args: OnEventArgs) => {
+        navigate("/employeeSplitJob", {
+          state: { submittedValues: submittedValues ,
+            emp : args.dataContext.jobId
+          },
+        });
+      }
+    },
+
     { id: 'userName', name: 'CLIENT', field: 'userName', maxWidth: 100 },
     { id: 'createdDateTime', name: 'DATE', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
     {
@@ -410,13 +440,16 @@ const JobsList = () => {
             title: 'Split Job',
             iconCssClass: 'fa fa-clone text-info',
             positionOrder: 66,
-            itemVisibilityOverride(args) {
-              return false; //(args.dataContext.statusName == 'Pending' || args.dataContext.statusName == 'In Progress');
-            },
+            itemVisibilityOverride: (args) => true,
             action: (_e, args) => {
-              console.log(args.dataContext, args.column);
-              alert('Split');
-            },
+              let arr = JSON.parse(args.dataContext.jobFiles);
+              navigate("/split-job", {
+                state: { jobId : args.dataContext.jobId,
+                  pagecount: arr.JobFiles[0].PageCount || '',
+                  name:args.dataContext.name
+                },
+              });
+            }
           },
           {
             command: 'merge', title: 'Merge Job', positionOrder: 64,
@@ -587,6 +620,12 @@ const JobsList = () => {
     loadData(false);
   }, [initialLoad]);
 
+  useEffect(() => {
+    if(location.state){
+      setclientJobId(location.state?.jobId)
+    }
+  },[]);
+
   const updateJobStatus = (jobId:string, status: string) => {
     JobService.updateJobStatus(jobId, user.id, status).then((response: any) => {
       if (response.isSuccess) {
@@ -660,7 +699,7 @@ const JobsList = () => {
             <div className="card">
             <div className="card-header d-flex">
                 <div className='col-md-4'>
-                  <h3 className="card-title">Jobs</h3>
+                  <h3 className="card-title" style={{ fontSize: "1.8rem" }}><strong>Jobs</strong></h3>
                 </div>
                 <div className='col-md-8 d-flex flex-row-reverse'>
                   {/* <Button className='btn-sm btn-success'>
@@ -673,7 +712,7 @@ const JobsList = () => {
 
                 <div className="col-md-3">
                   <div className="form-group">
-                      <label>Select Status </label>
+                      <label>Select Status</label>
                       <Select options={statusList} isClearable={true} onChange={onStatusChange} isMulti={true}  closeMenuOnSelect={false}/>
                   </div>
                 </div>  
