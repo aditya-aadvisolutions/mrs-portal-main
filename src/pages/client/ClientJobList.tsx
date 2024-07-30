@@ -35,6 +35,7 @@ const ClientJobList = () => {
   const [mergeFileName, setMergeFileName] = useState('');
   const [selectedStatus, setStatusFilter] = useState('');
   const [filename, setFilename] = useState('');
+  const [jobId, setJobId] = useState('');
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
   const [initialLoad, setInitialLoad] = useState(true);
@@ -236,53 +237,74 @@ const ClientJobList = () => {
     setGrid(reactGridInstance);
   }
 
-  const loadData = (isreload:boolean) => {
+  const loadData = (isreload: boolean) => {
     setLoader(true);
-    let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : '';
-    let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : '';
-    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {      
-      if (response.isSuccess) {
-        let data = response.data.map((item: any) => {
-          item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];
-          item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => item.IsUploadFile) : [];
-          item.uid = crypto.randomUUID();
-      
-          return item;
-        });
-        // const fileNames = response.data.map((job:any) => {
-        //   const jobFiles = JSON.parse(job.jobFiles);
-        //   return jobFiles.JobFiles.map((file:any) => file.FileName);
-        // }).flat();
-        
-        const fileNames = response.data.map((job:any) => {
-          const jobFiles = JSON.parse(job.jobFiles);
-          return jobFiles.JobFiles.map((file:any) => file.FileName);
-        }).flat().map((filename:any) => filename.split(' - ').slice(2).join(' - '));
-        
-        setFileNames(fileNames)
 
-        const fiveMinutesAgo = moment().subtract(48, 'hours');
-        if (!selectedStatus.includes('Completed' || 'Downloaded')) {
-          data = data.filter((item: any) => {
-            if (item.statusName === 'Completed' || item.statusName === 'Downloaded') {
-              const modifiedTime = moment(item.modifiedDateTime);
-              return modifiedTime.isAfter(fiveMinutesAgo);
+    let fDate = fromDate ? moment(fromDate).format('YYYY-MM-DD') : '';
+    let tDate = toDate ? moment(toDate).format('YYYY-MM-DD') : '';
+    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, jobId, fDate, tDate, initialLoad).then((response: any) => {
+        if (response.isSuccess) {
+            let data = response.data.map((item: any) => {
+                item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => !item.IsUploadFile) : [];
+                item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => item.IsUploadFile) : [];
+                item.uid = crypto.randomUUID();
+                return item;
+            });
+            console.log(data);
+            if (isreload && reactGrid) {
+                reactGrid.dataView.setItems(data);
+            } else {
+                setData(data);
             }
-            return true;
-          });
         }
-        data.sort((a: any, b: any) => b.jobId - a.jobId);
+    }).catch(() => {
+        setLoader(false);
+//     let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : '';
+//     let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : '';
+//     JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {      
+//       if (response.isSuccess) {
+//         let data = response.data.map((item: any) => {
+//           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];
+//           item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => item.IsUploadFile) : [];
+//           item.uid = crypto.randomUUID();
+      
+//           return item;
+//         });
+//         // const fileNames = response.data.map((job:any) => {
+//         //   const jobFiles = JSON.parse(job.jobFiles);
+//         //   return jobFiles.JobFiles.map((file:any) => file.FileName);
+//         // }).flat();
+        
+//         const fileNames = response.data.map((job:any) => {
+//           const jobFiles = JSON.parse(job.jobFiles);
+//           return jobFiles.JobFiles.map((file:any) => file.FileName);
+//         }).flat().map((filename:any) => filename.split(' - ').slice(2).join(' - '));
+        
+//         setFileNames(fileNames)
 
-        console.log(data);
-        if(reactGrid && isreload)
-          reactGrid.dataView.setItems(data)
-        else
-          setData(data);
-      }
+//         const fiveMinutesAgo = moment().subtract(48, 'hours');
+//         if (!selectedStatus.includes('Completed' || 'Downloaded')) {
+//           data = data.filter((item: any) => {
+//             if (item.statusName === 'Completed' || item.statusName === 'Downloaded') {
+//               const modifiedTime = moment(item.modifiedDateTime);
+//               return modifiedTime.isAfter(fiveMinutesAgo);
+//             }
+//             return true;
+//           });
+//         }
+//         data.sort((a: any, b: any) => b.jobId - a.jobId);
+
+//         console.log(data);
+//         if(reactGrid && isreload)
+//           reactGrid.dataView.setItems(data)
+//         else
+//           setData(data);
+//       }
     }).finally(() => {
-      setLoader(false);
+        setLoader(false);
     });
-  }
+}
+
 
   const deleteJob = (jobId:string, status: string) => {
     JobService.deleteJob(jobId, user.id, status).then((response: any) => {
@@ -468,6 +490,19 @@ const ClientJobList = () => {
                       <input className="form-control" type='text' name='txtFilename' onChange={(e) => setFilename(e.target.value)} value={filename} />
                   </div>
                 </div>  
+                <div className="col-md-2">
+                    <div className="form-group">
+                      <label>Job Id</label>
+                      <input
+                        className="form-control"
+                        type='text'
+                        name='jobId' 
+                        onChange={(e) => setJobId(e.target.value)}
+                        value={jobId} 
+                      />
+                    </div>
+                  </div>
+
 
                 <div className="col-md-2">
                   <div className="form-group">
