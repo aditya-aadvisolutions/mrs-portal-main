@@ -116,29 +116,29 @@ const JobsList = () => {
     }
      },
     { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
-    {
-      id: 'expandCollapse',
-      field: 'expandCollapse',
-      excludeFromColumnPicker: true,
-      excludeFromGridMenu: true,
-      excludeFromHeaderMenu: true,
-      formatter: (row, cell, value, colDef, dataContext) => {
-        const isExpanded = dataContext.isExpanded;
-        const iconClass = isExpanded ? 'fa-chevron-up' : 'fa-chevron-down';
+    // {
+    //   id: 'expandCollapse',
+    //   field: 'expandCollapse',
+    //   excludeFromColumnPicker: true,
+    //   excludeFromGridMenu: true,
+    //   excludeFromHeaderMenu: true,
+    //   formatter: (row, cell, value, colDef, dataContext) => {
+    //     const isExpanded = dataContext.isExpanded;
+    //     const iconClass = isExpanded ? 'fa-chevron-up' : 'fa-chevron-down';
     
-        return `<div>
-                  <i class="fa ${iconClass} pointer" data-row="${row}"></i>
-                </div>`;
-      },
-      minWidth: 30,
-      onCellClick: (e: Event, args: OnEventArgs) => {
-        navigate("/employeeSplitJob", {
-          state: { submittedValues: submittedValues ,
-            emp : args.dataContext.jobId
-          },
-        });
-      }
-    },
+    //     return `<div>
+    //               <i class="fa ${iconClass} pointer" data-row="${row}"></i>
+    //             </div>`;
+    //   },
+    //   minWidth: 30,
+    //   onCellClick: (e: Event, args: OnEventArgs) => {
+    //     navigate("/employeeSplitJob", {
+    //       state: { submittedValues: submittedValues ,
+    //         emp : args.dataContext.jobId
+    //       },
+    //     });
+    //   }
+    // },
 
     { id: 'userName', name: 'CLIENT', field: 'userName', maxWidth: 100 },
     { id: 'createdDateTime', name: 'DATE', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
@@ -157,12 +157,10 @@ const JobsList = () => {
         }
       },
       onCellClick: (e: Event, args: OnEventArgs) => {
-        console.log(args.dataContext);
         if (args.dataContext.isSingleJob) {
-          setFiles(args.dataContext.files);
-          setMergeFileName(args.dataContext.name)
+          let fileName = args.dataContext.name ? args.dataContext.name : args.dataContext.jobId;
+          downloadZip(args.dataContext.files, fileName);
           //handleShow();
-          downloadZip(args.dataContext.files, args.dataContext.name);
         }
         else {
           let fileInfo: any = args.dataContext.files[0];
@@ -217,7 +215,7 @@ const JobsList = () => {
     //   }
     // },
     {
-      id: 'uploadFiles', name: 'FILES <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'uploadFiles', sortable: true, maxWidth: 100,
+      id: 'uploadFiles', name: 'FILES <i class="fa fa-upload text-success ml-1" aria-hidden="true"></i>', field: 'uploadFiles', sortable: true, maxWidth: 100,
       formatter: (row, cell, value, colDef, dataContext) => {
         if (value.length == 0)
           return '';
@@ -535,6 +533,27 @@ const JobsList = () => {
           item.uid = crypto.randomUUID();
           return item;
         });
+        // const fiveMinutesAgo = moment().subtract(5, 'minutes');
+        // data = data.filter((item: any) => {
+        //   if (item.statusName === 'Completed') {
+        //     const modifiedTime = moment(item.modifiedDateTime);
+        //     return modifiedTime.isAfter(fiveMinutesAgo);
+        //   }
+        //   return true;
+        // });
+
+        const fiveMinutesAgo = moment().subtract(5, 'minutes');
+        if (!selectedStatus.includes('Completed')) {
+          data = data.filter((item: any) => {
+            if (item.statusName === 'Completed') {
+              const modifiedTime = moment(item.modifiedDateTime);
+              return modifiedTime.isAfter(fiveMinutesAgo);
+            }
+            return true;
+          });
+        }
+        data.sort((a: any, b: any) => b.jobId - a.jobId);
+
         console.log(data);
         if(isreload && reactGrid){
            reactGrid.dataView.setItems(data);
@@ -589,13 +608,15 @@ const JobsList = () => {
       return { 'value': item.id, 'label': item.value };
     });
       setStatus(status)
-      console.log(response.data);
     }
   }
 
-  const onStatusChange = (newValue: any, actionMeta: any) => {
-    let selStatus = newValue ? newValue.map((val: any, index: number) => val.value).join(',') : '';
+  const onStatusChange = (selectedOptions: any, actionMeta: any) => {
+    let selStatus = selectedOptions ? selectedOptions.map((val: any, index: number) => val.value).join(',') : '';
     setStatusFilter(selStatus);
+    // setSelectedStatus(selValues);
+
+    loadData(false)
   };
 
   const onClientChange = (newValue: any, actionMeta: any) => {

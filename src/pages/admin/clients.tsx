@@ -19,6 +19,9 @@ import { AxiosResponse } from "axios";
 import ClientService from "@app/services/clientservice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import Select from 'react-select'
+import DatePicker from "react-datepicker";
+
 
 interface State {
   title: string;
@@ -26,7 +29,13 @@ interface State {
   gridOptions2?: GridOption;
   columnDefinitions1: Column[];
 }
-
+interface Client {
+  Email: string;
+  FirstName: string;
+  LastName: string;
+  PhoneNo: string;
+  
+}
 let grid1!: SlickGrid;
 
 const ClientsList = () => {
@@ -35,14 +44,27 @@ const ClientsList = () => {
   const dispatch = useDispatch();
   const [reactGrid, setGrid] = useState<SlickgridReactInstance>();
   const [dataset, setData] = useState<any[]>([]);
+  const [statusList, setStatus] = useState([]);
+  const [usersList, setUsers] = useState([]);
+  const [selectedClient, setClientFilter] = useState('');
+  const [selectedStatus, setStatusFilter] = useState('');
+  const [toDate, setToDate] = useState<Date>();
+  const [initialLoad, setInitialLoad] = useState(true);
+const [filteredData, setFilteredData] = useState<any[]>([]);
+const [selectedEmail, setEmailFilter] = useState<any[]>([]);
+const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
+
+
+
 
   let data = dataset.map((item) => {
     return {
       ...item,
       id: item.Id,
-      clientName: item.ClientName,
+      clientName: item.FirstName + ' ' + item.LastName ,
       lastName: item.LastName,
       firstName: item.FirstName,
+      phone: item.PhoneNo,
       email: item.Email,
       loginName: item.LoginName,
       createdDateTime: item.CreatedDateTime,
@@ -64,20 +86,21 @@ const ClientsList = () => {
       sortable: true,
       maxWidth: 150,
     },
-    {
-      id: "firstName",
-      name: "First Name",
-      field: "firstName",
-      sortable: true,
-      maxWidth: 150,
-    },
-    {
-      id: "lastName",
-      name: "Last Name",
-      field: "lastName",
-      sortable: true,
-      maxWidth: 150,
-    },
+    // {
+    //   id: "firstName",
+    //   name: "First Name",
+    //   field: "firstName",
+    //   sortable: true,
+    //   maxWidth: 150,
+    // },
+    // {
+    //   id: "lastName",
+    //   name: "Last Name",
+    //   field: "lastName",
+    //   sortable: true,
+    //   maxWidth: 150,
+    // },
+
     {
       id: "email",
       name: "Email",
@@ -87,20 +110,27 @@ const ClientsList = () => {
       formatter: (row, cell, value) => `<div title="${value}">${value}</div>`,
     },
     {
-      id: "loginName",
-      name: "User Name",
-      field: "loginName",
+      id: "phone",
+      name: "PhoneNo",
+      field: "phone",
       sortable: true,
       maxWidth: 150,
     },
-    {
-      id: "createdDateTime",
-      name: "Date",
-      field: "createdDateTime",
-      sortable: true,
-      formatter: Formatters.dateIso,
-      maxWidth: 150,
-    },
+    // {
+    //   id: "loginName",
+    //   name: "User Name",
+    //   field: "loginName",
+    //   sortable: true,
+    //   maxWidth: 150,
+    // },
+    // {
+    //   id: "createdDateTime",
+    //   name: "Date",
+    //   field: "createdDateTime",
+    //   sortable: true,
+    //   formatter: Formatters.dateIso,
+    //   maxWidth: 150,
+    // },
     {
       id: "defaultTAT",
       name: "TAT",
@@ -108,43 +138,29 @@ const ClientsList = () => {
       sortable: true,
       maxWidth: 150,
     },
-    {
-      id: "action",
-      name: "",
-      field: "id",
-      maxWidth: 130,
-      formatter: () => `<div class="btn btn-default btn-xs">Action <i class="fa fa-caret-down"></i></div>`,
-      cellMenu: {
-        commandItems: [
-          {
-            command: "Profile",
-            title: "Edit Profile",
-            iconCssClass: "fa fa-user text-success",
-            positionOrder: 66,
-            action: (_e, args) => {
-              navigate("/profile", {
-                state: { userId: args.dataContext.UserId, tab: "PROFILE"  },
-              });
-            },
-          },
-          {
-            command: "changePassword",
-            title: "Change Password",
-            iconCssClass: "fa fa-key text-success",
-            positionOrder: 66,
-            action: (_e, args) => {
-              console.log(args.dataContext);
-              navigate("/profile", {
-                state: {
-                  userId: args.dataContext.UserId,
-                  tab: "CHANGEPASSWORD",
-                },
-              });
-            },
-          },
-        ],
+ {
+      id: 'edit',
+      field: 'edit',
+      name:'Edit',
+      excludeFromColumnPicker: true,
+      excludeFromGridMenu: true,
+      excludeFromHeaderMenu: true,
+      formatter: (row, cell, value, colDef, dataContext) => {
+        // const isExpanded = dataContext.isExpanded;
+        const iconClass = 'fa-edit';
+    
+        return `<div>
+                  <i class="fa ${iconClass} pointer" data-row="${row}"></i>
+                </div>`;
       },
+      minWidth: 30,
+      onCellClick: (e: Event, args: OnEventArgs) => {
+        navigate("/profile", {
+          state: {userId: args.dataContext.UserId}
+        });
+      }
     },
+
   ];
 
   const gridOptions: GridOption = {
@@ -186,6 +202,57 @@ const ClientsList = () => {
     loadData(false);
   }, []);
 
+  // function search()
+  // {
+  //   if(initialLoad)
+  //     setInitialLoad(false);
+  //   else
+  //     loadData(false);  
+  // }
+  const search = () => {
+    if (initialLoad) {
+      setInitialLoad(false);
+    } else {
+      const filteredData = dataset.filter((item) => {
+  
+        const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
+        const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
+        const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;
+        return matchesEmail && matchesClient && matchesPhone;
+      });
+      setFilteredData(filteredData);
+    }
+  };
+  const emailList = data.map((item) => ({
+    value: item.Email,
+    label: item.Email,
+  }));
+  const clientNames = data.map((item) => ({
+    value: item.FirstName + item.LastName,
+    label: item.FirstName + item.LastName,
+  }));
+  const phoneList = data.map((item) => ({
+    value: item.PhoneNo,
+    label: item.PhoneNo
+  }))
+
+  const emailChange = (selectedOptions: any) => {
+    const selectedEmails = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
+    setEmailFilter(selectedEmails);
+    search();
+  };
+  const clientChange = (selectedOptions: any) => {
+    const selectedClients = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
+    setClientFilter(selectedClients);
+    search();
+  };
+
+  // const handlePhoneChange = (selectedOptions: any) => {
+  //   const selectedPhones = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
+  //   setPhoneFilter(selectedPhones);
+  //   search();
+  // };
+
   return (
     <>
       {showloader && <PageLoader></PageLoader>}
@@ -204,7 +271,53 @@ const ClientsList = () => {
                   </Button>
                 </div>
               </div>
+              <div className="card-body">
+                <div className='row'>
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Search by Email</label>
+                      <Select
+                        options={emailList}
+                        isClearable={true}
+                        onChange={emailChange}
+                        isMulti={true}
+                        closeMenuOnSelect={false} />
+                    </div>
+                  </div>
 
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Search by Client Name</label>
+                      <Select
+                        options={clientNames}
+                        isClearable={true}
+                        onChange={clientChange}
+                        isMulti={true}
+                        closeMenuOnSelect={false} />
+                    </div>
+                  </div>
+
+                  
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Search by Phone Number</label>
+                      <Select
+                        options={phoneList}
+                        isClearable={true}
+                        onChange={emailChange}
+                        isMulti={true}
+                        closeMenuOnSelect={false} />
+                    </div>
+                  </div>
+
+                  <div className="col-md-1">
+                  <div className="form-group">
+                      <label>&nbsp; </label><br></br>
+                      <Button variant="primary" onClick={(e) => search()}>Search</Button>
+                  </div>
+                </div>  
+                </div>
+              </div>
               <div className="card-body">
                 <div className="row">
                   <div className="col-md-12" style={{ zIndex: "0" }}>

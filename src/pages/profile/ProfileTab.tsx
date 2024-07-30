@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { countryList } from "@app/constants/countries.constants";
 import { statesList } from "@app/constants/states.constants";
 import { PatternFormat } from "react-number-format";
+import { useNavigate } from 'react-router-dom';
+
 
 import ApiService from '@app/services/Api.service';
 
@@ -14,6 +16,7 @@ import { updateUserDetails } from "@app/utils/oidc-providers"; // Adjust the imp
 
 const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isAuthLoading, setIsAuthLoading] = useState(false);
   const [initialValues, setInitialValues] = useState({
     firstName: "",
@@ -88,6 +91,7 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
         }
          // Adjust according to your API call
         toast.success("Profile updated successfully.");
+        navigate('/client-list')
       } catch (error : any) {
         toast.error(error.message || "Failed to update profile.");
       } finally {

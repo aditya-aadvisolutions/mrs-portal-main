@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ContentHeader } from '@components';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import APIService from '@app/services/Api.service';
 
 // interface DashboardData {
@@ -54,24 +54,24 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, [username.loginName]);
 
-  const handlePendingJobsClick = () => {
-    // setJobStatus('Pending');
-    navigate('/jobslist/Pending');
-  };
+  // const handlePendingJobsClick = () => {
+  //   // setJobStatus('Pending');
+  //   navigate('/jobslist/Pending');
+  // };
 
-  const handleCompletedJobsClick = () => {
-    // setJobStatus('Completed');
-    navigate('/jobslist/Completed');
-  };
+  // const handleCompletedJobsClick = () => {
+  //   // setJobStatus('Completed');
+  //   navigate('/jobslist/Completed');
+  // };
 
-  const handleClientsClick = () => {
-    // setJobStatus('All');
-    navigate('/client-list');
-  };
+  // const handleClientsClick = () => {
+  //   // setJobStatus('All');
+  //   navigate('/client-list');
+  // };
 
-  const handleEmployeesClick = () => {
-    navigate('/employee');
-  };
+  // const handleEmployeesClick = () => {
+  //   navigate('/employee');
+  // };
 
     
   return (
@@ -90,9 +90,9 @@ const Dashboard: React.FC = () => {
                 <div className="icon">
                   <i className="ion ion-document" />
                 </div>
-                <a href="" className="small-box-footer" onClick={handlePendingJobsClick}>
+                <Link to="/jobslist/Pending" className="small-box-footer">
                   More info <i className="fas fa-arrow-circle-right"  />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="col-lg-3 col-6">
@@ -104,9 +104,9 @@ const Dashboard: React.FC = () => {
                 <div className="icon">
                   <i className="ion ion-document-text" />
                 </div>
-                <a href="" className="small-box-footer" onClick={handleCompletedJobsClick}>
+                <Link to ="/jobslist/Completed" className="small-box-footer">
                   More info <i className="fas fa-arrow-circle-right" />
-                </a>
+                </Link>
               </div>
             </div>
             {role=="Admin" && (
@@ -120,9 +120,9 @@ const Dashboard: React.FC = () => {
                 <div className="icon">
                   <i className="ion ion-person-stalker" />
                 </div>
-                <a href="" className="small-box-footer" onClick={handleClientsClick}>
+                <Link to="/client-list" className="small-box-footer">
                   More info <i className="fas fa-arrow-circle-right" />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="col-lg-3 col-6">
@@ -134,9 +134,9 @@ const Dashboard: React.FC = () => {
                 <div className="icon">
                   <i className="ion ion-person-stalker" />
                 </div>
-                <a href="" className="small-box-footer" onClick={handleEmployeesClick}>
+                <Link to="/employee" className="small-box-footer">
                   More info <i className="fas fa-arrow-circle-right" />
-                </a>
+                </Link>
               </div>
             </div></>)
 }
