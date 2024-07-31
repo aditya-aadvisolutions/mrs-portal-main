@@ -39,6 +39,7 @@ const JobList = () => {
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
   const [initialLoad, setInitialLoad] = useState(false);
+  const [JobId,setJobId]=useState()
   const [showNotification, setShowNotification] = useState(false);
   const [jobStatus, setJobStatus] = useState<string>('Pending');
   const [selectedJobId, setSelectedJobId] = useState<string>('');
@@ -247,7 +248,7 @@ const JobList = () => {
     setLoader(true);
     let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : '';
     let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : '';
-    JobService.getJobs(user.id,path=="Pending"?status:completedStatus,selectedClient, filename, fDate, tDate,initialLoad).then((response: any) => {
+    JobService.getJobs(user.id,path=="Pending"?status:completedStatus,selectedClient, filename, JobId, fDate, tDate,initialLoad).then((response: any) => {
       if (response.isSuccess) {
         let data = response.data.map((item: any) => {
           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];

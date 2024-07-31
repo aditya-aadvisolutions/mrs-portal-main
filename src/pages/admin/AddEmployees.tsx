@@ -16,6 +16,8 @@ import { countryList } from "@app/constants/countries.constants";
 import { statesList } from "@app/constants/states.constants";
 import PhoneNumberInput from "react-phone-number-input";
 import { PatternFormat } from "react-number-format";
+import { managersList } from "@app/constants/manager.constants";
+import { roleList } from "@app/constants/role.constants";
 
 const AddEmployees = () => {
   const [t] = useTranslation();
@@ -174,7 +176,14 @@ const AddEmployees = () => {
   console.log(values);
   return (
     <div className="max-w-4xl mx-auto p-4 border rounded shadow-lg bg-white">
-      <h2 className="text-2xl font-bold mb-4"><strong>Add Employee</strong></h2>
+      <div style={{ display: "flex", justifyContent: 'space-between' }}>
+        <div className="col-6">
+          <h2 className="text-2xl font-bold"><strong>Add Employee</strong></h2>
+        </div>
+        {/* <div className="col-3 text-right">
+          <Button>Active</Button>
+        </div> */}
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-md-6">
@@ -231,6 +240,40 @@ const AddEmployees = () => {
 
             <div className="mb-3">
               <label className="form-label">
+                Confirm Password<span className="text-danger">*</span>
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  id="passwordRetype"
+                  name="passwordRetype"
+                  type="password"
+                  placeholder="Confirm password"
+                  onChange={handleChange}
+                  value={values.passwordRetype}
+                  isValid={touched.passwordRetype && !errors.passwordRetype}
+                  isInvalid={touched.passwordRetype && !!errors.passwordRetype}
+                  tabIndex={12}
+                />
+                {touched.passwordRetype && errors.passwordRetype ? (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.passwordRetype}
+                  </div>
+                ) : (
+                  <InputGroup.Append>
+                    <InputGroup.Text>
+                      <i className="fas fa-lock" />
+                    </InputGroup.Text>
+                  </InputGroup.Append>
+                )}
+              </InputGroup>
+            </div>
+
+
+            <div className="mb-3">
+              <label className="form-label">
                 Email<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
@@ -261,6 +304,41 @@ const AddEmployees = () => {
                 )}
               </InputGroup>
             </div>
+
+            
+            <div className="mb-3">
+              <label className="form-label">
+                Role
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  as="select"
+                  id="state"
+                  name="state"
+                  onChange={handleChange}
+                  value={values.state}
+                  isValid={touched.state && !errors.state}
+                  isInvalid={touched.state && !!errors.state}
+                  tabIndex={9}
+                >
+                  <option value="" label="Select Role" />
+                  {roleList.map((state, index) => (
+                    <option key={index} value={state.value}>
+                      {state.label}
+                    </option>
+                  ))}
+                </Form.Control>
+                {touched.state && errors.state && (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.state}
+                  </div>
+                )}
+              </InputGroup>
+            </div>
+
             <div className="mb-3">
               <label className="form-label">Address 2</label>
               <InputGroup className="mb-3">
@@ -318,7 +396,7 @@ const AddEmployees = () => {
               </InputGroup>
             </div>
 
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <label className="form-label">
                 Password<span className="text-danger">*</span>
               </label>
@@ -349,7 +427,8 @@ const AddEmployees = () => {
                   </InputGroup.Append>
                 )}
               </InputGroup>
-            </div>
+            </div> */}
+
             <div className="mb-3">
               <label htmlFor="logo">Logo</label>
               <InputGroup className="mb-3">
@@ -429,6 +508,38 @@ const AddEmployees = () => {
               </InputGroup>
             </div>
            
+            <div className="mb-3">
+              <label className="form-label">
+                Password<span className="text-danger">*</span>
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  onChange={handleChange}
+                  value={values.password}
+                  isValid={touched.password && !errors.password}
+                  isInvalid={touched.password && !!errors.password}
+                  tabIndex={11}
+                />
+                {touched.password && errors.password ? (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.password}
+                  </div>
+                ) : (
+                  <InputGroup.Append>
+                    <InputGroup.Text>
+                      <i className="fas fa-lock" />
+                    </InputGroup.Text>
+                  </InputGroup.Append>
+                )}
+              </InputGroup>
+            </div>
 
             <div className="mb-3">
               <label className="form-label">
@@ -454,6 +565,39 @@ const AddEmployees = () => {
                     style={{ marginTop: "2.30rem" }}
                   >
                     {errors.phone}
+                  </div>
+                )}
+              </InputGroup>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">
+                Manager
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  as="select"
+                  id="state"
+                  name="state"
+                  onChange={handleChange}
+                  value={values.state}
+                  isValid={touched.state && !errors.state}
+                  isInvalid={touched.state && !!errors.state}
+                  tabIndex={9}
+                >
+                  <option value="" label="Select Manager" />
+                  {managersList.map((state, index) => (
+                    <option key={index} value={state.value}>
+                      {state.label}
+                    </option>
+                  ))}
+                </Form.Control>
+                {touched.state && errors.state && (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.state}
                   </div>
                 )}
               </InputGroup>
@@ -544,7 +688,7 @@ const AddEmployees = () => {
               </InputGroup>
             </div>
 
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <label className="form-label">
                 Retype Password<span className="text-danger">*</span>
               </label>
@@ -575,7 +719,7 @@ const AddEmployees = () => {
                   </InputGroup.Append>
                 )}
               </InputGroup>
-            </div>
+            </div> */}
 
            
           </div>

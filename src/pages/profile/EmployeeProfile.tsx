@@ -16,7 +16,7 @@ const StyledUserImage = styled(Image)`
   --pf-padding: 3px;
 `;
 
-const Profile = () => {
+const EmployeeProfile = () => {
   const [activeTab, setActiveTab] = useState('PROFILE');
   const [userId, setUserId] = useState('');
   const [t] = useTranslation();
@@ -51,7 +51,7 @@ const Profile = () => {
                     />
                   </div>
                   <h3 className="profile-username text-center">
-                    Client
+                    Employee
                   </h3>
                 </div>
               </div>
@@ -116,4 +116,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default EmployeeProfile;

@@ -35,6 +35,7 @@ import Employees from './pages/admin/Employees';
 import AddEmployees from './pages/admin/AddEmployees';
 import SplitJob from './pages/admin/SplitJob';
 import EmployeeSplitJob from './pages/admin/EmployeeSplitJob';
+import EmployeeProfile from './pages/profile/EmployeeProfile';
 
 const { VITE_NODE_ENV } = import.meta.env;
 
@@ -124,6 +125,8 @@ const App = () => {
             <Route path="/intake" element={<Intake />} />
             {/* <Route path="/blank" element={<Blank />} /> */}
             <Route path="/profile" element={<Profile />} />
+            <Route path="/employee-profile" element={<EmployeeProfile />} />
+
             <Route path="/client-registration" element={<RegistrationForm />} />
             <Route path="/add-employees" element={<AddEmployees />} />
             <Route path="/" element={<Dashboard />} />

@@ -8,7 +8,7 @@ import {
   SlickGrid,
   MenuCommandItem,
 } from "slickgrid-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PageLoader from "@app/utils/loading";
 import ConfigSettings from "@app/utils/config";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,6 +19,8 @@ import { AxiosResponse } from "axios";
 import ClientService from "@app/services/clientservice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import Select from 'react-select'
+
 
 interface State {
   title: string;
@@ -32,21 +34,31 @@ let grid1!: SlickGrid;
 const ClientsList = () => {
   const user = useSelector((state: IUser) => store.getState().auth);
   const [showloader, setLoader] = useState(true);
-  const dispatch = useDispatch();
   const [reactGrid, setGrid] = useState<SlickgridReactInstance>();
   const [dataset, setData] = useState<any[]>([]);
+  const [selectedClient, setClientFilter] = useState('');
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [selectedEmail, setEmailFilter] = useState<any[]>([]);
+  const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
+
+
+
 
   let data = dataset.map((item) => {
     return {
       ...item,
       id: item.Id,
-      clientName: item.ClientName,
+      clientName: item.FirstName + ' ' + item.LastName ,
       lastName: item.LastName,
       firstName: item.FirstName,
+      phone: item.PhoneNo,
       email: item.Email,
       loginName: item.LoginName,
+      company:item.CompanyName,
       createdDateTime: item.CreatedDateTime,
       defaultTAT: item.DefaultTAT,
+      filePreferences: item.FilePreference
     };
   });
 
@@ -58,93 +70,112 @@ const ClientsList = () => {
 
   const columns: Column[] = [
     {
+      id: "company",
+      name: "COMPANY NAME",
+      field: "company",
+      sortable: true,
+      // maxWidth: 150,
+      // cssClass:'text-left'
+    },
+    {
       id: "clientName",
-      name: "Client Name",
+      name: "CLIENT NAME",
       field: "clientName",
       sortable: true,
-      maxWidth: 150,
-    },
-    {
-      id: "firstName",
-      name: "First Name",
-      field: "firstName",
-      sortable: true,
-      maxWidth: 150,
-    },
-    {
-      id: "lastName",
-      name: "Last Name",
-      field: "lastName",
-      sortable: true,
-      maxWidth: 150,
-    },
-    {
-      id: "email",
-      name: "Email",
-      field: "email",
-      sortable: true,
-      maxWidth: 150,
-      formatter: (row, cell, value) => `<div title="${value}">${value}</div>`,
+      // maxWidth: 150,
     },
     {
       id: "loginName",
-      name: "User Name",
+      name: "USER NAME",
       field: "loginName",
       sortable: true,
-      maxWidth: 150,
+      // maxWidth: 150,
     },
+    // {
+    //   id: "firstName",
+    //   name: "First Name",
+    //   field: "firstName",
+    //   sortable: true,
+    //   maxWidth: 150,
+    // },
+    // {
+    //   id: "lastName",
+    //   name: "Last Name",
+    //   field: "lastName",
+    //   sortable: true,
+    //   maxWidth: 150,
+    // },
+
     {
-      id: "createdDateTime",
-      name: "Date",
-      field: "createdDateTime",
+      id: "email",
+      name: "EMAIL",
+      field: "email",
       sortable: true,
-      formatter: Formatters.dateIso,
-      maxWidth: 150,
+      // maxWidth: 150,
+minWidth:100,
+      formatter: (row, cell, value) => `<div title="${value}">${value}</div>`,
     },
     {
-      id: "defaultTAT",
-      name: "TAT",
-      field: "defaultTAT",
+      id: "phone",
+      name: "PHONE NO.",
+      field: "phone",
       sortable: true,
-      maxWidth: 150,
+      minWidth: 100,
+      maxWidth:120
     },
     {
-      id: "action",
-      name: "",
-      field: "id",
-      maxWidth: 130,
-      formatter: () => `<div class="btn btn-default btn-xs">Action <i class="fa fa-caret-down"></i></div>`,
-      cellMenu: {
-        commandItems: [
-          {
-            command: "Profile",
-            title: "Edit Profile",
-            iconCssClass: "fa fa-user text-success",
-            positionOrder: 66,
-            action: (_e, args) => {
-              navigate("/profile", {
-                state: { userId: args.dataContext.UserId, tab: "PROFILE"  },
-              });
-            },
-          },
-          {
-            command: "changePassword",
-            title: "Change Password",
-            iconCssClass: "fa fa-key text-success",
-            positionOrder: 66,
-            action: (_e, args) => {
-              console.log(args.dataContext);
-              navigate("/profile", {
-                state: {
-                  userId: args.dataContext.UserId,
-                  tab: "CHANGEPASSWORD",
-                },
-              });
-            },
-          },
-        ],
+      id: "file",
+      name: "FILE PREFERENCES",
+      field: "filePreferences",
+      sortable: true,
+      // maxWidth: 150,
+    },
+
+    // {
+    //   id: "loginName",
+    //   name: "User Name",
+    //   field: "loginName",
+    //   sortable: true,
+    //   maxWidth: 150,
+    // },
+    // {
+    //   id: "createdDateTime",
+    //   name: "Date",
+    //   field: "createdDateTime",
+    //   sortable: true,
+    //   formatter: Formatters.dateIso,
+    //   maxWidth: 150,
+    // },
+    // {
+    //   id: "defaultTAT",
+    //   name: "TAT",
+    //   field: "defaultTAT",
+    //   sortable: true,
+    //   // maxWidth: 150,
+    // },
+ {
+      id: 'edit',
+      field: 'edit',
+      name:'EDIT',
+      excludeFromColumnPicker: true,
+      excludeFromGridMenu: true,
+      excludeFromHeaderMenu: true,
+      formatter: (row, cell, value, colDef, dataContext) => {
+        // const isExpanded = dataContext.isExpanded;
+        const iconClass = 'fa-edit';
+    
+        return `<div>
+                  <i class="fa ${iconClass} pointer" data-row="${row}"></i>
+                </div>`;
       },
+      maxWidth: 40,
+      onCellClick: (e: Event, args: OnEventArgs) => {
+        navigate("/profile", {
+          state: {userId: args.dataContext.UserId}
+        });
+      }
     },
+
   ];
 
   const gridOptions: GridOption = {
@@ -186,6 +217,55 @@ const ClientsList = () => {
     loadData(false);
   }, []);
 
+  const search = () => {
+    if (initialLoad) {
+      setInitialLoad(false);
+    } else {
+      const filteredData = dataset.filter((item) => {
+  console.log(item,"iiiiiiiiiiiiii");
+  
+        const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
+        const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
+        const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;
+        return matchesEmail && matchesClient && matchesPhone;
+      });
+      setFilteredData(filteredData);
+      setData(filteredData)
+    }
+  };
+
+  // useEffect(() => {
+  //   search();
+  // }, [selectedEmail]);
+  
+  const emailList = data.map((item) => ({
+    value: item.Email,
+    label: item.Email,
+  }));
+  const clientNames = data.map((item) => ({
+    value: item.FirstName + ' ' +  item.LastName,
+    label: item.FirstName + ' ' +  item.LastName,
+  }));
+  const phoneList = data.map((item) => ({
+    value: item.PhoneNo,
+    label: item.PhoneNo
+  }))
+
+  const emailChange = (selectedOptions: any) => {
+    const selectedEmails = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
+    setEmailFilter(selectedEmails);
+  };
+  const clientChange = (selectedOptions: any) => {
+    const selectedClients = selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : '';
+    console.log(selectedClients, "iiiiiiiiiiiiii");
+    setClientFilter(selectedClients);
+  };
+
+  const phoneChange = (selectedOptions: any) => {
+    const selectedPhones = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
+    setPhoneFilter(selectedPhones);
+  };
+
   return (
     <>
       {showloader && <PageLoader></PageLoader>}
@@ -204,7 +284,58 @@ const ClientsList = () => {
                   </Button>
                 </div>
               </div>
+              <div className="card-body">
+                <div className='row'>
 
+
+                <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Search by Client Name</label>
+                      <Select
+                        options={clientNames}
+                        // isClearable={true}
+                        onChange={clientChange}
+                        isMulti={true}
+                        // closeMenuOnSelect={false} 
+                        />
+                    </div>
+                  </div>
+
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Search by Email</label>
+                      <Select
+                        options={emailList}
+                        // isClearable={true}
+                        onChange={emailChange}
+                        
+                        isMulti={true}
+                        // closeMenuOnSelect={false} 
+                        />
+                    </div>
+                  </div>
+         
+                  <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Search by Phone Number</label>
+                      <Select
+                        options={phoneList}
+                        // isClearable={true}
+                        onChange={phoneChange}
+                        isMulti={true}
+                        // closeMenuOnSelect={false} 
+                        />
+                    </div>
+                  </div>
+
+                  <div className="col-md-1">
+                  <div className="form-group">
+                      <label>&nbsp; </label><br></br>
+                      <Button variant="primary" onClick={(e) => search()}>Search</Button>
+                  </div>
+                </div>  
+                </div>
+              </div>
               <div className="card-body">
                 <div className="row">
                   <div className="col-md-12" style={{ zIndex: "0" }}>

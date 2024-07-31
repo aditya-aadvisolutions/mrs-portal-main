@@ -115,35 +115,35 @@ const JobsList = () => {
         args.dataContext.selected = e.target.checked;
     }
      },
-    { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
-    {
-      id: 'expandCollapse',
-      field: 'expandCollapse',
-      excludeFromColumnPicker: true,
-      excludeFromGridMenu: true,
-      excludeFromHeaderMenu: true,
-      formatter: (row, cell, value, colDef, dataContext) => {
-        const isExpanded = dataContext.isExpanded;
-        const iconClass = isExpanded ? 'fa-chevron-up' : 'fa-chevron-down';
+    { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:50 },
+    // {
+    //   id: 'expandCollapse',
+    //   field: 'expandCollapse',
+    //   excludeFromColumnPicker: true,
+    //   excludeFromGridMenu: true,
+    //   excludeFromHeaderMenu: true,
+    //   formatter: (row, cell, value, colDef, dataContext) => {
+    //     const isExpanded = dataContext.isExpanded;
+    //     const iconClass = isExpanded ? 'fa-chevron-up' : 'fa-chevron-down';
     
-        return `<div>
-                  <i class="fa ${iconClass} pointer" data-row="${row}"></i>
-                </div>`;
-      },
-      minWidth: 30,
-      onCellClick: (e: Event, args: OnEventArgs) => {
-        navigate("/employeeSplitJob", {
-          state: { submittedValues: submittedValues ,
-            emp : args.dataContext.jobId
-          },
-        });
-      }
-    },
+    //     return `<div>
+    //               <i class="fa ${iconClass} pointer" data-row="${row}"></i>
+    //             </div>`;
+    //   },
+    //   minWidth: 30,
+    //   onCellClick: (e: Event, args: OnEventArgs) => {
+    //     navigate("/employeeSplitJob", {
+    //       state: { submittedValues: submittedValues ,
+    //         emp : args.dataContext.jobId
+    //       },
+    //     });
+    //   }
+    // },
 
-    { id: 'userName', name: 'CLIENT', field: 'userName', maxWidth: 100 },
-    { id: 'createdDateTime', name: 'DATE', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
+    { id: 'userName', name: 'CLIENT', field: 'userName', minWidth: 80 },
+    // { id: 'createdDateTime', name: 'DATE', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
     {
-      id: 'files', name: 'FILE NAME <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'files', sortable: true,
+      id: 'files', name: 'FILE NAME <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'files', minWidth:150,sortable: true,
       formatter: (row, cell, value, colDef, dataContext) => {
         if (dataContext.isSingleJob)
           {
@@ -157,12 +157,10 @@ const JobsList = () => {
         }
       },
       onCellClick: (e: Event, args: OnEventArgs) => {
-        console.log(args.dataContext);
         if (args.dataContext.isSingleJob) {
-          setFiles(args.dataContext.files);
-          setMergeFileName(args.dataContext.name)
+          let fileName = args.dataContext.name ? args.dataContext.name : args.dataContext.jobId;
+          downloadZip(args.dataContext.files, fileName);
           //handleShow();
-          downloadZip(args.dataContext.files, args.dataContext.name);
         }
         else {
           let fileInfo: any = args.dataContext.files[0];
@@ -217,7 +215,7 @@ const JobsList = () => {
     //   }
     // },
     {
-      id: 'uploadFiles', name: 'FILES <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'uploadFiles', sortable: true, maxWidth: 100,
+      id: 'uploadFiles', name: 'FILES <i class="fa fa-upload text-success ml-1" aria-hidden="true"></i>', field: 'uploadFiles', sortable: true, maxWidth: 100,
       formatter: (row, cell, value, colDef, dataContext) => {
         if (value.length == 0)
           return '';
@@ -244,7 +242,7 @@ const JobsList = () => {
       }
     },
     { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 100 },
-    { id: 'pagecount', name: '#PAGES', field: 'files', sortable: true, maxWidth: 100,
+    { id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 70,
       formatter: (row, cell, value, colDef, dataContext) => {
         let pageCount = 0;
         value.forEach((item:any) => {
@@ -266,6 +264,7 @@ const JobsList = () => {
     {
       id: 'notification',
       field: 'unReadMessages',
+      name:` <a href="#" class="pointer" title="comments"><i class="fa fa-commenting pointer"></i></a>`,
       excludeFromColumnPicker: true,
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
@@ -280,8 +279,8 @@ const JobsList = () => {
             '</div>';
         }
       },
-      minWidth: 30,
-      maxWidth: 40,
+      // minWidth: 30,
+      // maxWidth: 40,
       cssClass: 'text-primary',
       onCellClick: (_e: any, args: OnEventArgs) => {
         setShowNotification(args.dataContext)
@@ -292,7 +291,7 @@ const JobsList = () => {
     },
     {
       id: 'action',
-      name: '',
+      name: 'ACTIONS',
       field: 'id',
       maxWidth: 100,
       formatter: (row, cell, value, colDef, dataContext) => {
@@ -525,9 +524,9 @@ const JobsList = () => {
  
   const loadData = (isreload:boolean) => {
     setLoader(true);
-    let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : '';
-    let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : '';
-    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
+    let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : null;
+    let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : null;
+    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, jobId, fDate, tDate, initialLoad).then((response: any) => {
       if (response.isSuccess) {
         let data = response.data.map((item: any) => {
           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];
@@ -535,6 +534,27 @@ const JobsList = () => {
           item.uid = crypto.randomUUID();
           return item;
         });
+        // const fiveMinutesAgo = moment().subtract(5, 'minutes');
+        // data = data.filter((item: any) => {
+        //   if (item.statusName === 'Completed') {
+        //     const modifiedTime = moment(item.modifiedDateTime);
+        //     return modifiedTime.isAfter(fiveMinutesAgo);
+        //   }
+        //   return true;
+        // });
+
+        // const fiveMinutesAgo = moment().subtract(5, 'minutes');
+        // if (!selectedStatus.includes('Completed')) {
+        //   data = data.filter((item: any) => {
+        //     if (item.statusName === 'Completed') {
+        //       const modifiedTime = moment(item.modifiedDateTime);
+        //       return modifiedTime.isAfter(fiveMinutesAgo);
+        //     }
+        //     return true;
+        //   });
+        // }
+        data.sort((a: any, b: any) => b.jobId - a.jobId);
+
         console.log(data);
         if(isreload && reactGrid){
            reactGrid.dataView.setItems(data);
@@ -589,13 +609,15 @@ const JobsList = () => {
       return { 'value': item.id, 'label': item.value };
     });
       setStatus(status)
-      console.log(response.data);
     }
   }
 
-  const onStatusChange = (newValue: any, actionMeta: any) => {
-    let selStatus = newValue ? newValue.map((val: any, index: number) => val.value).join(',') : '';
+  const onStatusChange = (selectedOptions: any, actionMeta: any) => {
+    let selStatus = selectedOptions ? selectedOptions.map((val: any, index: number) => val.value).join(',') : '';
     setStatusFilter(selStatus);
+    // setSelectedStatus(selValues);
+
+    loadData(false)
   };
 
   const onClientChange = (newValue: any, actionMeta: any) => {
@@ -710,7 +732,7 @@ const JobsList = () => {
               <div className="card-body">
                 <div className='row'>
 
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <div className="form-group">
                       <label>Select Status</label>
                       <Select options={statusList} isClearable={true} onChange={onStatusChange} isMulti={true}  closeMenuOnSelect={false}/>
@@ -723,6 +745,7 @@ const JobsList = () => {
                       <Select options={usersList} isClearable={true} onChange={onClientChange} isMulti={true} closeMenuOnSelect={false}/>
                   </div>
                 </div>  
+                
 
                 <div className="col-md-2">
                   <div className="form-group">
@@ -730,6 +753,20 @@ const JobsList = () => {
                       <input  className="form-control" type='text' name='txtFilename' onChange={(e) => setFilename(e.target.value)} value={filename} />
                   </div>
                 </div>  
+
+                <div className="col-md-1">
+                    <div className="form-group">
+                      <label>Job Id</label>
+                      <input
+                        className="form-control"
+                        type='text'
+                        name='jobId' 
+                        onChange={(e) => setJobId(e.target.value)}
+                        value={jobId} 
+                      />
+                    </div>
+                  </div>
+
 
                 <div className="col-md-2">
                   <div className="form-group">
