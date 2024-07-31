@@ -177,14 +177,14 @@ const RegistrationForm = () => {
   console.log(values);
   return (
     <div className="max-w-4xl mx-auto p-4 border rounded shadow-lg bg-white">
-<div style={{display:"flex",justifyContent:'space-between'}}>
-  <div className="col-6">
-    <h2 className="text-2xl font-bold">Add Client</h2>
-  </div>
-  <div className="col-3 text-right">
-    <Button>Active</Button>
-  </div>
-</div>
+      <div style={{ display: "flex", justifyContent: 'space-between' }}>
+        <div className="col-6">
+          <h2 className="text-2xl font-bold">Add Client</h2>
+        </div>
+        {/* <div className="col-3 text-right">
+          <Button>Active</Button>
+        </div> */}
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-md-6">
@@ -243,14 +243,14 @@ const RegistrationForm = () => {
 
             <div className="mb-3">
               <label className="form-label">
-                Retype Password<span className="text-danger">*</span>
+                Confirm Password<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="passwordRetype"
                   name="passwordRetype"
                   type="password"
-                  placeholder="Retype password"
+                  placeholder="Confirm Password"
                   onChange={handleChange}
                   value={values.passwordRetype}
                   isValid={touched.passwordRetype && !errors.passwordRetype}
