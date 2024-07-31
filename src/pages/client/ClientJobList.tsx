@@ -64,10 +64,10 @@ const ClientJobList = () => {
   const columns: Column[] = [
     { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
     // { id: 'notes', name: 'Notes', field: 'notes', sortable: true },
-    { id: 'createdDateTime', name: 'Date', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
+    // { id: 'createdDateTime', name: 'Date', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
     
     {
-      id: 'files', name: 'FILE NAME <i class="fa fa-upload text-success ml-1" aria-hidden="true"></i>', field: 'files', sortable: true,
+      id: 'files', name: 'FILE NAME <i class="fa fa-upload text-success ml-1" aria-hidden="true"></i>', field: 'files',minWidth:150, sortable: true,
       formatter: (row, cell, value, colDef, dataContext) => {
         if (dataContext.isSingleJob) {
           let title = dataContext.name ? dataContext.name : dataContext.jobId;
@@ -101,14 +101,15 @@ const ClientJobList = () => {
       },
       cssClass: 'text-left px-4'
     },
-    { id: 'pagecount', name: '#PAGES', field: 'files', sortable: true, maxWidth: 120,
+    { id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 60,
       formatter: (row, cell, value, colDef, dataContext) => {
         let pageCount = 0;
         value.forEach((item:any) => {
             pageCount += item.PageCount ? item.PageCount : 0;
         });
         return pageCount.toString();
-      }
+      },
+      cssClass: 'text-left px-4'
     },
     {
       id: 'uploadFiles', name: 'FILES <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'uploadFiles', sortable: true, maxWidth: 100,

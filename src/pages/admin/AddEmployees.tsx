@@ -16,6 +16,8 @@ import { countryList } from "@app/constants/countries.constants";
 import { statesList } from "@app/constants/states.constants";
 import PhoneNumberInput from "react-phone-number-input";
 import { PatternFormat } from "react-number-format";
+import { managersList } from "@app/constants/manager.constants";
+import { roleList } from "@app/constants/role.constants";
 
 const AddEmployees = () => {
   const [t] = useTranslation();
@@ -320,7 +322,7 @@ const AddEmployees = () => {
                   tabIndex={9}
                 >
                   <option value="" label="Select Role" />
-                  {statesList.map((state, index) => (
+                  {roleList.map((state, index) => (
                     <option key={index} value={state.value}>
                       {state.label}
                     </option>
@@ -584,7 +586,7 @@ const AddEmployees = () => {
                   tabIndex={9}
                 >
                   <option value="" label="Select Manager" />
-                  {statesList.map((state, index) => (
+                  {managersList.map((state, index) => (
                     <option key={index} value={state.value}>
                       {state.label}
                     </option>

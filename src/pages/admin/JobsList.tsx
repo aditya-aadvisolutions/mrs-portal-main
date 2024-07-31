@@ -115,7 +115,7 @@ const JobsList = () => {
         args.dataContext.selected = e.target.checked;
     }
      },
-    { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
+    { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:50 },
     // {
     //   id: 'expandCollapse',
     //   field: 'expandCollapse',
@@ -140,10 +140,10 @@ const JobsList = () => {
     //   }
     // },
 
-    { id: 'userName', name: 'CLIENT', field: 'userName', maxWidth: 100 },
-    { id: 'createdDateTime', name: 'DATE', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
+    { id: 'userName', name: 'CLIENT', field: 'userName', minWidth: 80 },
+    // { id: 'createdDateTime', name: 'DATE', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
     {
-      id: 'files', name: 'FILE NAME <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'files', sortable: true,
+      id: 'files', name: 'FILE NAME <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'files', minWidth:150,sortable: true,
       formatter: (row, cell, value, colDef, dataContext) => {
         if (dataContext.isSingleJob)
           {
@@ -242,7 +242,7 @@ const JobsList = () => {
       }
     },
     { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 100 },
-    { id: 'pagecount', name: '#PAGES', field: 'files', sortable: true, maxWidth: 100,
+    { id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 70,
       formatter: (row, cell, value, colDef, dataContext) => {
         let pageCount = 0;
         value.forEach((item:any) => {
@@ -264,6 +264,7 @@ const JobsList = () => {
     {
       id: 'notification',
       field: 'unReadMessages',
+      name:` <a href="#" class="pointer" title="comments"><i class="fa fa-commenting pointer"></i></a>`,
       excludeFromColumnPicker: true,
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
@@ -278,8 +279,8 @@ const JobsList = () => {
             '</div>';
         }
       },
-      minWidth: 30,
-      maxWidth: 40,
+      // minWidth: 30,
+      // maxWidth: 40,
       cssClass: 'text-primary',
       onCellClick: (_e: any, args: OnEventArgs) => {
         setShowNotification(args.dataContext)
@@ -290,7 +291,7 @@ const JobsList = () => {
     },
     {
       id: 'action',
-      name: '',
+      name: 'ACTIONS',
       field: 'id',
       maxWidth: 100,
       formatter: (row, cell, value, colDef, dataContext) => {
@@ -542,16 +543,16 @@ const JobsList = () => {
         //   return true;
         // });
 
-        const fiveMinutesAgo = moment().subtract(5, 'minutes');
-        if (!selectedStatus.includes('Completed')) {
-          data = data.filter((item: any) => {
-            if (item.statusName === 'Completed') {
-              const modifiedTime = moment(item.modifiedDateTime);
-              return modifiedTime.isAfter(fiveMinutesAgo);
-            }
-            return true;
-          });
-        }
+        // const fiveMinutesAgo = moment().subtract(5, 'minutes');
+        // if (!selectedStatus.includes('Completed')) {
+        //   data = data.filter((item: any) => {
+        //     if (item.statusName === 'Completed') {
+        //       const modifiedTime = moment(item.modifiedDateTime);
+        //       return modifiedTime.isAfter(fiveMinutesAgo);
+        //     }
+        //     return true;
+        //   });
+        // }
         data.sort((a: any, b: any) => b.jobId - a.jobId);
 
         console.log(data);
