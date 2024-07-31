@@ -153,7 +153,7 @@ import {
             <div className="container-fluid">
               <div className="card">
                 <div className="card-header d-flex justify-content-between align-items-center">
-                  <h3 className="card-title" style={{ fontSize: "30px" }}>Employees</h3>
+                  <h3 className="card-title" style={{ fontSize: "1.8rem" }}> <strong>Employees</strong></h3>
                   <div className="ml-auto">
                     <Button
                       variant="primary"

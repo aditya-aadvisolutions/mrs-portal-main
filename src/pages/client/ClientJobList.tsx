@@ -409,7 +409,7 @@ const ClientJobList = () => {
             <div className="card">
               <div className="card-header d-flex">
                 <div className='col-md-4'>
-                  <h3 className="card-title">Jobs</h3>
+                  <h3 className="card-title"style={{ fontSize: "1.8rem" }}><strong>Jobs</strong></h3>
                 </div>
                 <div className='col-md-8 d-flex flex-row-reverse'>
                   <Button style={{ backgroundColor:'#b8f9d3', color:'black', marginLeft:'5px'}} className='btn-sm' onClick={(e) => navigate('/intake', { state: { isSingle: true } })}>

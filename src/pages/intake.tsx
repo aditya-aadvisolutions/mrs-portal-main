@@ -143,7 +143,7 @@ export default function Upload(){
             <div className="container-fluid">
                 <div className="card">
                     <div className="card-header">
-                        <h3 className="card-title">Upload</h3>
+                        <h3 className="card-title"style={{ fontSize: "1.8rem" }}><strong>Upload</strong></h3>
                     </div>
                     <div className="card-body">
                     
