@@ -138,13 +138,13 @@ const NotificationModal = forwardRef((props: IDialog, ref) => {
         <Modal.Body className='p-1' style={{ overflowX: 'hidden' }}>
         <div className="row p-2 ">
           <div className="px-2">
-          Job Id : {props?.details?.jobId}
+          <b>Job Id</b> : {props?.details?.jobId}
           </div>
           <div className="px-2">
-          FIle Name : {props?.details?.name}
+          <b>File Name</b> : {(props?.details?.name) ? (props?.details?.name) : (props?.details?.jobId + '.zip')}
           </div>
           <div  className="px-2">
-          Client Name : {props?.details?.userName}
+          <b>Client Name</b> : {props?.details?.userName}
           </div>
           </div>
           <div className="row p-2">

@@ -8,7 +8,7 @@ import {
   SlickGrid,
   MenuCommandItem,
 } from "slickgrid-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PageLoader from "@app/utils/loading";
 import ConfigSettings from "@app/utils/config";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,7 +20,6 @@ import ClientService from "@app/services/clientservice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import Select from 'react-select'
-import DatePicker from "react-datepicker";
 
 
 interface State {
@@ -29,30 +28,19 @@ interface State {
   gridOptions2?: GridOption;
   columnDefinitions1: Column[];
 }
-interface Client {
-  Email: string;
-  FirstName: string;
-  LastName: string;
-  PhoneNo: string;
-  
-}
+
 let grid1!: SlickGrid;
 
 const ClientsList = () => {
   const user = useSelector((state: IUser) => store.getState().auth);
   const [showloader, setLoader] = useState(true);
-  const dispatch = useDispatch();
   const [reactGrid, setGrid] = useState<SlickgridReactInstance>();
   const [dataset, setData] = useState<any[]>([]);
-  const [statusList, setStatus] = useState([]);
-  const [usersList, setUsers] = useState([]);
   const [selectedClient, setClientFilter] = useState('');
-  const [selectedStatus, setStatusFilter] = useState('');
-  const [toDate, setToDate] = useState<Date>();
   const [initialLoad, setInitialLoad] = useState(true);
-const [filteredData, setFilteredData] = useState<any[]>([]);
-const [selectedEmail, setEmailFilter] = useState<any[]>([]);
-const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [selectedEmail, setEmailFilter] = useState<any[]>([]);
+  const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
 
 
 
@@ -67,6 +55,7 @@ const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
       phone: item.PhoneNo,
       email: item.Email,
       loginName: item.LoginName,
+      company:item.CompanyName,
       createdDateTime: item.CreatedDateTime,
       defaultTAT: item.DefaultTAT,
     };
@@ -81,10 +70,10 @@ const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
   const columns: Column[] = [
     {
       id: "clientName",
-      name: "Client Name",
+      name: "CLIENT NAME",
       field: "clientName",
       sortable: true,
-      maxWidth: 150,
+      // maxWidth: 150,
     },
     // {
     //   id: "firstName",
@@ -103,7 +92,7 @@ const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
 
     {
       id: "email",
-      name: "Email",
+      name: "EMAIL",
       field: "email",
       sortable: true,
       maxWidth: 150,
@@ -111,10 +100,18 @@ const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
     },
     {
       id: "phone",
-      name: "PhoneNo",
+      name: "PHONE NO.",
       field: "phone",
       sortable: true,
-      maxWidth: 150,
+      // maxWidth: 150,
+    },
+    {
+      id: "company",
+      name: "COMPANY NAME",
+      field: "company",
+      sortable: true,
+      // maxWidth: 150,
+      // cssClass:'text-left'
     },
     // {
     //   id: "loginName",
@@ -131,17 +128,17 @@ const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
     //   formatter: Formatters.dateIso,
     //   maxWidth: 150,
     // },
-    {
-      id: "defaultTAT",
-      name: "TAT",
-      field: "defaultTAT",
-      sortable: true,
-      maxWidth: 150,
-    },
+    // {
+    //   id: "defaultTAT",
+    //   name: "TAT",
+    //   field: "defaultTAT",
+    //   sortable: true,
+    //   // maxWidth: 150,
+    // },
  {
       id: 'edit',
       field: 'edit',
-      name:'Edit',
+      name:'EDIT',
       excludeFromColumnPicker: true,
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
@@ -202,18 +199,12 @@ const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
     loadData(false);
   }, []);
 
-  // function search()
-  // {
-  //   if(initialLoad)
-  //     setInitialLoad(false);
-  //   else
-  //     loadData(false);  
-  // }
   const search = () => {
     if (initialLoad) {
       setInitialLoad(false);
     } else {
       const filteredData = dataset.filter((item) => {
+  console.log(item,"iiiiiiiiiiiiii");
   
         const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
         const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
@@ -221,15 +212,21 @@ const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
         return matchesEmail && matchesClient && matchesPhone;
       });
       setFilteredData(filteredData);
+      setData(filteredData)
     }
   };
+
+  // useEffect(() => {
+  //   search();
+  // }, [selectedEmail]);
+  
   const emailList = data.map((item) => ({
     value: item.Email,
     label: item.Email,
   }));
   const clientNames = data.map((item) => ({
-    value: item.FirstName + item.LastName,
-    label: item.FirstName + item.LastName,
+    value: item.FirstName + ' ' +  item.LastName,
+    label: item.FirstName + ' ' +  item.LastName,
   }));
   const phoneList = data.map((item) => ({
     value: item.PhoneNo,
@@ -239,19 +236,17 @@ const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
   const emailChange = (selectedOptions: any) => {
     const selectedEmails = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
     setEmailFilter(selectedEmails);
-    search();
   };
   const clientChange = (selectedOptions: any) => {
-    const selectedClients = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
+    const selectedClients = selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : '';
+    console.log(selectedClients, "iiiiiiiiiiiiii");
     setClientFilter(selectedClients);
-    search();
   };
 
-  // const handlePhoneChange = (selectedOptions: any) => {
-  //   const selectedPhones = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
-  //   setPhoneFilter(selectedPhones);
-  //   search();
-  // };
+  const phoneChange = (selectedOptions: any) => {
+    const selectedPhones = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
+    setPhoneFilter(selectedPhones);
+  };
 
   return (
     <>
@@ -273,40 +268,45 @@ const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
               </div>
               <div className="card-body">
                 <div className='row'>
+
+
+                <div className="col-md-3">
+                    <div className="form-group">
+                      <label>Search by Client Name</label>
+                      <Select
+                        options={clientNames}
+                        // isClearable={true}
+                        onChange={clientChange}
+                        isMulti={true}
+                        // closeMenuOnSelect={false} 
+                        />
+                    </div>
+                  </div>
+
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Search by Email</label>
                       <Select
                         options={emailList}
-                        isClearable={true}
+                        // isClearable={true}
                         onChange={emailChange}
+                        
                         isMulti={true}
-                        closeMenuOnSelect={false} />
+                        // closeMenuOnSelect={false} 
+                        />
                     </div>
                   </div>
-
-                  <div className="col-md-3">
-                    <div className="form-group">
-                      <label>Search by Client Name</label>
-                      <Select
-                        options={clientNames}
-                        isClearable={true}
-                        onChange={clientChange}
-                        isMulti={true}
-                        closeMenuOnSelect={false} />
-                    </div>
-                  </div>
-
-                  
+         
                   <div className="col-md-3">
                     <div className="form-group">
                       <label>Search by Phone Number</label>
                       <Select
                         options={phoneList}
-                        isClearable={true}
-                        onChange={emailChange}
+                        // isClearable={true}
+                        onChange={phoneChange}
                         isMulti={true}
-                        closeMenuOnSelect={false} />
+                        // closeMenuOnSelect={false} 
+                        />
                     </div>
                   </div>
 
