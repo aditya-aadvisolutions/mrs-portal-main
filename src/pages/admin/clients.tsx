@@ -58,6 +58,7 @@ const ClientsList = () => {
       company:item.CompanyName,
       createdDateTime: item.CreatedDateTime,
       defaultTAT: item.DefaultTAT,
+      filePreferences: item.FilePreference
     };
   });
 
@@ -69,9 +70,24 @@ const ClientsList = () => {
 
   const columns: Column[] = [
     {
+      id: "company",
+      name: "COMPANY NAME",
+      field: "company",
+      sortable: true,
+      // maxWidth: 150,
+      // cssClass:'text-left'
+    },
+    {
       id: "clientName",
       name: "CLIENT NAME",
       field: "clientName",
+      sortable: true,
+      // maxWidth: 150,
+    },
+    {
+      id: "loginName",
+      name: "USER NAME",
+      field: "loginName",
       sortable: true,
       // maxWidth: 150,
     },
@@ -95,7 +111,8 @@ const ClientsList = () => {
       name: "EMAIL",
       field: "email",
       sortable: true,
-      maxWidth: 150,
+      // maxWidth: 150,
+minWidth:100,
       formatter: (row, cell, value) => `<div title="${value}">${value}</div>`,
     },
     {
@@ -103,16 +120,17 @@ const ClientsList = () => {
       name: "PHONE NO.",
       field: "phone",
       sortable: true,
-      // maxWidth: 150,
+      minWidth: 100,
+      maxWidth:120
     },
     {
-      id: "company",
-      name: "COMPANY NAME",
-      field: "company",
+      id: "file",
+      name: "FILE PREFERENCES",
+      field: "filePreferences",
       sortable: true,
       // maxWidth: 150,
-      // cssClass:'text-left'
     },
+
     // {
     //   id: "loginName",
     //   name: "User Name",
@@ -150,7 +168,7 @@ const ClientsList = () => {
                   <i class="fa ${iconClass} pointer" data-row="${row}"></i>
                 </div>`;
       },
-      minWidth: 30,
+      maxWidth: 40,
       onCellClick: (e: Event, args: OnEventArgs) => {
         navigate("/profile", {
           state: {userId: args.dataContext.UserId}
