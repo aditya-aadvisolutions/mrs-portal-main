@@ -45,7 +45,8 @@ const RegistrationForm = () => {
     phoneNo: string,
     filePreference: string,
     createdBy: string,
-    companyId: string
+    companyId: string,
+    companyName:string
   ) => {
     try {
       setIsAuthLoading(true);
@@ -65,6 +66,7 @@ const RegistrationForm = () => {
         filePreference,
         createdBy,
         companyId,
+        companyName
       };
 
       const response = await RegisterUser(user);
@@ -83,6 +85,7 @@ const RegistrationForm = () => {
         firstName: "",
         loginName: "",
         lastName: "",
+        companyName:"",
         email: "",
         phone: "",
         address1: "",
@@ -170,7 +173,9 @@ const RegistrationForm = () => {
           values.phone,
           values.filePreference,
           createdBy,
-          companyId
+          companyId,
+          values.companyName,
+
         );
       },
     });
@@ -178,7 +183,7 @@ const RegistrationForm = () => {
   return (
     <div className="max-w-4xl mx-auto p-4 border rounded shadow-lg bg-white">
       <div style={{ display: "flex", justifyContent: 'space-between' }}>
-        <div className="col-6">
+        <div className="col-6 ps-0">
           <h2 className="text-2xl font-bold">Add Client</h2>
         </div>
         {/* <div className="col-3 text-right">
@@ -241,28 +246,29 @@ const RegistrationForm = () => {
             </div>
             {/* loginName */}
 
+                 
             <div className="mb-3">
               <label className="form-label">
-                Confirm Password<span className="text-danger">*</span>
+                Password<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="passwordRetype"
-                  name="passwordRetype"
+                  id="password"
+                  name="password"
                   type="password"
-                  placeholder="Confirm Password"
+                  placeholder="Password"
                   onChange={handleChange}
-                  value={values.passwordRetype}
-                  isValid={touched.passwordRetype && !errors.passwordRetype}
-                  isInvalid={touched.passwordRetype && !!errors.passwordRetype}
-                  tabIndex={12}
+                  value={values.password}
+                  isValid={touched.password && !errors.password}
+                  isInvalid={touched.password && !!errors.password}
+                  tabIndex={11}
                 />
-                {touched.passwordRetype && errors.passwordRetype ? (
+                {touched.password && errors.password ? (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.passwordRetype}
+                    {errors.password}
                   </div>
                 ) : (
                   <InputGroup.Append>
@@ -274,62 +280,59 @@ const RegistrationForm = () => {
               </InputGroup>
             </div>
 
+
+ <div className="mb-3">
+              <label className="form-label">Company Name<span className="text-danger">*</span></label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  id="companyName"
+                  name="companyName"
+                  type="text"
+                  placeholder="Company Name"
+                  onChange={handleChange}
+                  value={values.companyName}
+                  isValid={touched.companyName && !errors.companyName}
+                  isInvalid={touched.companyName && !!errors.companyName}
+                  tabIndex={3}
+                />
+                {/* {touched.companyName && errors.companyName && (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.companyName}
+                  </div>
+                )} */}
+              </InputGroup>
+            </div>
+
             <div className="mb-3">
               <label className="form-label">
-                Email<span className="text-danger">*</span>
+                Address 1<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  onChange={handleChange}
-                  value={values.email}
-                  isValid={touched.email && !errors.email}
-                  isInvalid={touched.email && !!errors.email}
-                  tabIndex={5}
-                />
-                {touched.email && errors.email ? (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.email}
-                  </div>
-                ) : (
-                  <InputGroup.Append>
-                    <InputGroup.Text>
-                      <i className="fas fa-envelope" />
-                    </InputGroup.Text>
-                  </InputGroup.Append>
-                )}
-              </InputGroup>
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Address 2</label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="address2"
-                  name="address2"
+                  id="address1"
+                  name="address1"
                   type="text"
-                  placeholder="Address 2"
+                  placeholder="Address 1"
                   onChange={handleChange}
-                  value={values.address2}
-                  isValid={touched.address2 && !errors.address2}
-                  isInvalid={touched.address2 && !!errors.address2}
-                  tabIndex={7}
+                  value={values.address1}
+                  isValid={touched.address1 && !errors.address1}
+                  isInvalid={touched.address1 && !!errors.address1}
+                  tabIndex={6}
                 />
-                {touched.address2 && errors.address2 && (
+                {touched.address1 && errors.address1 && (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.address2}
+                    {errors.address1}
                   </div>
                 )}
               </InputGroup>
             </div>
+           
             <div className="mb-3">
               <label className="form-label">
                 State<span className="text-danger">*</span>
@@ -358,6 +361,39 @@ const RegistrationForm = () => {
                     style={{ marginTop: "2.30rem" }}
                   >
                     {errors.state}
+                  </div>
+                )}
+              </InputGroup>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">
+                Country<span className="text-danger">*</span>
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  as="select"
+                  id="country"
+                  name="country"
+                  onChange={handleChange}
+                  value={values.country}
+                  isValid={touched.country && !errors.country}
+                  isInvalid={touched.country && !!errors.country}
+                  tabIndex={10}
+                >
+                  <option value="" label="Select country" />
+                  {countryList.map((state, index) => (
+                    <option key={index} value={state.value}>
+                      {state.label}
+                    </option>
+                  ))}
+                </Form.Control>
+                {touched.country && errors.country && (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.country}
                   </div>
                 )}
               </InputGroup>
@@ -421,26 +457,59 @@ const RegistrationForm = () => {
 
             <div className="mb-3">
               <label className="form-label">
-                Password<span className="text-danger">*</span>
+                Email<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Password"
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Email"
                   onChange={handleChange}
-                  value={values.password}
-                  isValid={touched.password && !errors.password}
-                  isInvalid={touched.password && !!errors.password}
-                  tabIndex={11}
+                  value={values.email}
+                  isValid={touched.email && !errors.email}
+                  isInvalid={touched.email && !!errors.email}
+                  tabIndex={5}
                 />
-                {touched.password && errors.password ? (
+                {touched.email && errors.email ? (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.password}
+                    {errors.email}
+                  </div>
+                ) : (
+                  <InputGroup.Append>
+                    <InputGroup.Text>
+                      <i className="fas fa-envelope" />
+                    </InputGroup.Text>
+                  </InputGroup.Append>
+                )}
+              </InputGroup>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">
+                Confirm Password<span className="text-danger">*</span>
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  id="passwordRetype"
+                  name="passwordRetype"
+                  type="password"
+                  placeholder="Confirm Password"
+                  onChange={handleChange}
+                  value={values.passwordRetype}
+                  isValid={touched.passwordRetype && !errors.passwordRetype}
+                  isInvalid={touched.passwordRetype && !!errors.passwordRetype}
+                  tabIndex={12}
+                />
+                {touched.passwordRetype && errors.passwordRetype ? (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.passwordRetype}
                   </div>
                 ) : (
                   <InputGroup.Append>
@@ -480,32 +549,32 @@ const RegistrationForm = () => {
                 )}
               </InputGroup>
             </div>
+
             <div className="mb-3">
-              <label className="form-label">
-                Address 1<span className="text-danger">*</span>
-              </label>
+              <label className="form-label">Address 2</label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="address1"
-                  name="address1"
+                  id="address2"
+                  name="address2"
                   type="text"
-                  placeholder="Address 1"
+                  placeholder="Address 2"
                   onChange={handleChange}
-                  value={values.address1}
-                  isValid={touched.address1 && !errors.address1}
-                  isInvalid={touched.address1 && !!errors.address1}
-                  tabIndex={6}
+                  value={values.address2}
+                  isValid={touched.address2 && !errors.address2}
+                  isInvalid={touched.address2 && !!errors.address2}
+                  tabIndex={7}
                 />
-                {touched.address1 && errors.address1 && (
+                {touched.address2 && errors.address2 && (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.address1}
+                    {errors.address2}
                   </div>
                 )}
               </InputGroup>
             </div>
+           
             <div className="mb-3">
               <label className="form-label">
                 City<span className="text-danger">*</span>
@@ -533,38 +602,7 @@ const RegistrationForm = () => {
               </InputGroup>
             </div>
 
-            <div className="mb-3">
-              <label className="form-label">
-                Country<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  as="select"
-                  id="country"
-                  name="country"
-                  onChange={handleChange}
-                  value={values.country}
-                  isValid={touched.country && !errors.country}
-                  isInvalid={touched.country && !!errors.country}
-                  tabIndex={10}
-                >
-                  <option value="" label="Select country" />
-                  {countryList.map((state, index) => (
-                    <option key={index} value={state.value}>
-                      {state.label}
-                    </option>
-                  ))}
-                </Form.Control>
-                {touched.country && errors.country && (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.country}
-                  </div>
-                )}
-              </InputGroup>
-            </div>
+
 
             <div className="mb-3">
               <label htmlFor="logo">Logo</label>
