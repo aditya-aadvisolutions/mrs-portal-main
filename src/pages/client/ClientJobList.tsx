@@ -21,9 +21,14 @@ import confirm from '@app/components/confirm/confirmService';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
+import { DateTime } from 'luxon';
 
 //let reactGrid!: SlickgridReactInstance;
 let grid1!: SlickGrid;
+let downloadCount=0;
+let fileCount=0;
+let modifiedDate;
+let todayDate;
 
 const ClientJobList = () => {
 
@@ -119,10 +124,29 @@ const ClientJobList = () => {
         else{
           
           let content = '';
+          
           if(value)
           value.forEach((file:any) => {
-              let fileicon = getFileIcon(file.FileExtension);
-              content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
+              if(dataContext.statusName==='Downloaded'){
+                 
+                  modifiedDate = new Date(dataContext.modifiedDateTime);
+                  console.log('** modifiedDate..',modifiedDate);
+                  todayDate = new Date();
+                  console.log('** todayDate..',todayDate)
+                  let timeDiff = diff_hours(modifiedDate,todayDate);
+                  console.log('** timeDiff..',timeDiff);
+
+                  if(timeDiff>48){
+                    content += ``;
+                  }else{
+                    let fileicon = getFileIcon(file.FileExtension);
+                    content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
+                  }
+
+              }else{
+                let fileicon = getFileIcon(file.FileExtension);
+                content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
+              }
           });
 
           return content;
@@ -131,11 +155,19 @@ const ClientJobList = () => {
       },
       onCellClick: (e: any, args: OnEventArgs) => {
         let fileid = e.target.attributes['data-id'];
+        fileCount = args.dataContext.uploadFiles.length;
         if(fileid.value){
+          downloadCount++;
           let fileinfo = args.dataContext.uploadFiles.find((item:any) => item.Id == fileid.value);
           downloadFile(fileinfo);
         }
-        //updateJobStatus(args.dataContext.id,'Downloaded');
+        if(fileCount === downloadCount){
+          updateJobStatus(args.dataContext.id,'Downloaded');
+          fileCount=0;
+          downloadCount=0;
+
+        }
+        
       }
     },
     { id: 'statusName', name: 'STATUS', field: 'statusName',  maxWidth: 180},
@@ -370,6 +402,15 @@ const ClientJobList = () => {
   function downloadZipPopUp(){
     DownloadZipService.createZip(fileList, mergeFileName, function() {});
   }
+
+  function diff_hours(modifiedDate: Date,todayDate: Date) {
+      // Calculate the difference in milliseconds between the two provided Date objects by subtracting the milliseconds value of dt1 from the milliseconds value of dt2
+        var diff =(todayDate.getTime() - modifiedDate.getTime()) / 1000;
+      // Convert the difference from milliseconds to hours by dividing it by the number of seconds in an hour (3600)
+         diff /= (60 * 60);
+      // Return the absolute value of the rounded difference in hours
+        return Math.abs(Math.round(diff));
+ }
   const getFileIcon = (fileExt:string) => {
     //['pdf','.pdf','pdflink',''].indexOf(value[0].FileExtension) > -1 ?  '<i class="fa fa-file-pdf-o text-danger" aria-hidden="true"></i>' : '<i class="fa fa-file-word-o text-primary" aria-hidden="true"></i>';
 
