@@ -134,7 +134,7 @@ const ClientJobList = () => {
                   todayDate = new Date();
                   console.log('** todayDate..',todayDate)
                   let timeDiff = diff_hours(modifiedDate,todayDate);
-                  console.log('** timeDiff..',timeDiff);
+                  console.log('** timeDiff in Hours..',timeDiff);
 
                   if(timeDiff>48){
                     content += ``;
