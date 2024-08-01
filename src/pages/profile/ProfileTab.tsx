@@ -31,6 +31,7 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
     country: "",
     filePreference: [''],
     logo: null,
+    isActive: '',
   });
 
   const modifyedBy = localStorage.getItem("authentication")
@@ -118,6 +119,7 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
             country: response.Country || "", // Adjust if necessary
             filePreference: response.FilePreference.split(','), // Convert string to array
             logo: null, // Handle file uploads if necessary
+            isActive:response.IsActive
           });
         }
       } catch (error) {
@@ -141,6 +143,7 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
             country: response.Country || "", // Adjust if necessary
             filePreference: response.FilePreference.split(','), // Convert string to array
             logo: null, // Handle file uploads if necessary
+            isActive:response.IsActive
           });
         }
       } catch (error) {
@@ -154,7 +157,16 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
       fetchDetails();
     }
   }, [userId]);
-
+  const handleIsActive = [
+    {
+      label: "Active",
+      value: true,
+    },
+    {
+      label: "Inactive",
+      value: false,
+    },
+  ];
 
 
   return (
@@ -163,9 +175,24 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
         <div className="col-6 ps-0">
           <h2 className="text-2xl font-bold mb-4">Profile</h2>
         </div>
-        <div className="col-3 text-right">
-          <Button>Active</Button>
-        </div>
+        <InputGroup className="mb-3" style={{ width: "30%" }}>
+        <Form.Control
+          as="select"
+          id="isActive"
+          name="isActive"
+          onChange={handleChange}
+          value={values.isActive}
+          isValid={touched.isActive && !errors.isActive}
+          isInvalid={touched.isActive && !!errors.isActive}
+          tabIndex={9}
+        >
+          {handleIsActive.map((status, index) => (
+            <option key={index} value={status.value as any}>
+              {status.label}
+            </option>
+          ))}
+        </Form.Control>
+      </InputGroup>
       </div>
       <form onSubmit={handleSubmit}>
       <div className="row">

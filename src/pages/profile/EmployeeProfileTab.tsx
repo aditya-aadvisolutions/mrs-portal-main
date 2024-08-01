@@ -227,7 +227,7 @@ const EmployeeProfileTab = ({
           tabIndex={9}
         >
           {handleIsActive.map((status, index) => (
-            <option key={index} value={status.value}>
+            <option key={index} value={status.value as any}>
               {status.label}
             </option>
           ))}
@@ -610,18 +610,10 @@ const EmployeeProfileTab = ({
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-3">
-            <div className="mb-3">
-              <Button
-                // loading={isAuthLoading}
-                // disabled={isGoogleAuthLoading || isFacebookAuthLoading}
-                onClick={handleSubmit as any}
-              >
-                Submit
-              </Button>
-            </div>
-          </div>
+        <div className="d-flex justify-content-end">
+          <Button type="submit" variant="primary" disabled={isAuthLoading}>
+            {isAuthLoading ? "Updating..." : "Update"}
+          </Button>
         </div>
       </form>
     </div>
