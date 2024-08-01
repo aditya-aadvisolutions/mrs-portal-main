@@ -149,6 +149,23 @@ export const CreateEmployee = (user: any) => {
   })
 }
 
+export const Updateemployee = (user: any) => {
+  return new Promise(async (res, rej) => {
+    ApiService.requests.patch('employee/update', user)
+    .then((response) => {
+      console.log(response,'response');
+      if(response)
+      {
+        return res(response);
+      }
+      else
+      {
+        return rej({ message: response });
+      }
+    })
+  })
+}
+
 export const refreshToken = (user: User) => {
   
   return new Promise(async (res, rej) => {
@@ -170,4 +187,15 @@ export const refreshToken = (user: User) => {
       }
     })
   });
+};
+
+export const formatNumber = (phone:any) => {
+  // Assuming the phone number is a 10-digit string
+  const phoneNumber = phone.replace(/\D/g, ''); // Remove non-digit characters
+  const country = "+1";
+  const area = phoneNumber.substring(0, 3);
+  const middle = phoneNumber.substring(3, 6);
+  const last = phoneNumber.substring(6, 10);
+
+  return `${country} (${area}) ${middle}-${last}`;
 };
