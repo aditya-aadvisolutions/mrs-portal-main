@@ -5,7 +5,6 @@ export const getJobs = (
   jobStatus: string,
   createdBy: string,
   filename: string | null = null,
-  jobId: string | null = null,
   fromDate: string | null = null,
   toDate: string | null = null,
   initialLoad: boolean = false
@@ -17,7 +16,6 @@ export const getJobs = (
     if (jobStatus) params.append('jobStatus', jobStatus);
     if (createdBy) params.append('createdBy', createdBy);
     if (filename) params.append('filename', filename);
-    if (jobId) params.append('jobId', jobId);
     if (fromDate) params.append('fromDate', fromDate);
     if (toDate) params.append('toDate', toDate);
     params.append('initialLoad', initialLoad.toString());
