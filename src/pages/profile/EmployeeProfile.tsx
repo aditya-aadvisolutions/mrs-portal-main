@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ContentHeader } from '@components';
 import { Image } from '@profabric/react-components';
 import styled from 'styled-components';
-import ProfileTab from  './ProfileTab';
+import EmployeeProfileTab from './EmployeeProfileTab';
 import ActivityTab from './ActivityTab';
 import TimelineTab from './TimelineTab';
 import SettingsTab from './SettingsTab';
@@ -100,8 +100,8 @@ const EmployeeProfile = () => {
                   <div className="tab-content">
                     {/* <ActivityTab isActive={activeTab === 'ACTIVITY'} />
                     <TimelineTab isActive={activeTab === 'TIMELINE'} /> */}
-                    <ProfileTab isActive={activeTab === 'TIMELINE'} userId={userId}/>
-
+                    <EmployeeProfileTab isActive={activeTab === 'TIMELINE'} userId={userId}/>
+                    
                     {/* { activeTab === 'PROFILE' && <ProfileTab isActive={activeTab === 'PROFILE'} userId={userId}/> } */}
                     {/* { activeTab === 'PREFERENCES' && <SettingsTab isActive={activeTab === 'PREFERENCES'} userId={userId}/> }
                     { activeTab === 'CHANGEPASSWORD' && <ChagePasswordTab isActive={activeTab == 'CHANGEPASSWORD'} userId={userId}/> } */}
