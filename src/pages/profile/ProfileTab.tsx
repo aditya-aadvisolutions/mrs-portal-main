@@ -159,7 +159,14 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
 
   return (
     <div className="">
-      <h2 className="text-2xl font-bold mb-4">Profile</h2>
+          <div style={{ display: "flex", justifyContent: 'space-between'}}>
+        <div className="col-6 ps-0">
+          <h2 className="text-2xl font-bold mb-4">Profile</h2>
+        </div>
+        <div className="col-3 text-right">
+          <Button>Active</Button>
+        </div>
+      </div>
       <form onSubmit={handleSubmit}>
       <div className="row">
           <div className="col-md-6">

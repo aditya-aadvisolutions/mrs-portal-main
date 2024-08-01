@@ -17,7 +17,6 @@ import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import LookupService from "@app/services/lookupService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import useHistory from 'react-router-dom';
 
 
 export default function UppyUpload(props: any) {
@@ -30,6 +29,7 @@ export default function UppyUpload(props: any) {
 
   const [fileTypes, setFileTypes] = useState([]);
   const dispatch = useDispatch();
+  const { isSingle } = useLocation().state || { isSingle: []};  
   const uploadedFiles = useSelector(
     (state: Array<IUploadFiles>) => store.getState().uploadfile
   );
@@ -145,13 +145,14 @@ export default function UppyUpload(props: any) {
           file.name = "/client" + '/' + newFileName;
         }
 
-          if (fileNames.includes(nameWithoutExtension + extension)) {
-            toast.error(`File ${nameWithoutExtension + extension} already exists.`);
-            uppy.removeFile(file.id);
-            setDuplicateFileError(true);
-            return;
-          }
- 
+       if(!isSingle){
+        if (fileNames.includes(nameWithoutExtension + extension)) {
+          toast.error(`File ${nameWithoutExtension + extension} already exists.`);
+          uppy.removeFile(file.id);
+          setDuplicateFileError(true);
+          return;
+        }
+       } 
       }
     })
 

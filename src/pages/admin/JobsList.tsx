@@ -325,7 +325,7 @@ const JobsList = () => {
             action: (_e, args) => {
                 setJobId(args.dataContext.id);
                 setFileType('.docx');
-                handleUploadShow();
+                handleUploadShow();         
             },
           },
           {
@@ -526,7 +526,7 @@ const JobsList = () => {
     setLoader(true);
     let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : null;
     let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : null;
-    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, jobId, fDate, tDate, initialLoad).then((response: any) => {
+    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate,tDate, initialLoad).then((response: any) => {
       if (response.isSuccess) {
         let data = response.data.map((item: any) => {
           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];
@@ -534,15 +534,6 @@ const JobsList = () => {
           item.uid = crypto.randomUUID();
           return item;
         });
-        // const fiveMinutesAgo = moment().subtract(5, 'minutes');
-        // data = data.filter((item: any) => {
-        //   if (item.statusName === 'Completed') {
-        //     const modifiedTime = moment(item.modifiedDateTime);
-        //     return modifiedTime.isAfter(fiveMinutesAgo);
-        //   }
-        //   return true;
-        // });
-
         // const fiveMinutesAgo = moment().subtract(5, 'minutes');
         // if (!selectedStatus.includes('Completed')) {
         //   data = data.filter((item: any) => {
