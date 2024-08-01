@@ -26,7 +26,7 @@ import {
     const [initialLoad, setInitialLoad] = useState(true);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [selectedEmail, setEmailFilter] = useState<any[]>([]);
-  const [selectedPhone, setPhoneFilter] = useState<any[]>([]);
+  const [selectedPhone, setPhoneFilter] = useState<any[]>([]);  
     let data = dataset.map((item) => {
       return {
         ...item,
@@ -39,6 +39,8 @@ import {
         loginName: item.LoginName,
         createdDateTime: item.CreatedDateTime,
         defaultTAT: item.DefaultTAT,
+        manager:item.Manager,
+        role:item.Role
       };
     });
   
@@ -74,14 +76,14 @@ import {
       {
         id: "Manager",
         name: "Manager",
-        field: "employeeName",
+        field: "manager",
         sortable: true,
         maxWidth: 150,
       },
       {
         id: "Role",
         name: "Role",
-        field: "employeeName",
+        field: "role",
         sortable: true,
         maxWidth: 150,
       },
@@ -197,8 +199,6 @@ import {
         setInitialLoad(false);
       } else {
         const filteredData = dataset.filter((item) => {
-          console.log(item, "iiiiiiiiiiiiii");
-
           const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
           const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
           const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;
@@ -234,7 +234,6 @@ import {
 
     const roleChange = (selectedOptions: any) => {
       const selectedClients = selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : '';
-      console.log(selectedClients, "iiiiiiiiiiiiii");
       setClientFilter(selectedClients);
     };
 

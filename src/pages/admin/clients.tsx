@@ -338,7 +338,7 @@ minWidth:100,
               </div>
               <div className="card-body">
                 <div className="row">
-                  <div className="col-md-12" style={{ zIndex: "0" }}>
+                  <div className="col-md-12" style={{ zIndex: "0" , width:'100%'}}>
                     <SlickgridReact
                       gridId="grid1"
                       columnDefinitions={columns}
@@ -346,7 +346,8 @@ minWidth:100,
                       dataset={data}
                       onReactGridCreated={(e) => {
                         reactGridReady(e.detail);
-                      }}
+                      }
+                    }
                     />
                   </div>
                 </div>

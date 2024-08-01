@@ -116,16 +116,16 @@ const RegistrationForm = () => {
 
         // Phone number is required, must be a string, and must be exactly 10 characters long
         phone: Yup.string()
-        .test('phone', 'Invalid phone number. Please enter a valid 10-digit phone number.', 
-          function(value: any) {
-            const phoneRegex = /^\+1 \(\d{3}\) \d{3}-\d{4}$/;
-            return phoneRegex.test(value);
-          }
-        )
-        .required("Phone Number is a required field"),
+          .test('phone', 'Invalid phone number. Please enter a valid 10-digit phone number.',
+            function (value: any) {
+              const phoneRegex = /^\+1 \(\d{3}\) \d{3}-\d{4}$/;
+              return phoneRegex.test(value);
+            }
+          )
+          .required("Phone Number is a required field"),
 
         // Address line 1 is required and must be a string
-        address1: Yup.string().required("Address line 1 is a required field"),
+        address1: Yup.string().required("Address Line 1 is a required field"),
 
         // Address line 2 is optional and can be any string
         address2: Yup.string(),
@@ -153,7 +153,10 @@ const RegistrationForm = () => {
         // File preference is required, must be an array, and must have at least one item
         filePreference: Yup.array()
           .min(1, "Select at least one document type.")
-          .required("File preference is a required field"),
+          .required("File Preference is a required field"),
+
+        companyName: Yup.string()
+          .required("Company Name Is a required field")
 
         // Logo is required (commented out for now)
         // logo: Yup.mixed().required('Logo is a required field'),
@@ -182,17 +185,16 @@ const RegistrationForm = () => {
   console.log(values);
   return (
     <div className="max-w-4xl mx-auto p-4 border rounded shadow-lg bg-white">
-      <h2 className="text-2xl font-bold mb-4"><strong>Add Client</strong></h2>
-      <div style={{ display: "flex", justifyContent: 'space-between' }}>
+      <div style={{ display: "flex", justifyContent: 'space-between'}}>
         <div className="col-6 ps-0">
-          <h2 className="text-2xl font-bold">Add Client</h2>
+          <h2 className="text-2xl font-bold mb-4"><strong>Add Client</strong></h2>
         </div>
-        {/* <div className="col-3 text-right">
-          <Button>Active</Button>
-        </div> */}
+        <div className="col-1.5 text-right">
+          <Button onClick={() => navigate("/client-list")}>Back</Button>
+        </div>
       </div>
       <form onSubmit={handleSubmit}>
-        <div className="row">
+        <div className=" row container border ml-1 mb-3" style={{ width: '100%' }}>
           <div className="col-md-6">
             <div className="mb-3">
               <label className="form-label">
@@ -222,59 +224,32 @@ const RegistrationForm = () => {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Login Name<span className="text-danger">*</span></label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="loginName"
-                  name="loginName"
-                  type="text"
-                  placeholder="Login Name"
-                  onChange={handleChange}
-                  value={values.loginName}
-                  isValid={touched.loginName && !errors.loginName}
-                  isInvalid={touched.loginName && !!errors.loginName}
-                  tabIndex={3}
-                />
-                {touched.loginName && errors.loginName && (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.loginName}
-                  </div>
-                )}
-              </InputGroup>
-            </div>
-            {/* loginName */}
-
-                 
-            <div className="mb-3">
               <label className="form-label">
-                Password<span className="text-danger">*</span>
+                Email<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Password"
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Email"
                   onChange={handleChange}
-                  value={values.password}
-                  isValid={touched.password && !errors.password}
-                  isInvalid={touched.password && !!errors.password}
-                  tabIndex={11}
+                  value={values.email}
+                  isValid={touched.email && !errors.email}
+                  isInvalid={touched.email && !!errors.email}
+                  tabIndex={5}
                 />
-                {touched.password && errors.password ? (
+                {touched.email && errors.email ? (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.password}
+                    {errors.email}
                   </div>
                 ) : (
                   <InputGroup.Append>
                     <InputGroup.Text>
-                      <i className="fas fa-lock" />
+                      <i className="fas fa-envelope" />
                     </InputGroup.Text>
                   </InputGroup.Append>
                 )}
@@ -282,7 +257,7 @@ const RegistrationForm = () => {
             </div>
 
 
- <div className="mb-3">
+            <div className="mb-3">
               <label className="form-label">Company Name<span className="text-danger">*</span></label>
               <InputGroup className="mb-3">
                 <Form.Control
@@ -296,14 +271,157 @@ const RegistrationForm = () => {
                   isInvalid={touched.companyName && !!errors.companyName}
                   tabIndex={3}
                 />
-                {/* {touched.companyName && errors.companyName && (
+                {touched.companyName && errors.companyName && (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
                     {errors.companyName}
                   </div>
-                )} */}
+                )}
+              </InputGroup>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Address 2</label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  id="address2"
+                  name="address2"
+                  type="text"
+                  placeholder="Address 2"
+                  onChange={handleChange}
+                  value={values.address2}
+                  isValid={touched.address2 && !errors.address2}
+                  isInvalid={touched.address2 && !!errors.address2}
+                  tabIndex={7}
+                />
+                {touched.address2 && errors.address2 && (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.address2}
+                  </div>
+                )}
+              </InputGroup>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">
+                State<span className="text-danger">*</span>
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  as="select"
+                  id="state"
+                  name="state"
+                  onChange={handleChange}
+                  value={values.state}
+                  isValid={touched.state && !errors.state}
+                  isInvalid={touched.state && !!errors.state}
+                  tabIndex={9}
+                >
+                  <option value="" label="Select state" />
+                  {statesList.map((state, index) => (
+                    <option key={index} value={state.value}>
+                      {state.label}
+                    </option>
+                  ))}
+                </Form.Control>
+                {touched.state && errors.state && (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.state}
+                  </div>
+                )}
+              </InputGroup>
+            </div>
+
+
+            <div className="mb-3">
+              <label>
+                Select Document Type<span className="text-danger">*</span>
+              </label>
+              <div>
+                {[".pdf", ".docx", ".pdflnk"].map((type) => (
+                  <div key={type} className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="filePreference"
+                      value={type}
+                      onChange={handleChange}
+                      checked={values.filePreference.includes(type)}
+                    />
+                    <label className="form-check-label" htmlFor={type}>
+                      {type.toUpperCase()}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              {touched.filePreference && errors.filePreference && (
+                <div className="text-danger">{errors.filePreference}</div>
+              )}
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <div className="mb-3">
+              <label className="form-label">
+                Last Name<span className="text-danger">*</span>
+              </label>
+              <InputGroup className="mb-3">
+                <Form.Control
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  placeholder="Last Name"
+                  onChange={handleChange}
+                  value={values.lastName}
+                  isValid={touched.lastName && !errors.lastName}
+                  isInvalid={touched.lastName && !!errors.lastName}
+                  tabIndex={2}
+                />
+                {touched.lastName && errors.lastName && (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.lastName}
+                  </div>
+                )}
+              </InputGroup>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">
+                Phone<span className="text-danger">*</span>
+              </label>
+              <InputGroup className="mb-3">
+                <PatternFormat
+                  format="+1 (###) ###-####"
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="Phone Number"
+                  onChange={handleChange}
+                  value={values.phone}
+                  //isValid={touched.phone && !errors.phone}
+                  // isInvalid={touched.phone && !!errors.phone}
+                  tabIndex={4}
+                  style={{ height: '38px', width: '100%', padding: '10px', fontSize: '16px', border: '1px solid #ced4da', borderRadius: '3px' }}
+                />
+                {touched.phone && errors.phone && (
+                  <div
+                    className="position-absolute top-100 start-0 text-danger small"
+                    style={{ marginTop: "2.30rem" }}
+                  >
+                    {errors.phone}
+                  </div>
+                )}
               </InputGroup>
             </div>
 
@@ -333,35 +451,29 @@ const RegistrationForm = () => {
                 )}
               </InputGroup>
             </div>
-           
+
             <div className="mb-3">
               <label className="form-label">
-                State<span className="text-danger">*</span>
+                City<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
-                  as="select"
-                  id="state"
-                  name="state"
+                  id="city"
+                  name="city"
+                  type="text"
+                  placeholder="City"
                   onChange={handleChange}
-                  value={values.state}
-                  isValid={touched.state && !errors.state}
-                  isInvalid={touched.state && !!errors.state}
-                  tabIndex={9}
-                >
-                  <option value="" label="Select state" />
-                  {statesList.map((state, index) => (
-                    <option key={index} value={state.value}>
-                      {state.label}
-                    </option>
-                  ))}
-                </Form.Control>
-                {touched.state && errors.state && (
+                  value={values.city}
+                  isValid={touched.city && !errors.city}
+                  isInvalid={touched.city && !!errors.city}
+                  tabIndex={8}
+                />
+                {touched.city && errors.city && (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
-                    {errors.state}
+                    {errors.city}
                   </div>
                 )}
               </InputGroup>
@@ -401,211 +513,6 @@ const RegistrationForm = () => {
             </div>
 
             <div className="mb-3">
-              <label>
-                Select Document Type<span className="text-danger">*</span>
-              </label>
-              <div>
-                {[".pdf", ".docx", ".pdflnk"].map((type) => (
-                  <div key={type} className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      name="filePreference"
-                      value={type}
-                      onChange={handleChange}
-                      checked={values.filePreference.includes(type)}
-                    />
-                    <label className="form-check-label" htmlFor={type}>
-                      {type.toUpperCase()}
-                    </label>
-                  </div>
-                ))}
-              </div>
-              {touched.filePreference && errors.filePreference && (
-                <div className="text-danger">{errors.filePreference}</div>
-              )}
-            </div>
-          </div>
-
-          <div className="col-md-6">
-            
-            <div className="mb-3">
-              <label className="form-label">
-                Last Name<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  placeholder="Last Name"
-                  onChange={handleChange}
-                  value={values.lastName}
-                  isValid={touched.lastName && !errors.lastName}
-                  isInvalid={touched.lastName && !!errors.lastName}
-                  tabIndex={2}
-                />
-                {touched.lastName && errors.lastName && (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.lastName}
-                  </div>
-                )}
-              </InputGroup>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">
-                Email<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  onChange={handleChange}
-                  value={values.email}
-                  isValid={touched.email && !errors.email}
-                  isInvalid={touched.email && !!errors.email}
-                  tabIndex={5}
-                />
-                {touched.email && errors.email ? (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.email}
-                  </div>
-                ) : (
-                  <InputGroup.Append>
-                    <InputGroup.Text>
-                      <i className="fas fa-envelope" />
-                    </InputGroup.Text>
-                  </InputGroup.Append>
-                )}
-              </InputGroup>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">
-                Confirm Password<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="passwordRetype"
-                  name="passwordRetype"
-                  type="password"
-                  placeholder="Confirm Password"
-                  onChange={handleChange}
-                  value={values.passwordRetype}
-                  isValid={touched.passwordRetype && !errors.passwordRetype}
-                  isInvalid={touched.passwordRetype && !!errors.passwordRetype}
-                  tabIndex={12}
-                />
-                {touched.passwordRetype && errors.passwordRetype ? (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.passwordRetype}
-                  </div>
-                ) : (
-                  <InputGroup.Append>
-                    <InputGroup.Text>
-                      <i className="fas fa-lock" />
-                    </InputGroup.Text>
-                  </InputGroup.Append>
-                )}
-              </InputGroup>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">
-                Phone<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <PatternFormat
-                  format="+1 (###) ###-####"
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="Phone Number"
-                  onChange={handleChange}
-                  value={values.phone}
-                  //isValid={touched.phone && !errors.phone}
-                 // isInvalid={touched.phone && !!errors.phone}
-                  tabIndex={4}
-                  style={{ height: '38px', width: '100%', padding: '10px', fontSize: '16px' }}
-                />
-                {touched.phone && errors.phone && (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.phone}
-                  </div>
-                )}
-              </InputGroup>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Address 2</label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="address2"
-                  name="address2"
-                  type="text"
-                  placeholder="Address 2"
-                  onChange={handleChange}
-                  value={values.address2}
-                  isValid={touched.address2 && !errors.address2}
-                  isInvalid={touched.address2 && !!errors.address2}
-                  tabIndex={7}
-                />
-                {touched.address2 && errors.address2 && (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.address2}
-                  </div>
-                )}
-              </InputGroup>
-            </div>
-           
-            <div className="mb-3">
-              <label className="form-label">
-                City<span className="text-danger">*</span>
-              </label>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  id="city"
-                  name="city"
-                  type="text"
-                  placeholder="City"
-                  onChange={handleChange}
-                  value={values.city}
-                  isValid={touched.city && !errors.city}
-                  isInvalid={touched.city && !!errors.city}
-                  tabIndex={8}
-                />
-                {touched.city && errors.city && (
-                  <div
-                    className="position-absolute top-100 start-0 text-danger small"
-                    style={{ marginTop: "2.30rem" }}
-                  >
-                    {errors.city}
-                  </div>
-                )}
-              </InputGroup>
-            </div>
-
-
-
-            <div className="mb-3">
               <label htmlFor="logo">Logo</label>
               <InputGroup className="mb-3">
                 <Form.Control
@@ -630,6 +537,110 @@ const RegistrationForm = () => {
             </div>
           </div>
         </div>
+
+        <div className="container border p-3 mb-3" style={{ width: '100%' }}>
+          <form onSubmit={handleSubmit}>
+            <div className="row">
+              <div className="col-md-6">
+
+                {/* loginName */}
+                <div className="mb-3">
+                  <label className="form-label">Login Name<span className="text-danger">*</span></label>
+                  <InputGroup className="mb-3">
+                    <Form.Control
+                      id="loginName"
+                      name="loginName"
+                      type="text"
+                      placeholder="Login Name"
+                      onChange={handleChange}
+                      value={values.loginName}
+                      isValid={touched.loginName && !errors.loginName}
+                      isInvalid={touched.loginName && !!errors.loginName}
+                      tabIndex={3}
+                    />
+                    {touched.loginName && errors.loginName && (
+                      <div
+                        className="position-absolute top-100 start-0 text-danger small"
+                        style={{ marginTop: "2.30rem" }}
+                      >
+                        {errors.loginName}
+                      </div>
+                    )}
+                  </InputGroup>
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">
+                    Confirm Password<span className="text-danger">*</span>
+                  </label>
+                  <InputGroup className="mb-3">
+                    <Form.Control
+                      id="passwordRetype"
+                      name="passwordRetype"
+                      type="password"
+                      placeholder="Confirm Password"
+                      onChange={handleChange}
+                      value={values.passwordRetype}
+                      isValid={touched.passwordRetype && !errors.passwordRetype}
+                      isInvalid={touched.passwordRetype && !!errors.passwordRetype}
+                      tabIndex={12}
+                    />
+                    {touched.passwordRetype && errors.passwordRetype ? (
+                      <div
+                        className="position-absolute top-100 start-0 text-danger small"
+                        style={{ marginTop: "2.30rem" }}
+                      >
+                        {errors.passwordRetype}
+                      </div>
+                    ) : (
+                      <InputGroup.Append>
+                        <InputGroup.Text>
+                          <i className="fas fa-lock" />
+                        </InputGroup.Text>
+                      </InputGroup.Append>
+                    )}
+                  </InputGroup>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="mb-3">
+                  <label className="form-label">
+                    Password<span className="text-danger">*</span>
+                  </label>
+                  <InputGroup className="mb-3">
+                    <Form.Control
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Password"
+                      onChange={handleChange}
+                      value={values.password}
+                      isValid={touched.password && !errors.password}
+                      isInvalid={touched.password && !!errors.password}
+                      tabIndex={11}
+                    />
+                    {touched.password && errors.password ? (
+                      <div
+                        className="position-absolute top-100 start-0 text-danger small"
+                        style={{ marginTop: "2.30rem" }}
+                      >
+                        {errors.password}
+                      </div>
+                    ) : (
+                      <InputGroup.Append>
+                        <InputGroup.Text>
+                          <i className="fas fa-lock" />
+                        </InputGroup.Text>
+                      </InputGroup.Append>
+                    )}
+                  </InputGroup>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
 
         <div className="row">
           <div className="col-3">

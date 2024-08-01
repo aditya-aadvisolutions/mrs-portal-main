@@ -243,7 +243,7 @@ const ClientJobList = () => {
 
     let fDate = fromDate ? moment(fromDate).format('YYYY-MM-DD') : '';
     let tDate = toDate ? moment(toDate).format('YYYY-MM-DD') : '';
-    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, jobId, fDate, tDate, initialLoad).then((response: any) => {
+    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
         if (response.isSuccess) {
             let data = response.data.map((item: any) => {
                 item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => !item.IsUploadFile) : [];
@@ -251,8 +251,12 @@ const ClientJobList = () => {
                 item.uid = crypto.randomUUID();
                 return item;
             });
+            const file = response.data.filter((item:any) =>!item.isSingleJob).map((item:any) => item.name);
+            const fileNames = file.map((filename:any) => filename.split(' - ').slice(2).join(' - '))
+            setFileNames(fileNames)
+
             console.log(data);
-            if (isreload && reactGrid) {
+            if (reactGrid && isreload) {
                 reactGrid.dataView.setItems(data);
             } else {
                 setData(data);
@@ -271,17 +275,6 @@ const ClientJobList = () => {
       
 //           return item;
 //         });
-//         // const fileNames = response.data.map((job:any) => {
-//         //   const jobFiles = JSON.parse(job.jobFiles);
-//         //   return jobFiles.JobFiles.map((file:any) => file.FileName);
-//         // }).flat();
-        
-//         const fileNames = response.data.map((job:any) => {
-//           const jobFiles = JSON.parse(job.jobFiles);
-//           return jobFiles.JobFiles.map((file:any) => file.FileName);
-//         }).flat().map((filename:any) => filename.split(' - ').slice(2).join(' - '));
-        
-//         setFileNames(fileNames)
 
 //         const fiveMinutesAgo = moment().subtract(48, 'hours');
 //         if (!selectedStatus.includes('Completed' || 'Downloaded')) {

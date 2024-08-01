@@ -1,8 +1,7 @@
 export const managersList = [
-
   {
-    "label": "RAJ DESAI",
-    "value": "RAJ DESAI"
+    "label": "Raj desai",
+    "value": "Raj desai"
   },
   {
     "label": "Reshma",

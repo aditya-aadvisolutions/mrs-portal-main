@@ -471,7 +471,7 @@ const JobList = () => {
                  
                 </div>
                 <div className='row pt-4'>
-                  <div className='col-md-12' style={{ zIndex: '0' }}>
+                  <div className='col-md-12' style={{ zIndex: '0', width:'100%' }}>
                     <SlickgridReact gridId="grid1"
                       columnDefinitions={columns}
                       gridOptions={gridOptions!}
