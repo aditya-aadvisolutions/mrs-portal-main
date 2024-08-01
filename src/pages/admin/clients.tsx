@@ -20,6 +20,7 @@ import ClientService from "@app/services/clientservice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import Select from 'react-select'
+import { formatNumber } from "@app/utils/oidc-providers";
 
 
 interface State {
@@ -112,7 +113,7 @@ const ClientsList = () => {
       field: "email",
       sortable: true,
       // maxWidth: 150,
-minWidth:100,
+        minWidth:90,
       formatter: (row, cell, value) => `<div title="${value}">${value}</div>`,
     },
     {
@@ -121,14 +122,16 @@ minWidth:100,
       field: "phone",
       sortable: true,
       minWidth: 100,
-      maxWidth:120
+      maxWidth:120,
+      formatter: (row, cell, value) => `<div style="padding-right: 10px;">${formatNumber(value)}</div>`, // Adding padding-right for gap
     },
     {
       id: "file",
       name: "FILE PREFERENCES",
       field: "filePreferences",
       sortable: true,
-      // maxWidth: 150,
+       minWidth: 50,
+       formatter: (row, cell, value) => `<div style="padding-left: 10px;">${value}</div>`, // Adding padding-left for gap
     },
 
     // {

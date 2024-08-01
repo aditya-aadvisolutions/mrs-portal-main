@@ -16,6 +16,7 @@ import {
   import { useNavigate } from "react-router-dom";
   import { Button } from "react-bootstrap";
   import Select from 'react-select'
+import { formatNumber } from './../../utils/oidc-providers';
 
   const Employees = () => {
     const user = useSelector((state: IUser) => store.getState().auth);
@@ -72,6 +73,7 @@ import {
         field: "PhoneNo",
         sortable: true,
         maxWidth: 150,
+        formatter: (row, cell, value) => `<div ">${formatNumber(value)}</div>`,
       },
       {
         id: "Manager",
