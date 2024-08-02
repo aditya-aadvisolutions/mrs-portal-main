@@ -163,7 +163,7 @@ const ClientJobList = () => {
           let fileinfo = args.dataContext.uploadFiles.find((item:any) => item.Id == fileid.value);
           downloadFile(fileinfo);
         }
-        if(fileCount === downloadCount){
+        if(fileCount === downloadCount && args.dataContext.statusName==='Completed'){
           updateJobStatus(args.dataContext.id,'Downloaded');
           fileCount=0;
           downloadCount=0;
