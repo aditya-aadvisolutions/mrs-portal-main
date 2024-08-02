@@ -16,6 +16,8 @@ import LookupService from '@app/services/lookupService';
 import IUser from "@app/store/Models/User";
 import PageLoader from "@app/utils/loading";
 import { useLocation } from 'react-router-dom';
+import moment from "moment";
+import JobService from "@app/services/jobService";
 
 
 interface IUploadForm{
@@ -32,12 +34,30 @@ export default function Upload(){
     const [ isSingle, setIsSingle ] = useState(true);
     const [showForm, setShowForm ] = useState(false);
     const [tatLookup, setTatLookup] = useState([]);
+    const [showloader, setLoader] = useState(true);
+    const [fromDate, setFromDate] = useState<Date>();
+    const [toDate, setToDate] = useState<Date>();
+    const [initialLoad, setInitialLoad] = useState(true);
+    const [fileNames, setFileNames] = useState([]);
+    const [selectedStatus, setStatusFilter] = useState('');
+    const [filename, setFilename] = useState('');
+    const [dataset, setData] = useState<any[]>([]);
+
+
+
+
+
 
     const navigate = useNavigate();
     const user = useSelector((state: IUser) => store.getState().auth);
     const uploadedFiles = useSelector((state: Array<IUploadFiles>) => store.getState().uploadfile);
     const dispatch = useDispatch();
     const location = useLocation();
+    // const { fileNames } = useLocation().state || { fileNames: [] };
+    // const { isSingle } = useLocation().state || { isSingle: []};  
+    console.log(fileNames, isSingle, "iiiiiiiiiiiiiii");
+    let selectedClient: string = user.id;
+
 
     const getTat = async () => {
         const response: any = await LookupService.getStatus('tat');
@@ -79,8 +99,35 @@ export default function Upload(){
         //     then: () => Yup.string().required('Merge file name is required')
         //     })
     });
+    const loadData = (isreload: boolean) => {
+        setLoader(true);
     
-
+        let fDate = fromDate ? moment(fromDate).format('YYYY-MM-DD') : '';
+        let tDate = toDate ? moment(toDate).format('YYYY-MM-DD') : '';
+        JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
+            if (response.isSuccess) {
+                let data = response.data.map((item: any) => {
+                    item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => !item.IsUploadFile) : [];
+                    item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => item.IsUploadFile) : [];
+                    item.uid = crypto.randomUUID();
+                    return item;
+                });
+                const file = response.data.filter((item:any) =>!item.isSingleJob).map((item:any) => item.name);
+                const fileNames = file.map((filename:any) => filename.split(' - ').slice(2).join(' - '))
+                setFileNames(fileNames)
+                setData(data);
+            }
+        }).catch(() => {
+            setLoader(false);
+   
+        }).finally(() => {
+            setLoader(false);
+        });
+    }
+    
+    useEffect(() => {
+        loadData(false);
+      }, []);      
     const handleSubmit = async (values: IUploadForm) => {
         try{
             setSubmitting(true);
@@ -148,11 +195,11 @@ export default function Upload(){
                     <div className="card-body">
                     
                     { !showForm && <div className="d-flex justify-content-center mb-3">
-                        <div className="shadow upload-button-green mr-5 pointer box" onClick={() => { setIsSingle(true); setShowForm(true); formik.values.uploadtype = false }}>
-                        <PiFilesThin size={80} className="transparent-color"/>
+                        <div className="shadow upload-button-green mr-5 pointer box" onClick={() => { setIsSingle(true);setShowForm(true); formik.values.uploadtype = false;}} >
+                        <PiFilesThin size={80} className="transparent-color" />
                             Merge Upload
                         </div>   
-                        <div className="shadow upload-button-blue px-3 pointer box" onClick={() => { setIsSingle(false); setShowForm(true); formik.values.uploadtype = true }}>
+                        <div className="shadow upload-button-blue px-3 pointer box" onClick={() => { setIsSingle(false);setShowForm(true); formik.values.uploadtype = true; navigate('/intake', { state: { fileNames: fileNames } }) }}>
                             <PiFileThin size={80} className="transparent-color"/>
                             Single Upload
                         </div>

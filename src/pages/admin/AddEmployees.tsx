@@ -186,10 +186,7 @@ const AddEmployees = () => {
     <div className="max-w-4xl mx-auto p-4 border rounded shadow-lg bg-white">
            <div style={{ display: "flex", justifyContent: 'space-between'}}>
         <div className="col-6 ps-0">
-          <h2 className="text-2xl font-bold mb-4"><strong>Add Employee</strong></h2>
-        </div>
-        <div className="col-1.5 text-right">
-          <Button onClick={() => navigate("/employee")}>Back</Button>
+          <h2 className="text-2xl font-bold mb-4"><i className="fa fa-arrow-left pointer ml-1 mr-2" style={{fontSize:"26px"}} onClick={() => navigate("/employee")} aria-hidden="true"></i><strong>Add Employee</strong></h2>
         </div>
       </div>
       <form onSubmit={handleSubmit}>

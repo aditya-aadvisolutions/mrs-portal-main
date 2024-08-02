@@ -220,27 +220,41 @@ const ClientsList = () => {
     loadData(false);
   }, []);
 
-  const search = () => {
+  // const search = () => {
+  //   if (initialLoad) {
+  //     setInitialLoad(false);
+  //   } else {
+  //     const filteredData = dataset.filter((item) => {
+  // console.log(item,"iiiiiiiiiiiiii");
+  
+  //       const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
+  //       const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
+  //       const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;
+  //       return matchesEmail && matchesClient && matchesPhone;
+  //     });
+  //     setFilteredData(filteredData);
+  //     setData(filteredData)
+  //   }
+  // };
+
+  const search = useCallback(() => {
     if (initialLoad) {
       setInitialLoad(false);
     } else {
       const filteredData = dataset.filter((item) => {
-  console.log(item,"iiiiiiiiiiiiii");
-  
         const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
         const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
         const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;
         return matchesEmail && matchesClient && matchesPhone;
       });
       setFilteredData(filteredData);
-      setData(filteredData)
+      setData(filteredData);
     }
-  };
+  }, [dataset, selectedEmail, selectedClient, selectedPhone]);
 
-  // useEffect(() => {
-  //   search();
-  // }, [selectedEmail]);
-  
+  useEffect(() => {
+    search();
+  }, [search]);
   const emailList = data.map((item) => ({
     value: item.Email,
     label: item.Email,
@@ -257,6 +271,7 @@ const ClientsList = () => {
   const emailChange = (selectedOptions: any) => {
     const selectedEmails = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
     setEmailFilter(selectedEmails);
+    search()
   };
   const clientChange = (selectedOptions: any) => {
     const selectedClients = selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : '';
@@ -277,7 +292,7 @@ const ClientsList = () => {
           <div className="container-fluid">
             <div className="card">
               <div className="card-header d-flex justify-content-between align-items-center">
-                <h3 className="card-title" style={{ fontSize: "1.8rem" }}><strong>Clients</strong></h3>
+                <h3 className="card-title" style={{ fontSize: "1.8rem" }}><i className="fa fa-arrow-left pointer ml-1 mr-2" style={{fontSize:"26px"}} onClick={() => navigate("/admin-jobs")} aria-hidden="true"></i><strong>Clients</strong></h3>
                 <div className="ml-auto">
                   <Button
                     variant="primary"
@@ -296,10 +311,11 @@ const ClientsList = () => {
                       <label>Search by Client Name</label>
                       <Select
                         options={clientNames}
-                        // isClearable={true}
+                        isClearable={true}
                         onChange={clientChange}
                         isMulti={true}
-                        // closeMenuOnSelect={false} 
+                        onBlur={search}
+                        closeMenuOnSelect={true} 
                         />
                     </div>
                   </div>
@@ -309,11 +325,11 @@ const ClientsList = () => {
                       <label>Search by Email</label>
                       <Select
                         options={emailList}
-                        // isClearable={true}
+                        isClearable={true}
                         onChange={emailChange}
-                        
                         isMulti={true}
-                        // closeMenuOnSelect={false} 
+                        onBlur={search}
+                        closeMenuOnSelect={true} 
                         />
                     </div>
                   </div>
@@ -323,10 +339,11 @@ const ClientsList = () => {
                       <label>Search by Phone Number</label>
                       <Select
                         options={phoneList}
-                        // isClearable={true}
+                        isClearable={true}
                         onChange={phoneChange}
                         isMulti={true}
-                        // closeMenuOnSelect={false} 
+                        onBlur={search}
+                        closeMenuOnSelect={false} 
                         />
                     </div>
                   </div>

@@ -34,7 +34,7 @@ const Profile = () => {
 
   return (
     <>
-      <ContentHeader title="Profile" />
+      {/* <ContentHeader title="Profile" /> */}
       <section className="content">
         <div className="container-fluid">
           <div className="row">
