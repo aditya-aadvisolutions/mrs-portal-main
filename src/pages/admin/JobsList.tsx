@@ -62,6 +62,9 @@ const JobsList = () => {
   const [toDate, setToDate] = useState<Date>();
   const [initialLoad, setInitialLoad] = useState(true);
   const [showNotification, setShowNotification] = useState();
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [filteredClientData, setFilteredClientData] = useState<any[]>([]);
+
   const location = useLocation();
 
   const MenuCommandItems: MenuCommandItem[] = Array<MenuCommandItem>();
@@ -545,8 +548,6 @@ const JobsList = () => {
         //   });
         // }
         data.sort((a: any, b: any) => b.jobId - a.jobId);
-
-        console.log(data);
         if(isreload && reactGrid){
            reactGrid.dataView.setItems(data);
         }
@@ -608,11 +609,11 @@ const JobsList = () => {
     setStatusFilter(selStatus);
     // setSelectedStatus(selValues);
 
-    loadData(false)
+    // loadData(false)
   };
 
-  const onClientChange = (newValue: any, actionMeta: any) => {
-    let selClients = newValue ? newValue.map((val: any, index: number) => val.value).join(',') : '';
+  const onClientChange = (newValue: any, actionMeta: any) => {    
+    let selClients = newValue ? newValue.map((val: any, index: number) => val.label).join(',') : '';
     setClientFilter(selClients);
   };
 
@@ -649,18 +650,31 @@ const JobsList = () => {
       
     });
   }
+useEffect(()=>{
+  if(jobId !==''){
+    const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
+        setFilteredData(filteredData);
+        setData(filteredData);
+  }
+},[search,jobId])
 
-  function search()
-  {
-    if(initialLoad)
+  function search() {
+    if (initialLoad) {
       setInitialLoad(false);
-    else
-      loadData(false);  
+    } else {
+      const filteredClientData = dataset.filter((item) => {
+
+        const matchesClientName = selectedClient.length ? selectedClient.includes(item.userName) : true;
+        return matchesClientName
+      });
+      setFilteredClientData(filteredClientData);
+      setData(filteredClientData)
+    }
   }
 
-  useEffect(() => {
-    loadData(false);
-  }, [initialLoad]);
+  // useEffect(() => {
+  //   loadData(false);
+  // }, [initialLoad]);
 
   useEffect(() => {
     getUsers();

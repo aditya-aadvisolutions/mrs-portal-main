@@ -46,6 +46,8 @@ const ClientJobList = () => {
   const [initialLoad, setInitialLoad] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
   const [fileNames, setFileNames] = useState([]);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+
 
 //  const [mergeFileName, setMergeFileName] = useState('');
   // const [defaultStatus, setDefaultStatus] = useState([]);
@@ -435,7 +437,14 @@ const ClientJobList = () => {
     if(initialLoad)
       setInitialLoad(false);
     else
-      loadData(false);  
+      // loadData(false);
+      if (jobId.trim() !== '') {
+        const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
+        setFilteredData(filteredData);
+        setData(filteredData);
+      } else {
+        setData(dataset);
+      }  
   }
 
   useEffect(() => {
@@ -495,7 +504,8 @@ const ClientJobList = () => {
             <div className="card">
               <div className="card-header d-flex">
                 <div className='col-md-4'>
-                  <h3 className="card-title"style={{ fontSize: "1.8rem" }}><strong>Jobs</strong></h3>
+                  <h3 className="card-title"style={{ fontSize: "1.8rem" }}>
+                 <strong>Jobs</strong></h3>
                 </div>
                 <div className='col-md-8 d-flex flex-row-reverse'>
                   <Button style={{ backgroundColor:'#b8f9d3', color:'black', marginLeft:'5px'}} className='btn-sm' onClick={(e) => navigate('/intake', 

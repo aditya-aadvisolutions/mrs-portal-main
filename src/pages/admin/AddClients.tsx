@@ -186,12 +186,7 @@ const RegistrationForm = () => {
   return (
     <div className="max-w-4xl mx-auto p-4 border rounded shadow-lg bg-white">
       <div style={{ display: "flex", justifyContent: 'space-between'}}>
-        <div className="col-6 ps-0">
-          <h2 className="text-2xl font-bold mb-4"><strong>Add Client</strong></h2>
-        </div>
-        <div className="col-1.5 text-right">
-          <Button onClick={() => navigate("/client-list")}>Back</Button>
-        </div>
+          <h2 className="text-2xl font-bold mb-4"><i className="fa fa-arrow-left pointer ml-1 mr-2" style={{fontSize:"26px"}} onClick={() => navigate("/client-list")} aria-hidden="true"></i> <strong>Add Client</strong></h2>
       </div>
       <form onSubmit={handleSubmit}>
         <div className=" row container border ml-1 mb-3" style={{ width: '100%' }}>

@@ -251,7 +251,7 @@ import { formatNumber } from './../../utils/oidc-providers';
             <div className="container-fluid">
               <div className="card">
                 <div className="card-header d-flex justify-content-between align-items-center">
-                  <h3 className="card-title" style={{ fontSize: "1.8rem" }}> <strong>Employees</strong></h3>
+                  <h3 className="card-title" style={{ fontSize: "1.8rem" }}> <i className="fa fa-arrow-left pointer ml-1 mr-2" style={{fontSize:"26px"}} onClick={() => navigate("/admin-jobs")} aria-hidden="true"></i><strong>Employees</strong></h3>
                   <div className="ml-auto">
                     <Button
                       variant="primary"
