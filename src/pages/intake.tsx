@@ -53,9 +53,6 @@ export default function Upload(){
     const uploadedFiles = useSelector((state: Array<IUploadFiles>) => store.getState().uploadfile);
     const dispatch = useDispatch();
     const location = useLocation();
-    // const { fileNames } = useLocation().state || { fileNames: [] };
-    // const { isSingle } = useLocation().state || { isSingle: []};  
-    console.log(fileNames, isSingle, "iiiiiiiiiiiiiii");
     let selectedClient: string = user.id;
 
 

@@ -237,24 +237,30 @@ const ClientsList = () => {
   //   }
   // };
 
-  const search = useCallback(() => {
+  const search =()=> {
     if (initialLoad) {
       setInitialLoad(false);
-    } else {
+    } else {      
       const filteredData = dataset.filter((item) => {
         const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
         const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
-        const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;
+        const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;        
         return matchesEmail && matchesClient && matchesPhone;
       });
       setFilteredData(filteredData);
       setData(filteredData);
     }
-  }, [dataset, selectedEmail, selectedClient, selectedPhone]);
+  };
 
   useEffect(() => {
     search();
-  }, [search]);
+  }, [selectedEmail, selectedClient, selectedPhone]);
+
+  // useEffect(() => {
+  //   search();
+  // }, [search]);
+
+  
   const emailList = data.map((item) => ({
     value: item.Email,
     label: item.Email,
@@ -269,19 +275,28 @@ const ClientsList = () => {
   }))
 
   const emailChange = (selectedOptions: any) => {
-    const selectedEmails = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
-    setEmailFilter(selectedEmails);
+    console.log(selectedOptions,"iiiiiiiii");
+    
+    const selectedEmails = selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : '';
+    console.log(selectedEmails,"iiiiiiiiiiiiiii");
+    
+    setEmailFilter(selectedEmails);    
     search()
   };
+  console.log();
+  
   const clientChange = (selectedOptions: any) => {
     const selectedClients = selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : '';
-    console.log(selectedClients, "iiiiiiiiiiiiii");
     setClientFilter(selectedClients);
+    search();
+
   };
 
   const phoneChange = (selectedOptions: any) => {
     const selectedPhones = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
     setPhoneFilter(selectedPhones);
+    search();
+
   };
 
   return (

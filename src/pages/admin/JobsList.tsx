@@ -650,27 +650,27 @@ const JobsList = () => {
       
     });
   }
-useEffect(()=>{
-  if(jobId !==''){
-    const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
-        setFilteredData(filteredData);
-        setData(filteredData);
-  }
-},[search,jobId])
+  useEffect(() => {
+    loadData(false);
+  }, [selectedStatus,selectedClient, fromDate, toDate, filename, jobId]); 
 
-  function search() {
-    if (initialLoad) {
-      setInitialLoad(false);
+function search() {
+  if (initialLoad) {
+    setInitialLoad(false);
+  } else {
+    if (jobId.trim() !== '') {
+      const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
+      setFilteredData(filteredData);
+      setData(filteredData);
+    } else if (selectedStatus === '') {
+      setData(dataset);
     } else {
-      const filteredClientData = dataset.filter((item) => {
-
-        const matchesClientName = selectedClient.length ? selectedClient.includes(item.userName) : true;
-        return matchesClientName
-      });
-      setFilteredClientData(filteredClientData);
-      setData(filteredClientData)
+      const filteredData = dataset.filter(item => selectedStatus.split(',').includes(item.statusId));
+      setFilteredData(filteredData);
+      setData(filteredData);
     }
   }
+}
 
   // useEffect(() => {
   //   loadData(false);
