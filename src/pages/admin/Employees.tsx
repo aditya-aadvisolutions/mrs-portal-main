@@ -17,6 +17,7 @@ import {
   import { Button } from "react-bootstrap";
   import Select from 'react-select'
 import { formatNumber } from './../../utils/oidc-providers';
+import { roleList } from "@app/constants/role.constants";
 
   const Employees = () => {
     const user = useSelector((state: IUser) => store.getState().auth);
@@ -202,7 +203,7 @@ import { formatNumber } from './../../utils/oidc-providers';
       } else {
         const filteredData = dataset.filter((item) => {
           const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
-          const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
+          const matchesClient = selectedClient.length ? selectedClient.includes(item.Role) : true;
           const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;
           return matchesEmail && matchesClient && matchesPhone;
         });
@@ -210,15 +211,15 @@ import { formatNumber } from './../../utils/oidc-providers';
         setData(filteredData)
       }
     };
+    useEffect(() => {
+      search();
+    }, [selectedEmail, selectedClient, selectedPhone]);
+  
 
     const emailList = data.map((item) => ({
       value: item.Email,
       label: item.Email,
     }));
-    const roleList = data.map((item) => ({
-      value: item.FirstName + ' ' + item.LastName,
-      label: item.FirstName + ' ' + item.LastName
-    }))
     const phoneList = data.map((item) => ({
       value: item.PhoneNo,
       label: item.PhoneNo

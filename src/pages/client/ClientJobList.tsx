@@ -72,7 +72,6 @@ const ClientJobList = () => {
     { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
     // { id: 'notes', name: 'Notes', field: 'notes', sortable: true },
     // { id: 'createdDateTime', name: 'Date', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
-    
     {
       id: 'files', name: 'FILE NAME <i class="fa fa-upload text-success ml-1" aria-hidden="true"></i>', field: 'files',minWidth:150, sortable: true,
       formatter: (row, cell, value, colDef, dataContext) => {
@@ -432,20 +431,41 @@ const ClientJobList = () => {
 
   };
 
-  function search()
-  {
-    if(initialLoad)
+  // function search()
+  // {
+  //   if(initialLoad)
+  //     setInitialLoad(false);
+  //   else
+  //     // loadData(false);
+  //     if (jobId.trim() !== '') {
+  //       const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
+  //       setFilteredData(filteredData);
+  //       setData(filteredData);
+  //     } else {
+  //       setData(dataset);
+  //     }  
+  // }
+
+  function search() {
+    if (initialLoad) {
       setInitialLoad(false);
-    else
-      // loadData(false);
+    } else {
       if (jobId.trim() !== '') {
         const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
         setFilteredData(filteredData);
         setData(filteredData);
-      } else {
+      } else if (selectedStatus === '') {
         setData(dataset);
-      }  
+      } else {
+        const filteredData = dataset.filter(item => selectedStatus.split(',').includes(item.statusId));
+        setFilteredData(filteredData);
+        setData(filteredData);
+      }
+    }
   }
+  useEffect(() => {
+    loadData(false);
+  }, [selectedStatus, fromDate, toDate, filename, jobId]); 
 
   useEffect(() => {
     loadData(false);
