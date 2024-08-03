@@ -239,6 +239,12 @@ import { roleList } from "@app/constants/role.constants";
       const selectedClients = selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : '';
       setClientFilter(selectedClients);
     };
+    const reset = () => {
+      setEmailFilter([]);
+      setClientFilter('');
+      setPhoneFilter([]);
+        loadData(false);
+    };
 
     useEffect(() => {
       loadData(false);
@@ -270,11 +276,11 @@ import { roleList } from "@app/constants/role.constants";
                       <label>Search by Email</label>
                       <Select
                         options={emailList}
-                        // isClearable={true}
+                        value={emailList.filter(option => selectedEmail.includes(option.value))}
+                        isClearable={true}
                         onChange={emailChange}
-                        
                         isMulti={true}
-                        // closeMenuOnSelect={false} 
+                        closeMenuOnSelect={true} 
                         />
                     </div>
                   </div>
@@ -284,10 +290,11 @@ import { roleList } from "@app/constants/role.constants";
                       <label>Search by Role</label>
                       <Select
                         options={roleList}
-                        // isClearable={true}
+                        value={roleList.filter(option => selectedClient.includes(option.value))}
+                        isClearable={true}
                         onChange={roleChange}
                         isMulti={true}
-                        // closeMenuOnSelect={false} 
+                        closeMenuOnSelect={true} 
                         />
                     </div>
                   </div>
@@ -298,10 +305,11 @@ import { roleList } from "@app/constants/role.constants";
                       <label>Search by Phone Number</label>
                       <Select
                         options={phoneList}
-                        // isClearable={true}
+                        value={phoneList.filter(option => selectedPhone.includes(option.value))}
+                        isClearable={true}
                         onChange={phoneChange}
                         isMulti={true}
-                        // closeMenuOnSelect={false} 
+                        closeMenuOnSelect={true} 
                         />
                     </div>
                   </div>
@@ -309,7 +317,7 @@ import { roleList } from "@app/constants/role.constants";
                   <div className="col-md-1">
                   <div className="form-group">
                       <label>&nbsp; </label><br></br>
-                      <Button variant="primary" onClick={(e) => search()}>Search</Button>
+                      <Button variant="secondary" onClick={(e) => reset()}>Reset</Button>
                   </div>
                 </div> 
                   </div>

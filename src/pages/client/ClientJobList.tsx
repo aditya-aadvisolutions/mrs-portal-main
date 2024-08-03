@@ -62,11 +62,10 @@ const ClientJobList = () => {
 
   let selectedClient: string = user.id;
 
-  localStorage.setItem('roleName', user.roleName);
-  localStorage.setItem('username', user.firstName);
+  sessionStorage.setItem('roleName', user.roleName);
+  sessionStorage.setItem('username', user.firstName);
 
-  localStorage.getItem('roleName');
-  const file = localStorage.getItem('username');
+  sessionStorage.getItem('roleName');
 
   const columns: Column[] = [
     { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
@@ -287,7 +286,7 @@ const ClientJobList = () => {
             const file = response.data.filter((item:any) =>!item.isSingleJob).map((item:any) => item.name);
             const fileNames = file.map((filename:any) => filename.split(' - ').slice(2).join(' - '))
             setFileNames(fileNames)
-
+            data.sort((a: any, b: any) => b.jobId - a.jobId);
             console.log(data);
             if (reactGrid && isreload) {
                 reactGrid.dataView.setItems(data);

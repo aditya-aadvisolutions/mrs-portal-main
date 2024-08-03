@@ -118,7 +118,7 @@ export default function UppyUpload(props: any) {
 
     uppy.on('files-added', (files: any) => {
       setDuplicateFileError(false)
-      let clientName = localStorage.getItem('username');
+      let clientName = sessionStorage.getItem('username');
       const date = new Date();
       let folderStructure;
       if (clientName !== null) {
