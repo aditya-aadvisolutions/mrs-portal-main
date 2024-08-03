@@ -63,7 +63,7 @@ const ClientJobList = () => {
   let selectedClient: string = user.id;
 
   sessionStorage.setItem('roleName', user.roleName);
-  sessionStorage.setItem('username', user.firstName);
+  sessionStorage.setItem('username', user.lastName);
 
   sessionStorage.getItem('roleName');
 
