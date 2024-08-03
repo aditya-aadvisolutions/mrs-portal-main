@@ -29,6 +29,8 @@ let downloadCount=0;
 let fileCount=0;
 let modifiedDate;
 let todayDate;
+let firstDownload=0;
+let isFilesVisible=false;
 
 const ClientJobList = () => {
 
@@ -127,26 +129,38 @@ const ClientJobList = () => {
           
           if(value)
           value.forEach((file:any) => {
-              if(dataContext.statusName==='Downloaded'){
-                 
+             if(dataContext.statusName==='Downloaded' || dataContext.statusName==='Completed' ){
+              let timeDiff =0;
+                 if(firstDownload==1){                
                   modifiedDate = new Date(dataContext.modifiedDateTime);
                   console.log('** modifiedDate..',modifiedDate);
                   todayDate = new Date();
                   console.log('** todayDate..',todayDate)
-                  let timeDiff = diff_hours(modifiedDate,todayDate);
+                  timeDiff = diff_hours(modifiedDate,todayDate);
                   console.log('** timeDiff in Hours..',timeDiff);
-
-                  if(timeDiff>48){
+                }
+                  if(timeDiff>48 && !isFilesVisible){
                     content += ``;
+                  }else if(isFilesVisible){
+                    console.log('inside files visible....')
+                    let fileicon = getFileIcon(file.FileExtension);
+                    content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
                   }else{
+                    console.log('inside files visible elsee....')
                     let fileicon = getFileIcon(file.FileExtension);
                     content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
                   }
-
-              }else{
-                let fileicon = getFileIcon(file.FileExtension);
-                content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
-              }
+                }
+                // else if(isFilesVisible){
+                //   let fileicon = getFileIcon(file.FileExtension);
+                //   content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
+                // }
+                
+                
+                // else if(dataContext.statusName==='Completed'){
+                //  let fileicon = getFileIcon(file.FileExtension);
+                //  content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
+                // }
           });
 
           return content;
@@ -163,6 +177,7 @@ const ClientJobList = () => {
         }
         if(fileCount === downloadCount && args.dataContext.statusName==='Completed'){
           updateJobStatus(args.dataContext.id,'Downloaded');
+          firstDownload=1;
           fileCount=0;
           downloadCount=0;
 
@@ -373,6 +388,9 @@ const ClientJobList = () => {
             if (item.value == 'Pending' || item.value == 'In Progress') 
               return { 'value': item.id, 'label': item.value } 
           });
+
+          
+
           dStatus = dStatus.filter((element: any) => !!element);
           //setStatusFilter(status);
         
@@ -382,6 +400,16 @@ const ClientJobList = () => {
 
   const onStatusChange = (newValue: any, actionMeta: any) => {
     let selStatus = newValue ? newValue.map((val: any, index: number) => val.value).join(',') : '';
+
+    if(selStatus =='12F5B379-A6E9-48A2-81E2-6E7249B4895E'){//Completed
+       isFilesVisible = true;
+       console.log('**selStatus',selStatus,' Label: Completed  isFilesVisible',isFilesVisible);
+    }
+   if(selStatus == '23503D95-B250-4185-AFC3-081B3D4051D6'){ //Downloaded
+      isFilesVisible = true;
+      console.log('**selStatus',selStatus,' label: Downloaded  isFilesVisible',isFilesVisible);
+   }
+    
     setStatusFilter(selStatus);
   };
 
