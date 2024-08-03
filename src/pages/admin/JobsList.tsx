@@ -83,6 +83,11 @@ const JobsList = () => {
   const navigate = useNavigate();
   const { submittedValues } = location.state || { submittedValues: [] };
 
+  sessionStorage.setItem('roleName', user.roleName);
+  sessionStorage.setItem('username', user.firstName);
+
+  sessionStorage.getItem('roleName');
+
 
   const uploadFiles = () => {
     const files = {
@@ -747,7 +752,7 @@ function search() {
                 <div className="col-md-2">
                   <div className="form-group">
                       <label>Select Client </label>
-                      <Select options={usersList} isClearable={true} onChange={onClientChange} isMulti={true} closeMenuOnSelect={false}/>
+                      <Select options={usersList} isClearable={true} onChange={onClientChange} isMulti={true} closeMenuOnSelect={true}/>
                   </div>
                 </div>  
                 

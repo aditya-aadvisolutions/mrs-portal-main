@@ -237,16 +237,21 @@ const ClientsList = () => {
   //   }
   // };
 
-  const search =()=> {
+  const search = () => {
     if (initialLoad) {
       setInitialLoad(false);
-    } else {      
-      const filteredData = dataset.filter((item) => {
-        const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
-        const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
-        const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;        
-        return matchesEmail && matchesClient && matchesPhone;
-      });
+    } else {
+      let filteredData = dataset;
+  
+      if (selectedEmail.length || selectedClient.length || selectedPhone.length) {
+        filteredData = dataset.filter((item) => {
+          const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
+          const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
+          const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;
+          return matchesEmail && matchesClient && matchesPhone;
+        });
+      }
+  
       setFilteredData(filteredData);
       setData(filteredData);
     }
@@ -275,28 +280,23 @@ const ClientsList = () => {
   }))
 
   const emailChange = (selectedOptions: any) => {
-    console.log(selectedOptions,"iiiiiiiii");
-    
-    const selectedEmails = selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : '';
-    console.log(selectedEmails,"iiiiiiiiiiiiiii");
-    
-    setEmailFilter(selectedEmails);    
-    search()
+    setEmailFilter(selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : []);
   };
-  console.log();
   
   const clientChange = (selectedOptions: any) => {
     const selectedClients = selectedOptions ? selectedOptions.map((val: any) => val.value).join(' ') : '';
     setClientFilter(selectedClients);
-    search();
-
   };
 
   const phoneChange = (selectedOptions: any) => {
     const selectedPhones = selectedOptions ? selectedOptions.map((val: any) => val.value) : [];
     setPhoneFilter(selectedPhones);
-    search();
-
+  };
+  const reset = () => {
+    setEmailFilter([]);
+    setClientFilter('');
+    setPhoneFilter([]);
+      loadData(false);
   };
 
   return (
@@ -326,10 +326,10 @@ const ClientsList = () => {
                       <label>Search by Client Name</label>
                       <Select
                         options={clientNames}
+                        value={clientNames.filter(option => selectedClient.includes(option.value))}
                         isClearable={true}
                         onChange={clientChange}
                         isMulti={true}
-                        onBlur={search}
                         closeMenuOnSelect={true} 
                         />
                     </div>
@@ -340,10 +340,10 @@ const ClientsList = () => {
                       <label>Search by Email</label>
                       <Select
                         options={emailList}
+                        value={emailList.filter(option => selectedEmail.includes(option.value))}
                         isClearable={true}
                         onChange={emailChange}
                         isMulti={true}
-                        onBlur={search}
                         closeMenuOnSelect={true} 
                         />
                     </div>
@@ -354,11 +354,11 @@ const ClientsList = () => {
                       <label>Search by Phone Number</label>
                       <Select
                         options={phoneList}
+                        value={phoneList.filter(option => selectedPhone.includes(option.value))}
                         isClearable={true}
                         onChange={phoneChange}
                         isMulti={true}
-                        onBlur={search}
-                        closeMenuOnSelect={false} 
+                        closeMenuOnSelect={true} 
                         />
                     </div>
                   </div>
@@ -366,7 +366,7 @@ const ClientsList = () => {
                   <div className="col-md-1">
                   <div className="form-group">
                       <label>&nbsp; </label><br></br>
-                      <Button variant="primary" onClick={(e) => search()}>Search</Button>
+                      <Button variant="secondary" onClick={(e) => reset()}>Reset</Button>
                   </div>
                 </div>  
                 </div>

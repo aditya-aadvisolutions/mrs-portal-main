@@ -213,7 +213,7 @@ const EmployeeProfileTab = ({
     <div className="">
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div className="col-6 ps-0">
-          <h2 className="text-2xl font-bold mb-4"> Employee Profile</h2>
+          <h2 className="text-2xl font-bold mb-4"><i className="fa fa-arrow-left pointer ml-1 mr-2" style={{fontSize:"26px"}} onClick={() => navigate("/employee")} aria-hidden="true"></i><strong> Employee Profile</strong></h2>
         </div>
         <InputGroup className="mb-3" style={{ width: "30%" }}>
         <Form.Control

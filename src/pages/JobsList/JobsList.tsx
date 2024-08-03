@@ -55,7 +55,7 @@ const JobList = () => {
   const authData = localStorage.getItem('authentication');
   const username= authData ? JSON.parse(authData) : { loginName: '' };
   let selectedClient=username?.roleName==="Client" ? user.id : "";
-
+const navigate = useNavigate()
   const status = "FAB98251-70C2-410B-BC09-9B66F9234E30"
   const completedStatus= "12F5B379-A6E9-48A2-81E2-6E7249B4895E"
  
@@ -422,7 +422,7 @@ const JobList = () => {
             <div className="card">
               <div className="card-header d-flex">
                 <div className='col-md-4'>
-                  <h3 className="card-title"style={{ fontSize: "1.8rem" }}><strong>{path} Jobs</strong></h3>
+                  <h3 className="card-title"style={{ fontSize: "1.8rem" }}><i className="fa fa-arrow-left pointer ml-1 mr-2" style={{fontSize:"26px"}} onClick={() => navigate("/")} aria-hidden="true"></i><strong>{path} Jobs</strong></h3>
                 </div>
                 {/* <div className='col-md-8 d-flex flex-row-reverse'>
                   <Button style={{ backgroundColor:'#b8f9d3', color:'black', marginLeft:'5px'}} className='btn-sm' onClick={(e) => navigate('/intake', { state: { isSingle: true } })}>
