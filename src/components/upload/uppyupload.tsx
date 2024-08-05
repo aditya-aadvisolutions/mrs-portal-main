@@ -17,12 +17,18 @@ import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import LookupService from "@app/services/lookupService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Header from "react-bootstrap/ModalHeader";
+import ModalHeader from "react-bootstrap/ModalHeader";
 
 export default function UppyUpload(props: any) {
   let uppy: any;
   const [uploading, setUploading] = useState(false);
   const [duplicateFileError, setDuplicateFileError] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+const [modalFile, setModalFile] = useState<any>('');
+
   const uploadUrl = import.meta.env.VITE_S3_URL;
   const Role = localStorage.getItem("authentication") ? JSON.parse(localStorage.getItem("authentication") as string).roleName : "";
   const { fileNames } = useLocation().state || { fileNames: [] };
@@ -48,9 +54,13 @@ export default function UppyUpload(props: any) {
   useEffect(() => {
 
     const uppy = new Uppy({
+      restrictions: {
+        allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',') : ['.pdf', '.doc', '.docx', '.tif','.tiff']
+      },
       id: "uppyloader",
       autoProceed: false,
       debug: true,
+
       locale: {
         strings: {
           noDuplicates: "File with same name already exists, if you would like to continue uploading please rename and try again",
@@ -145,20 +155,44 @@ export default function UppyUpload(props: any) {
           file.name = "/client" + '/' + newFileName;
         }
 
-       if(!isSingle){
+      //  if(!isSingle){
+      //   if (fileNames.includes(nameWithoutExtension + extension)) {
+      //     toast.error(`File ${nameWithoutExtension + extension} already exists.`);
+      //     uppy.removeFile(file.id);
+      //     setDuplicateFileError(true);
+      //     return;
+      //   }}
+      //   if (!isSingle) {
+      //     if (fileNames.includes(nameWithoutExtension + extension)) {
+      //       const confirmUpload = window.confirm(`File ${nameWithoutExtension + extension} already exists. Do you want to continue uploading?`);
+      //       if (confirmUpload) {
+      //         // Continue uploading the file
+      //         // toast.success(`Uploading ${nameWithoutExtension + extension}`)
+      //         console.log("Continue uploading the file")
+      //       } else {
+      //         uppy.removeFile(file.id);
+      //         setDuplicateFileError(true);
+      //         return;
+      //       }
+      //     }
+
+      // }
+
+      if (!isSingle) {
         if (fileNames.includes(nameWithoutExtension + extension)) {
-          toast.error(`File ${nameWithoutExtension + extension} already exists.`);
-          uppy.removeFile(file.id);
-          setDuplicateFileError(true);
+          // Show the modal instead of using window.confirm
+          setShowModal(true);
+          setModalFile(file);
           return;
         }
-       } 
+      }
+
       }
     })
 
       .setOptions({
         restrictions: {
-          allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',') : ['.pdf', '.doc', '.docx', '.*'],
+          allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',') : ['.pdf', '.doc', '.docx', '.tif','.tiff'],
           maxNumberOfFiles: (props.admin && props.admin === true ? 1 : undefined),
           maxFileSize: 1073741824
         },
@@ -167,6 +201,20 @@ export default function UppyUpload(props: any) {
   }, []);
 
 
+  
+
+
+const handleModalConfirm = () => {
+  // Continue uploading the file
+  console.log("Continue uploading the file");
+  setShowModal(false);
+};
+
+  const handleModalCancel = () => {
+    uppy.removeFile(modalFile.id);
+    setDuplicateFileError(true);
+    setShowModal(false);
+  };
   useEffect(() => {
     return () => {
       uppy?.close({ reason: "unmount" });
@@ -174,5 +222,25 @@ export default function UppyUpload(props: any) {
   }, [props.onCompleteCallback, props.filePreference, Role, uploadedFiles]);
 
 
-  return <div id="uppyUpload"></div>;
+  return <><div id="uppyUpload">
+     <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <ModalHeader placeholder={undefined}>
+          <Modal.Title>Duplicate File Detected</Modal.Title>
+        </ModalHeader>
+
+        <Modal.Body>
+          <p>File {modalFile.name} already exists. Do you want to continue uploading?</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalCancel}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleModalConfirm}>
+            Continue Uploading
+          </Button>
+        </Modal.Footer>
+      </Modal>
+  </div>
+  </>
 }

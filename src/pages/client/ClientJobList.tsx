@@ -254,18 +254,18 @@ const ClientJobList = () => {
               });
             },
           },
-          {
-            command: 'Duplicate',
-            title: 'Duplicate',
-            iconCssClass: 'fa fa-files-o text-info',
-            positionOrder: 66,
-            action: (_e, args) => {
-              confirm('Are you sure you want to Duplicate this record?', { title: 'Confirm', cancelLabel: 'No', okLabel: 'Yes' }).then((res:boolean) => {
-                if(res)
-                deleteJob(args.dataContext.id,'Duplicate');
-              });
-            },
-          },
+          // {
+          //   command: 'Duplicate',
+          //   title: 'Duplicate',
+          //   iconCssClass: 'fa fa-files-o text-info',
+          //   positionOrder: 66,
+          //   action: (_e, args) => {
+          //     confirm('Are you sure you want to Duplicate this record?', { title: 'Confirm', cancelLabel: 'No', okLabel: 'Yes' }).then((res:boolean) => {
+          //       if(res)
+          //       deleteJob(args.dataContext.id,'Duplicate');
+          //     });
+          //   },
+          // },
         ]
       }
     }
@@ -477,17 +477,18 @@ const ClientJobList = () => {
     if (initialLoad) {
       setInitialLoad(false);
     } else {
-      if (jobId.trim() !== '') {
-        const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
-        setFilteredData(filteredData);
-        setData(filteredData);
-      } else if (selectedStatus === '') {
-        setData(dataset);
-      } else {
-        const filteredData = dataset.filter(item => selectedStatus.split(',').includes(item.statusId));
-        setFilteredData(filteredData);
-        setData(filteredData);
-      }
+      // if (jobId.trim() !== '') {
+      //   const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
+      //   setFilteredData(filteredData);
+      //   setData(filteredData);
+      // } else if (selectedStatus === '') {
+      //   setData(dataset);
+      // } else {
+      //   const filteredData = dataset.filter(item => selectedStatus.split(',').includes(item.statusId));
+      //   setFilteredData(filteredData);
+      //   setData(filteredData);
+      // }
+      loadData(false)
     }
   }
   useEffect(() => {
@@ -582,7 +583,7 @@ const ClientJobList = () => {
                       <input className="form-control" type='text' name='txtFilename' onChange={(e) => setFilename(e.target.value)} value={filename} />
                   </div>
                 </div>  
-                <div className="col-md-2">
+                {/* <div className="col-md-2">
                     <div className="form-group">
                       <label>Job Id</label>
                       <input
@@ -593,7 +594,7 @@ const ClientJobList = () => {
                         value={jobId} 
                       />
                     </div>
-                  </div>
+                  </div> */}
 
 
                 <div className="col-md-2">

@@ -25,6 +25,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from 'path';
 import moment from 'moment';
 import { useLocation, useNavigate } from "react-router-dom";
+import confirm from '@app/components/confirm/confirmService';
+import { Form, FormControl } from 'react-bootstrap';
+
 
 
 interface Props { }
@@ -64,6 +67,9 @@ const JobsList = () => {
   const [showNotification, setShowNotification] = useState();
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [filteredClientData, setFilteredClientData] = useState<any[]>([]);
+  const [inputValue,setInputValue] = useState('')
+  const [id, setId] = useState(null);
+
 
   const location = useLocation();
 
@@ -78,9 +84,32 @@ const JobsList = () => {
   const [ clientJobId, setclientJobId ] = useState('');
   const [ fileType, setFileType] = useState('');
   const [showUpload, setShowUpload] = useState(false);
+  const [showPageCount,setShowPageCount] = useState(false)
+  const [pageCount, setPageCount] = useState('');
+
   const handleUploadClose = () => { setShowUpload(false); setJobId(''); dispatch(removeUploadedFiles()); }
   const handleUploadShow = () => setShowUpload(true);
   const navigate = useNavigate();
+  const handlePageCountSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const pageCount = (event.target as HTMLFormElement).pageCount.value;
+    console.log(id, pageCount);
+  }
+  const handlePageCount = (pageCount: any) => {
+    setShowPageCount(false);
+    handlePageCountSubmit(pageCount);
+  };
+  const handlePageCountClose = () => {
+    setShowPageCount(false);
+
+  }
+  const handlePageCountShow = (id:any, pageCount:any) => {
+    console.log(pageCount)
+    setShowPageCount(true);
+    setId(id);
+    setPageCount(pageCount);
+  };
+
   const { submittedValues } = location.state || { submittedValues: [] };
 
   sessionStorage.setItem('roleName', user.roleName);
@@ -88,7 +117,13 @@ const JobsList = () => {
 
   sessionStorage.getItem('roleName');
 
-
+  function formatPageCount(files: any[]) {
+    let pageCount = 0;
+    files.forEach((item: any) => {
+      pageCount += item.PageCount ? item.PageCount : 0;
+    });
+    return pageCount.toString();
+  }
   const uploadFiles = () => {
     const files = {
         jobId: jobId,
@@ -111,7 +146,7 @@ const JobsList = () => {
     
   }
   const columns: Column[] = [
-    { id: 'select', name: '', field: 'select', sortable: true, maxWidth: 50,
+    { id: 'select', name: '', field: 'select', sortable: true, maxWidth: 20,
     formatter: (row, cell, value, colDef, dataContext) => {
       if(dataContext.statusName == 'Pending' || dataContext.statusName == 'In Progress')
         return '<input type="checkbox">'
@@ -123,7 +158,9 @@ const JobsList = () => {
         args.dataContext.selected = e.target.checked;
     }
      },
-    { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:50 },
+    // { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:50 },
+    { id: 'createdDateTime', name: 'DATE', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, minWidth: 85 },
+
     // {
     //   id: 'expandCollapse',
     //   field: 'expandCollapse',
@@ -148,8 +185,11 @@ const JobsList = () => {
     //   }
     // },
 
-    { id: 'userName', name: 'CLIENT', field: 'userName', minWidth: 80 },
-    // { id: 'createdDateTime', name: 'DATE', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
+    { id: 'userName', name: 'CLIENT', field: 'userName', minWidth: 80,
+      formatter: (row, cell, value, colDef, dataContext) => {
+        return `<span class="pointer" title=" ${value}">${value}</span>`;
+      }
+     },
     {
       id: 'files', name: 'FILE NAME <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'files', minWidth:150,sortable: true,
       formatter: (row, cell, value, colDef, dataContext) => {
@@ -185,7 +225,7 @@ const JobsList = () => {
       formatter: (row, cell, value, colDef, dataContext) => {
         return value ? `<div title='Merge Upload'>M(${dataContext.files.length})</div>` : `<div title='Single Upload'>S(${dataContext.files.length})</div>`;
       },
-      cssClass: 'text-left px-4'
+      cssClass: 'text-right px-4'
     },
     { id: 'AssignTo', name: 'ASSIGN TO', field: 'AssignTo', sortable: true, maxWidth: 120 },
     // { id: 'l1User', name: 'L1 User', field: 'l1User', sortable: true, maxWidth: 100 },
@@ -249,7 +289,11 @@ const JobsList = () => {
         //updateJobStatus(args.dataContext.id,'Downloaded');
       }
     },
-    { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 100 },
+    { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 100,
+      formatter: (row, cell, value, colDef, dataContext) => {
+        return `<span class = "pointer" title=" ${value}">${value}</span>`;
+      }
+     },
     { id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 70,
       formatter: (row, cell, value, colDef, dataContext) => {
         let pageCount = 0;
@@ -258,7 +302,7 @@ const JobsList = () => {
         });
         return pageCount.toString();
       },
-      cssClass: 'text-center px-4'
+      cssClass: 'text-right px-4'
     },
     { id: 'tat', name: 'TAT', field: 'tat', maxWidth: 100 
       ,formatter: (row, cell, value, colDef, dataContext) => {
@@ -288,7 +332,7 @@ const JobsList = () => {
         }
       },
       // minWidth: 30,
-      // maxWidth: 40,
+      maxWidth: 30,
       cssClass: 'text-primary',
       onCellClick: (_e: any, args: OnEventArgs) => {
         setShowNotification(args.dataContext)
@@ -315,6 +359,16 @@ const JobsList = () => {
           return (args.dataContext.statusName !== 'Pending'); 
         },
         commandItems: [
+          {
+            command: 'Edit Page Count',
+            title: 'Edit Page Count',
+            iconCssClass: 'fa fa-pen text-info',
+            positionOrder: 66,
+
+            action: (_e, args) => {
+              handlePageCountShow(args.dataContext.id, formatPageCount(args.dataContext.files));
+            },
+          },
           {
             command: 'upload',
             title: 'Upload Word File',
@@ -443,21 +497,33 @@ const JobsList = () => {
             },
           },
           {
-            command: 'split',
-            title: 'Split Job',
-            iconCssClass: 'fa fa-clone text-info',
+            command: 'Duplicate',
+            title: 'Duplicate',
+            iconCssClass: 'fa fa-files-o text-info',
             positionOrder: 66,
-            itemVisibilityOverride: (args) => true,
             action: (_e, args) => {
-              let arr = JSON.parse(args.dataContext.jobFiles);
-              navigate("/split-job", {
-                state: { jobId : args.dataContext.jobId,
-                  pagecount: arr.JobFiles[0].PageCount || '',
-                  name:args.dataContext.name
-                },
+              confirm('Are you sure you want to Duplicate this record?', { title: 'Confirm', cancelLabel: 'No', okLabel: 'Yes' }).then((res:boolean) => {
+                if(res)
+                deleteJob(args.dataContext.id,'Duplicate');
               });
-            }
+            },
           },
+          // {
+            // command: 'split',
+            // title: 'Split Job',
+            // iconCssClass: 'fa fa-clone text-info',
+            // positionOrder: 66,
+            // itemVisibilityOverride: (args) => true,
+            // action: (_e, args) => {
+            //   let arr = JSON.parse(args.dataContext.jobFiles);
+            //   navigate("/split-job", {
+            //     state: { jobId : args.dataContext.jobId,
+            //       pagecount: arr.JobFiles[0].PageCount || '',
+            //       name:args.dataContext.name
+            //     },
+            //   });
+            // }
+          // },
           {
             command: 'merge', title: 'Merge Job', positionOrder: 64,
             iconCssClass: 'fa fa-compress text-info', cssClass: 'red', textCssClass: 'text-italic color-danger-light',
@@ -511,6 +577,18 @@ const JobsList = () => {
 
   function reactGridReady(reactGridInstance: SlickgridReactInstance) {
     setGrid(reactGridInstance);
+  }
+
+  const deleteJob = (jobId:string, status: string) => {
+    JobService.deleteJob(jobId, user.id, status).then((response: any) => {
+      if (response.isSuccess) {
+        toast.success(`Job ${status} successfully.`);
+
+        reloadGridData();
+      }
+    }).finally(() => {
+      
+    });
   }
 
   const getFileIcon = (fileExt:string) => {
@@ -663,17 +741,18 @@ function search() {
   if (initialLoad) {
     setInitialLoad(false);
   } else {
-    if (jobId.trim() !== '') {
-      const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
-      setFilteredData(filteredData);
-      setData(filteredData);
-    } else if (selectedStatus === '') {
-      setData(dataset);
-    } else {
-      const filteredData = dataset.filter(item => selectedStatus.split(',').includes(item.statusId));
-      setFilteredData(filteredData);
-      setData(filteredData);
-    }
+    // if (jobId.trim() !== '') {
+    //   const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
+    //   setFilteredData(filteredData);
+    //   setData(filteredData);
+    // } else if (selectedStatus === '') {
+    //   setData(dataset);
+    // } else {
+    //   const filteredData = dataset.filter(item => selectedStatus.split(',').includes(item.statusId));
+    //   setFilteredData(filteredData);
+    //   setData(filteredData);
+    // }
+    loadData(false)
   }
 }
 
@@ -764,7 +843,7 @@ function search() {
                   </div>
                 </div>  
 
-                <div className="col-md-1">
+                {/* <div className="col-md-1">
                     <div className="form-group">
                       <label>Job Id</label>
                       <input
@@ -775,7 +854,7 @@ function search() {
                         value={jobId} 
                       />
                     </div>
-                  </div>
+                  </div> */}
 
 
                 <div className="col-md-2">
@@ -854,7 +933,35 @@ function search() {
       </Modal>
 
       <NorificationModal title='alert' okBottonText='OK' cancelBottonText='Close' details={showNotification} ref={childRef} reloadGridData={reloadGridData}></NorificationModal>
+
+      <Modal show={showPageCount} onHide={handleClose}>
+        <ModalHeader placeholder={undefined}>
+          <Modal.Title>Update Page Count</Modal.Title>
+        </ModalHeader>
+        <Modal.Body>
+          <Form onSubmit={handlePageCountSubmit}>
+            <FormControl
+              type="text"
+              value={pageCount}
+              onChange={(event) => setPageCount(event.target.value)}
+              // placeholder="Enter some text"
+            />
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handlePageCountClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handlePageCount}>
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+
     </>
+
+
 
   );
 
