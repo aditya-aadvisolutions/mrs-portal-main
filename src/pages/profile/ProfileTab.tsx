@@ -353,6 +353,7 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
                       value={type}
                       onChange={handleChange}
                       checked={values.filePreference.includes(type)}
+                      tabIndex={11}
                     />
                     <label className="form-check-label" htmlFor={type}>
                       {type.toUpperCase()}
@@ -522,6 +523,7 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
                     setFieldValue("logo", event.currentTarget.files[0])
                   }
                   isInvalid={touched.logo && !!errors.logo}
+                  tabIndex={12}
                 />
                 {touched.logo && errors.logo && (
                   <div
@@ -537,8 +539,8 @@ const ProfileTab = ({ isActive, userId }: { isActive: boolean, userId: string })
         </div>
 
         <div className="d-flex justify-content-end">
-          <Button type="submit" variant="primary" disabled={isAuthLoading}>
-            {isAuthLoading ? "Updating..." : "Update"}
+          <Button type="submit" variant="primary" disabled={isAuthLoading}tabIndex={13}>
+            <strong>{isAuthLoading ? "Updating..." : "Update"}</strong>
           </Button>
         </div>
       </form>

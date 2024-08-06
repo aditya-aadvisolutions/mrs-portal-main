@@ -613,7 +613,7 @@ const ClientJobList = () => {
                 <div className="col-md-2">
                   <div className="form-group">
                       <label>&nbsp; </label><br></br>
-                     <Button variant="primary" onClick={(e) => search()}>Search</Button>
+                     <Button variant="primary" onClick={(e) => search()}><strong>Search</strong></Button>
                   </div>
                 </div>  
                  

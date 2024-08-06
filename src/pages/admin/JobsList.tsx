@@ -29,7 +29,6 @@ import confirm from '@app/components/confirm/confirmService';
 import { Form, FormControl } from 'react-bootstrap';
 
 
-
 interface Props { }
 
 interface State {
@@ -93,7 +92,6 @@ const JobsList = () => {
   const handlePageCountSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const pageCount = (event.target as HTMLFormElement).pageCount.value;
-    console.log(id, pageCount);
   }
   const handlePageCount = (pageCount: any) => {
     setShowPageCount(false);
@@ -810,7 +808,7 @@ function search() {
             <div className="card">
             <div className="card-header d-flex">
                 <div className='col-md-4'>
-                  <h3 className="card-title" style={{ fontSize: "1.8rem" }}><strong>Jobs</strong></h3>
+                <h3 className="card-title" style={{ fontSize: "1.8rem" }}><i className="fa fa-arrow-left pointer ml-1 mr-2" style={{fontSize:"26px"}} onClick={() => navigate("/client-list")} aria-hidden="true"></i><strong>Jobs</strong></h3>
                 </div>
                 <div className='col-md-8 d-flex flex-row-reverse'>
                   {/* <Button className='btn-sm btn-success'>
@@ -874,14 +872,14 @@ function search() {
                 <div className="col-md-1">
                   <div className="form-group">
                       <label>&nbsp; </label><br></br>
-                      <Button variant="primary" onClick={(e) => search()}>Search</Button>
+                      <Button variant="primary" onClick={(e) => search()}><strong>Search</strong></Button>
                   </div>
                 </div>  
                 </div>
                <div className='row'>
                 <div className='col-md-12'>
                 <Button className='btn-sm btn-success' onClick={mergeJobs}>
-                    Merge Selected Jobs
+                   <strong>Merge Selected Jobs</strong> 
                   </Button>
                 </div>
                

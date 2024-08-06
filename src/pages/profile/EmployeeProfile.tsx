@@ -51,7 +51,7 @@ const EmployeeProfile = () => {
                     />
                   </div>
                   <h3 className="profile-username text-center">
-                    Employee
+                   <strong>Employee</strong>
                   </h3>
                 </div>
               </div>

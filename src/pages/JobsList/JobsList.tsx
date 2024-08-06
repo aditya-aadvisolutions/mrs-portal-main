@@ -55,9 +55,15 @@ const JobList = () => {
   const authData = localStorage.getItem('authentication');
   const username= authData ? JSON.parse(authData) : { loginName: '' };
   let selectedClient=username?.roleName==="Client" ? user.id : "";
-const navigate = useNavigate()
+  const navigate = useNavigate()
   const status = "FAB98251-70C2-410B-BC09-9B66F9234E30"
   const completedStatus= "12F5B379-A6E9-48A2-81E2-6E7249B4895E"
+  const InProgressStatus= "4A6B36E0-FA7C-4F8D-8FE3-4E10A57D07B6"
+  const VoidStatus= "47F9E440-8044-4477-ACCA-33AADB632C4F"
+  const DuplicateStatus="CD98C47A-864D-4A80-A25D-E99FD5576E4D"
+  const DownloadedStatus="23503D95-B250-4185-AFC3-081B3D4051D6"
+  // const newPath = "Pending"?status:("completedStatus"? completedStatus :("InProgressStatus"? InProgressStatus :("VoidStatus"? VoidStatus : ("DuplicateStatus"?DuplicateStatus : DownloadedStatus))))
+ 
  
   const columns: Column[] = [
     { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
@@ -248,7 +254,10 @@ const navigate = useNavigate()
     setLoader(true);
     let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : '';
     let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : '';
-    JobService.getJobs(user.id,path=="Pending"?status:completedStatus,selectedClient, filename, fDate, tDate,initialLoad).then((response: any) => {
+
+    const statusId=path=="Pending"?status:path=="InProgress"?InProgressStatus:path=="Void"?VoidStatus:path=="Completed"?completedStatus:path=="Downloaded"?DownloadedStatus:DuplicateStatus
+
+    JobService.getJobs(user.id,statusId,selectedClient, filename, fDate, tDate,initialLoad).then((response: any) => {
       if (response.isSuccess) {
         let data = response.data.map((item: any) => {
           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];

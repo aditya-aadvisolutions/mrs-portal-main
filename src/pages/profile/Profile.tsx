@@ -51,7 +51,7 @@ const Profile = () => {
                     />
                   </div>
                   <h3 className="profile-username text-center">
-                    Client
+                    <strong>Client</strong>
                   </h3>
                 </div>
               </div>
