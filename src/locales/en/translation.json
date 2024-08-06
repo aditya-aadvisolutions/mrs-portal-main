@@ -3,7 +3,7 @@
     "label": {
       "signIn": "Sign in to start your session",
       "rememberMe": "Remember Me",
-      "forgotPass": "I forgot my password",
+      "forgotPass": "forgot my password?",
       "registerNew": "Register a new membership"
     },
     "button": {

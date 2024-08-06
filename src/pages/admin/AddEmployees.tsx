@@ -233,7 +233,7 @@ const AddEmployees = () => {
                   value={values.email}
                   isValid={touched.email && !errors.email}
                   isInvalid={touched.email && !!errors.email}
-                  tabIndex={5}
+                  tabIndex={3}
                 />
                 {touched.email && errors.email ? (
                   <div
@@ -265,7 +265,7 @@ const AddEmployees = () => {
                   value={values.role}
                   isValid={touched.role && !errors.role}
                   isInvalid={touched.role && !!errors.role}
-                  tabIndex={9}
+                  tabIndex={5}
                 >
                   <option value="" label="Select Role" />
                   {roleList.map((role, index) => (
@@ -298,7 +298,7 @@ const AddEmployees = () => {
                   value={values.address1}
                   isValid={touched.address1 && !errors.address1}
                   isInvalid={touched.address1 && !!errors.address1}
-                  tabIndex={6}
+                  tabIndex={7}
                 />
                 {touched.address1 && errors.address1 && (
                   <div
@@ -324,7 +324,7 @@ const AddEmployees = () => {
                   value={values.city}
                   isValid={touched.city && !errors.city}
                   isInvalid={touched.city && !!errors.city}
-                  tabIndex={8}
+                  tabIndex={9}
                 />
                 {touched.city && errors.city && (
                   <div
@@ -351,7 +351,7 @@ const AddEmployees = () => {
                   value={values.country}
                   isValid={touched.country && !errors.country}
                   isInvalid={touched.country && !!errors.country}
-                  tabIndex={10}
+                  tabIndex={11}
                 >
                   <option value="" label="Select country" />
                   {countryList.map((state, index) => (
@@ -442,7 +442,7 @@ const AddEmployees = () => {
                   value={values.manager}
                   isValid={touched.manager && !errors.manager}
                   isInvalid={touched.manager && !!errors.manager}
-                  tabIndex={9}
+                  tabIndex={6}
                 >
                   <option value="" label="Select Manager" />
                   {managersList.map((manager, index) => (
@@ -474,7 +474,7 @@ const AddEmployees = () => {
                   value={values.address2}
                   isValid={touched.address2 && !errors.address2}
                   isInvalid={touched.address2 && !!errors.address2}
-                  tabIndex={7}
+                  tabIndex={8}
                 />
                 {touched.address2 && errors.address2 && (
                   <div
@@ -499,7 +499,7 @@ const AddEmployees = () => {
                   value={values.state}
                   isValid={touched.state && !errors.state}
                   isInvalid={touched.state && !!errors.state}
-                  tabIndex={9}
+                  tabIndex={10}
                 >
                   <option value="" label="Select state" />
                   {statesList.map((state, index) => (
@@ -531,6 +531,7 @@ const AddEmployees = () => {
                     setFieldValue("logo", event.currentTarget.files[0])
                   }
                   isInvalid={touched.logo && !!errors.logo}
+                  tabIndex={12}
                 />
                 {touched.logo && errors.logo && (
                   <div
@@ -563,7 +564,7 @@ const AddEmployees = () => {
                       value={values.loginName}
                       isValid={touched.loginName && !errors.loginName}
                       isInvalid={touched.loginName && !!errors.loginName}
-                      tabIndex={3}
+                      tabIndex={13}
                     />
                     {touched.loginName && errors.loginName && (
                       <div
@@ -590,7 +591,7 @@ const AddEmployees = () => {
                       value={values.passwordRetype}
                       isValid={touched.passwordRetype && !errors.passwordRetype}
                       isInvalid={touched.passwordRetype && !!errors.passwordRetype}
-                      tabIndex={12}
+                      tabIndex={15}
                     />
                     {touched.passwordRetype && errors.passwordRetype ? (
                       <div
@@ -625,7 +626,7 @@ const AddEmployees = () => {
                       value={values.password}
                       isValid={touched.password && !errors.password}
                       isInvalid={touched.password && !!errors.password}
-                      tabIndex={11}
+                      tabIndex={14}
                     />
                     {touched.password && errors.password ? (
                       <div
@@ -660,6 +661,7 @@ const AddEmployees = () => {
                 loading={isAuthLoading}
                 disabled={isGoogleAuthLoading || isFacebookAuthLoading}
                 onClick={handleSubmit as any}
+                tabIndex={16}
               >
                 Submit
               </Button>

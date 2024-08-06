@@ -335,7 +335,7 @@ const EmployeeProfileTab = ({
                   value={values.role}
                   isValid={touched.role && !errors.role}
                   isInvalid={touched.role && !!errors.role}
-                  tabIndex={9}
+                  tabIndex={7}
                 >
                   <option value="" label="Select Role" />
                   {roleList.map((role, index) => (
@@ -366,7 +366,7 @@ const EmployeeProfileTab = ({
                   value={values.address2}
                   isValid={touched.address2 && !errors.address2}
                   isInvalid={touched.address2 && !!errors.address2}
-                  tabIndex={7}
+                  tabIndex={9}
                 />
                 {touched.address2 && errors.address2 && (
                   <div
@@ -389,7 +389,7 @@ const EmployeeProfileTab = ({
                   value={values.state}
                   isValid={touched.state && !errors.state}
                   isInvalid={touched.state && !!errors.state}
-                  tabIndex={9}
+                  tabIndex={11}
                 >
                   <option value="" label="Select state" />
                   {statesList.map((state, index) => (
@@ -415,11 +415,12 @@ const EmployeeProfileTab = ({
                   id="logo"
                   name="logo"
                   type="file"
-                  placeholder="Upload Logo"
+                  placeholder="Upload Logo" 
                   onChange={(event: any) =>
                     setFieldValue("logo", event.currentTarget.files[0])
                   }
                   isInvalid={touched.logo && !!errors.logo}
+                  tabIndex={13}
                 />
                 {touched.logo && errors.logo && (
                   <div
@@ -509,7 +510,7 @@ const EmployeeProfileTab = ({
                   value={values.manager}
                   isValid={touched.manager && !errors.manager}
                   isInvalid={touched.manager && !!errors.manager}
-                  tabIndex={9}
+                  tabIndex={6}
                 >
                   <option value="" label="Select Manager" />
                   {managersList.map((manager, index) => (
@@ -540,7 +541,7 @@ const EmployeeProfileTab = ({
                   value={values.address1}
                   isValid={touched.address1 && !errors.address1}
                   isInvalid={touched.address1 && !!errors.address1}
-                  tabIndex={6}
+                  tabIndex={8}
                 />
                 {touched.address1 && errors.address1 && (
                   <div
@@ -565,7 +566,7 @@ const EmployeeProfileTab = ({
                   value={values.city}
                   isValid={touched.city && !errors.city}
                   isInvalid={touched.city && !!errors.city}
-                  tabIndex={8}
+                  tabIndex={10}
                 />
                 {touched.city && errors.city && (
                   <div
@@ -588,7 +589,7 @@ const EmployeeProfileTab = ({
                   value={values.country}
                   isValid={touched.country && !errors.country}
                   isInvalid={touched.country && !!errors.country}
-                  tabIndex={10}
+                  tabIndex={12}
                 >
                   <option value="" label="Select country" />
                   {countryList.map((state, index) => (
@@ -611,8 +612,8 @@ const EmployeeProfileTab = ({
         </div>
 
         <div className="d-flex justify-content-end">
-          <Button type="submit" variant="primary" disabled={isAuthLoading}>
-            {isAuthLoading ? "Updating..." : "Update"}
+          <Button type="submit" variant="primary" disabled={isAuthLoading} tabIndex={14}>
+           <strong> {isAuthLoading ? "Updating..." : "Update"}</strong>
           </Button>
         </div>
       </form>
