@@ -1,4 +1,4 @@
-import { Column ,Formatters, GridOption, OnEventArgs, SlickgridReact, SlickgridReactInstance, SlickGrid, MenuCommandItem } from 'slickgrid-react';
+import { Column, Formatters, GridOption, OnEventArgs, SlickgridReact, SlickgridReactInstance, SlickGrid, MenuCommandItem } from 'slickgrid-react';
 import { useEffect, useRef, useState } from 'react';
 import JobService from '@app/services/jobService';
 import LookupService from '@app/services/lookupService';
@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import store from '../../store/store';
 import IUser from '../../store/Models/User';
 import UppyUpload from "@app/components/upload/uppyupload";
-import { removeUploadedFiles } from '@store/reducers/fileupload';import { saveAs } from 'file-saver';
+import { removeUploadedFiles } from '@store/reducers/fileupload'; import { saveAs } from 'file-saver';
 import DownloadZipService from '@app/services/downloadZipService';
 
 import ApiService from '@app/services/Api.service';
@@ -46,8 +46,6 @@ let grid1!: SlickGrid;
 const JobsList = () => {
 
   const user = useSelector((state: IUser) => store.getState().auth);
-  
-  
   const dispatch = useDispatch();
   const [reactGrid, setGrid] = useState<SlickgridReactInstance>();
   const [dataset, setData] = useState<any[]>([]);
@@ -65,9 +63,9 @@ const JobsList = () => {
   const [initialLoad, setInitialLoad] = useState(true);
   const [showNotification, setShowNotification] = useState();
   const [filteredData, setFilteredData] = useState<any[]>([]);
-  const [filteredClientData, setFilteredClientData] = useState<any[]>([]);
-  const [inputValue,setInputValue] = useState('')
   const [id, setId] = useState(null);
+  const [progress, setProgress] = useState<any>(0);
+  const [showProgressBar, setShowProgressBar] = useState(false);
 
 
   const location = useLocation();
@@ -79,12 +77,14 @@ const JobsList = () => {
   const handleShow = () => setShow(true);
 
   // upload modal
-  const [ jobId, setJobId ] = useState('');
-  const [ clientJobId, setclientJobId ] = useState('');
-  const [ fileType, setFileType] = useState('');
+  const [jobId, setJobId] = useState('');
+  const [clientJobId, setclientJobId] = useState('');
+  const [fileType, setFileType] = useState('');
   const [showUpload, setShowUpload] = useState(false);
-  const [showPageCount,setShowPageCount] = useState(false)
+  const [showPageCount, setShowPageCount] = useState(false)
   const [pageCount, setPageCount] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState('');
 
   const handleUploadClose = () => { setShowUpload(false); setJobId(''); dispatch(removeUploadedFiles()); }
   const handleUploadShow = () => setShowUpload(true);
@@ -101,7 +101,7 @@ const JobsList = () => {
     setShowPageCount(false);
 
   }
-  const handlePageCountShow = (id:any, pageCount:any) => {
+  const handlePageCountShow = (id: any, pageCount: any) => {
     console.log(pageCount)
     setShowPageCount(true);
     setId(id);
@@ -124,38 +124,36 @@ const JobsList = () => {
   }
   const uploadFiles = () => {
     const files = {
-        jobId: jobId,
-        UploadFiles: store.getState().uploadfile,
-        createdBy: user.id,
+      jobId: jobId,
+      UploadFiles: store.getState().uploadfile,
+      createdBy: user.id,
     }
     ApiService.requests.post('Upload/AdminFileUpload', files)
-            .then((response) => {
-                if(response.isSuccess)
-                {
-                    toast.success('File uploaded successfully');
-                    handleUploadClose();
-                    reloadGridData();
-                }
-                else
-                {
-                    toast.error((response as AxiosResponse).data);
-                }
-            });
-    
+      .then((response) => {
+        if (response.isSuccess) {
+          toast.success('File uploaded successfully');
+          handleUploadClose();
+          reloadGridData();
+        }
+        else {
+          toast.error((response as AxiosResponse).data);
+        }
+      });
   }
   const columns: Column[] = [
-    { id: 'select', name: '', field: 'select', sortable: true, maxWidth: 20,
-    formatter: (row, cell, value, colDef, dataContext) => {
-      if(dataContext.statusName == 'Pending' || dataContext.statusName == 'In Progress')
-        return '<input type="checkbox">'
-      else
-        return '';
+    {
+      id: 'select', name: '', field: 'select', sortable: true, maxWidth: 20,
+      formatter: (row, cell, value, colDef, dataContext) => {
+        if (dataContext.statusName == 'Pending' || dataContext.statusName == 'In Progress')
+          return '<input type="checkbox">'
+        else
+          return '';
+      },
+      onCellClick: (e: any, args: OnEventArgs) => {
+        if (e.target && e.target.type == 'checkbox')
+          args.dataContext.selected = e.target.checked;
+      }
     },
-    onCellClick: (e: any, args: OnEventArgs) => {
-      if(e.target && e.target.type == 'checkbox')
-        args.dataContext.selected = e.target.checked;
-    }
-     },
     // { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:50 },
     { id: 'createdDateTime', name: 'DATE', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, minWidth: 85 },
 
@@ -168,7 +166,7 @@ const JobsList = () => {
     //   formatter: (row, cell, value, colDef, dataContext) => {
     //     const isExpanded = dataContext.isExpanded;
     //     const iconClass = isExpanded ? 'fa-chevron-up' : 'fa-chevron-down';
-    
+
     //     return `<div>
     //               <i class="fa ${iconClass} pointer" data-row="${row}"></i>
     //             </div>`;
@@ -183,22 +181,22 @@ const JobsList = () => {
     //   }
     // },
 
-    { id: 'userName', name: 'CLIENT', field: 'userName', minWidth: 80,
+    {
+      id: 'userName', name: 'CLIENT', field: 'userName', minWidth: 80,
       formatter: (row, cell, value, colDef, dataContext) => {
         return `<span class="pointer" title=" ${value}">${value}</span>`;
       }
-     },
+    },
     {
-      id: 'files', name: 'FILE NAME <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'files', minWidth:150,sortable: true,
+      id: 'files', name: 'FILE NAME <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'files', minWidth: 150, sortable: true,
       formatter: (row, cell, value, colDef, dataContext) => {
-        if (dataContext.isSingleJob)
-          {
-            let title = dataContext.name ? dataContext.name : dataContext.jobId;
-            let fileName = dataContext.name ? dataContext.name : dataContext.jobId + '.zip';
-             return value.length > 0 ? `<i class="fa fa-file-archive-o text-info" aria-hidden="true"></i> <a href="#" class="pointer" title=${title}>${fileName}</a>` : '';
-          }
-        else{
-          let icon =  getFileIcon(value[0].FileExtension);
+        if (dataContext.isSingleJob) {
+          let title = dataContext.name ? dataContext.name : dataContext.jobId;
+          let fileName = dataContext.name ? dataContext.name : dataContext.jobId + '.zip';
+          return value.length > 0 ? `<i class="fa fa-file-archive-o text-info" aria-hidden="true"></i> <a href="#" class="pointer" title=${title}>${fileName}</a>` : '';
+        }
+        else {
+          let icon = getFileIcon(value[0].FileExtension);
           return value.length > 0 ? `<i class="fa ${icon}" aria-hidden="true"></i> <a href="#" class="pointer" title="${dataContext.name}">${dataContext.name}</a>` : '';
         }
       },
@@ -211,9 +209,10 @@ const JobsList = () => {
         else {
           let fileInfo: any = args.dataContext.files[0];
           //window.open(fileInfo.SourceFilePath,'_blank');
+
           downloadFile(fileInfo);
         }
-        updateJobStatus(args.dataContext.id,'In Progress');
+        updateJobStatus(args.dataContext.id, 'In Progress');
       }
     },
     // { id: 'name', name: 'Name', field: 'name', sortable: true },
@@ -229,8 +228,8 @@ const JobsList = () => {
     // { id: 'l1User', name: 'L1 User', field: 'l1User', sortable: true, maxWidth: 100 },
     // { id: 'l2User', name: 'L2 User', field: 'l2User', sortable: true, maxWidth: 100 },
     // { id: 'l3User', name: 'L3 User', field: 'l3User', sortable: true, maxWidth: 100 },
-    
-    
+
+
     // {
     //   id: 'uploadFiles', name: 'FILES <i class="fa fa-upload text-success ml-1" aria-hidden="true"></i>', field: 'uploadFiles', sortable: true, minWidth:100,
     //   formatter: (row, cell, value, colDef, dataContext) => {
@@ -265,45 +264,49 @@ const JobsList = () => {
       formatter: (row, cell, value, colDef, dataContext) => {
         if (value.length == 0)
           return '';
-        else{
-          
+        else {
+
           let content = '';
-          if(value)
-          value.forEach((file:any) => {
+          if (value)
+            value.forEach((file: any) => {
               let fileicon = getFileIcon(file.FileExtension);
               content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
-          });
+            });
 
           return content;
         }
-          
+
       },
       onCellClick: (e: any, args: OnEventArgs) => {
         let fileid = e.target.attributes['data-id'];
-        if(fileid.value){
-          let fileinfo = args.dataContext.uploadFiles.find((item:any) => item.Id == fileid.value);
+        if (fileid.value) {
+          let fileinfo = args.dataContext.uploadFiles.find((item: any) => item.Id == fileid.value);
+
           downloadFile(fileinfo);
         }
         //updateJobStatus(args.dataContext.id,'Downloaded');
       }
     },
-    { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 100,
+    {
+      id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 100,
       formatter: (row, cell, value, colDef, dataContext) => {
         return `<span class = "pointer" title=" ${value}">${value}</span>`;
       }
-     },
-    { id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 70,
+    },
+    {
+      id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 70,
       formatter: (row, cell, value, colDef, dataContext) => {
         let pageCount = 0;
-        value.forEach((item:any) => {
-            pageCount += item.PageCount ? item.PageCount : 0;
+        value.forEach((item: any) => {
+          pageCount += item.PageCount ? item.PageCount : 0;
         });
         return pageCount.toString();
       },
       cssClass: 'text-right px-4'
     },
-    { id: 'tat', name: 'TAT', field: 'tat', maxWidth: 100 
-      ,formatter: (row, cell, value, colDef, dataContext) => {
+    {
+      id: 'tat', name: 'TAT', field: 'tat', maxWidth: 100
+      , formatter: (row, cell, value, colDef, dataContext) => {
         if (typeof value === 'string' && value.endsWith("Hours")) {
           return value.replace("Hours", "Hrs");
         } else {
@@ -314,7 +317,7 @@ const JobsList = () => {
     {
       id: 'notification',
       field: 'unReadMessages',
-      name:` <a href="#" class="pointer" title="comments"><i class="fa fa-commenting pointer"></i></a>`,
+      name: ` <a href="#" class="pointer" title="comments"><i class="fa fa-commenting pointer"></i></a>`,
       excludeFromColumnPicker: true,
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
@@ -345,8 +348,8 @@ const JobsList = () => {
       field: 'id',
       maxWidth: 100,
       formatter: (row, cell, value, colDef, dataContext) => {
-        if(dataContext.statusName !== 'Pending')
-          return `<div class="btn btn-default btn-xs" >Action <i class="fa fa-caret-down"></i></div>`;  
+        if (dataContext.statusName !== 'Pending')
+          return `<div class="btn btn-default btn-xs" >Action <i class="fa fa-caret-down"></i></div>`;
         else
           return '';
       },
@@ -354,7 +357,7 @@ const JobsList = () => {
         //commandTitle: 'Commands',
         // width: 200,
         menuUsabilityOverride: function (args) {
-          return (args.dataContext.statusName !== 'Pending'); 
+          return (args.dataContext.statusName !== 'Pending');
         },
         commandItems: [
           {
@@ -374,18 +377,17 @@ const JobsList = () => {
             positionOrder: 66,
             itemVisibilityOverride(args) {
               let isShow = (args.dataContext.filePreference as string).split(',').findIndex((x) => x == '.doc' || x == '.docx') > -1
-              if(args.dataContext.uploadFiles.length == 0)
+              if (args.dataContext.uploadFiles.length == 0)
                 return isShow
-              else
-              {
-                let fileexits = args.dataContext.uploadFiles.find((file:any) => file.FileExtension == '.doc' || file.FileExtension == '.docx');
+              else {
+                let fileexits = args.dataContext.uploadFiles.find((file: any) => file.FileExtension == '.doc' || file.FileExtension == '.docx');
                 return isShow && !fileexits;
               }
             },
             action: (_e, args) => {
-                setJobId(args.dataContext.id);
-                setFileType('.docx');
-                handleUploadShow();         
+              setJobId(args.dataContext.id);
+              setFileType('.docx');
+              handleUploadShow();
             },
           },
           {
@@ -395,40 +397,38 @@ const JobsList = () => {
             positionOrder: 66,
             itemVisibilityOverride(args) {
               let isShow = (args.dataContext.filePreference as string).split(',').findIndex((x) => x == '.doc' || x == '.docx') > -1
-              if(args.dataContext.uploadFiles.length > 0)
-              {
-                let fileexits = args.dataContext.uploadFiles.find((file:any) => file.FileExtension == '.doc' || file.FileExtension == '.docx');
+              if (args.dataContext.uploadFiles.length > 0) {
+                let fileexits = args.dataContext.uploadFiles.find((file: any) => file.FileExtension == '.doc' || file.FileExtension == '.docx');
                 return isShow && fileexits;
               }
-              else 
+              else
                 return false;
 
             },
             action: (_e, args) => {
-                setJobId(args.dataContext.id);
-                setFileType('.docx');
-                handleUploadShow();
+              setJobId(args.dataContext.id);
+              setFileType('.docx');
+              handleUploadShow();
             },
           },
           {
-            command: 'upload', 
+            command: 'upload',
             title: 'Upload PDF File',
             iconCssClass: 'fa fa-upload text-success',
             positionOrder: 66,
-            itemVisibilityOverride(args) { 
+            itemVisibilityOverride(args) {
               let isShow = (args.dataContext.filePreference as string).split(',').findIndex((x) => x == '.pdf') > -1;
-              if(args.dataContext.uploadFiles.length == 0)
+              if (args.dataContext.uploadFiles.length == 0)
                 return isShow
-              else
-              {
-                let fileexits = args.dataContext.uploadFiles.find((file:any) => file.FileExtension == '.pdf');
+              else {
+                let fileexits = args.dataContext.uploadFiles.find((file: any) => file.FileExtension == '.pdf');
                 return isShow && !fileexits;
               }
             },
             action: (_e, args) => {
               setJobId(args.dataContext.id);
-                setFileType('.pdf');
-                handleUploadShow();
+              setFileType('.pdf');
+              handleUploadShow();
             },
           },
           {
@@ -438,18 +438,17 @@ const JobsList = () => {
             positionOrder: 66,
             itemVisibilityOverride(args) {
               let isShow = (args.dataContext.filePreference as string).split(',').findIndex((x) => x == '.pdf') > -1;
-              if(args.dataContext.uploadFiles.length > 0)
-              {
-                let fileexits = args.dataContext.uploadFiles.find((file:any) => file.FileExtension == '.pdf');
+              if (args.dataContext.uploadFiles.length > 0) {
+                let fileexits = args.dataContext.uploadFiles.find((file: any) => file.FileExtension == '.pdf');
                 return isShow && fileexits;
               }
-              else 
+              else
                 return false;
             },
             action: (_e, args) => {
               setJobId(args.dataContext.id);
-                setFileType('.pdf');
-                handleUploadShow();
+              setFileType('.pdf');
+              handleUploadShow();
             },
           },
           {
@@ -459,11 +458,10 @@ const JobsList = () => {
             positionOrder: 66,
             itemVisibilityOverride(args) {
               let isShow = (args.dataContext.filePreference as string).split(',').findIndex((x) => x == '.pdflnk') > -1;
-              if(args.dataContext.uploadFiles.length == 0)
+              if (args.dataContext.uploadFiles.length == 0)
                 return isShow
-              else
-              {
-                let fileexits = args.dataContext.uploadFiles.find((file:any) => file.FileExtension == '.pdflnk');
+              else {
+                let fileexits = args.dataContext.uploadFiles.find((file: any) => file.FileExtension == '.pdflnk');
                 return isShow && !fileexits;
               }
             },
@@ -480,12 +478,11 @@ const JobsList = () => {
             positionOrder: 66,
             itemVisibilityOverride(args) {
               let isShow = (args.dataContext.filePreference as string).split(',').findIndex((x) => x == '.pdflnk') > -1;
-              if(args.dataContext.uploadFiles.length > 0)
-              {
-                let fileexits = args.dataContext.uploadFiles.find((file:any) => file.FileExtension == '.pdflnk');
+              if (args.dataContext.uploadFiles.length > 0) {
+                let fileexits = args.dataContext.uploadFiles.find((file: any) => file.FileExtension == '.pdflnk');
                 return isShow && fileexits;
               }
-              else 
+              else
                 return false;
             },
             action: (_e, args) => {
@@ -500,27 +497,27 @@ const JobsList = () => {
             iconCssClass: 'fa fa-files-o text-info',
             positionOrder: 66,
             action: (_e, args) => {
-              confirm('Are you sure you want to Duplicate this record?', { title: 'Confirm', cancelLabel: 'No', okLabel: 'Yes' }).then((res:boolean) => {
-                if(res)
-                deleteJob(args.dataContext.id,'Duplicate');
+              confirm('Are you sure you want to Duplicate this record?', { title: 'Confirm', cancelLabel: 'No', okLabel: 'Yes' }).then((res: boolean) => {
+                if (res)
+                  deleteJob(args.dataContext.id, 'Duplicate');
               });
             },
           },
           // {
-            // command: 'split',
-            // title: 'Split Job',
-            // iconCssClass: 'fa fa-clone text-info',
-            // positionOrder: 66,
-            // itemVisibilityOverride: (args) => true,
-            // action: (_e, args) => {
-            //   let arr = JSON.parse(args.dataContext.jobFiles);
-            //   navigate("/split-job", {
-            //     state: { jobId : args.dataContext.jobId,
-            //       pagecount: arr.JobFiles[0].PageCount || '',
-            //       name:args.dataContext.name
-            //     },
-            //   });
-            // }
+          // command: 'split',
+          // title: 'Split Job',
+          // iconCssClass: 'fa fa-clone text-info',
+          // positionOrder: 66,
+          // itemVisibilityOverride: (args) => true,
+          // action: (_e, args) => {
+          //   let arr = JSON.parse(args.dataContext.jobFiles);
+          //   navigate("/split-job", {
+          //     state: { jobId : args.dataContext.jobId,
+          //       pagecount: arr.JobFiles[0].PageCount || '',
+          //       name:args.dataContext.name
+          //     },
+          //   });
+          // }
           // },
           {
             command: 'merge', title: 'Merge Job', positionOrder: 64,
@@ -537,13 +534,13 @@ const JobsList = () => {
       }
     }
   ];
-  
+
   // this._darkModeGrid1 = this.isBrowserDarkModeEnabled();
   const gridOptions: GridOption = {
     ...ConfigSettings.gridOptions,
     ...{
       enableCellNavigation: true,
-      enableExcelCopyBuffer:false,
+      enableExcelCopyBuffer: false,
       enableFiltering: true,
       enableRowSelection: true,
       enableCheckboxSelector: true,
@@ -552,7 +549,7 @@ const JobsList = () => {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: false,
         columnIndexPosition: 1,
-        onExtensionRegistered: (instance) => {  }
+        onExtensionRegistered: (instance) => { }
       },
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -569,7 +566,7 @@ const JobsList = () => {
           }
         },
       },
-      
+
     }
   };
 
@@ -577,7 +574,7 @@ const JobsList = () => {
     setGrid(reactGridInstance);
   }
 
-  const deleteJob = (jobId:string, status: string) => {
+  const deleteJob = (jobId: string, status: string) => {
     JobService.deleteJob(jobId, user.id, status).then((response: any) => {
       if (response.isSuccess) {
         toast.success(`Job ${status} successfully.`);
@@ -585,12 +582,12 @@ const JobsList = () => {
         reloadGridData();
       }
     }).finally(() => {
-      
+
     });
   }
 
-  const getFileIcon = (fileExt:string) => {
-    switch(fileExt){
+  const getFileIcon = (fileExt: string) => {
+    switch (fileExt) {
       case 'pdf':
       case '.pdf':
       case 'pdflink':
@@ -605,16 +602,16 @@ const JobsList = () => {
     }
 
   };
- 
-  const loadData = (isreload:boolean) => {
+
+  const loadData = (isreload: boolean) => {
     setLoader(true);
     let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : null;
     let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : null;
-    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate,tDate, initialLoad).then((response: any) => {
+    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
       if (response.isSuccess) {
         let data = response.data.map((item: any) => {
-          item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];
-          item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => item.IsUploadFile) : [];
+          item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => !item.IsUploadFile) : [];
+          item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => item.IsUploadFile) : [];
           item.uid = crypto.randomUUID();
           return item;
         });
@@ -629,8 +626,8 @@ const JobsList = () => {
         //   });
         // }
         data.sort((a: any, b: any) => b.jobId - a.jobId);
-        if(isreload && reactGrid){
-           reactGrid.dataView.setItems(data);
+        if (isreload && reactGrid) {
+          reactGrid.dataView.setItems(data);
         }
         else
           setData(data);
@@ -643,25 +640,25 @@ const JobsList = () => {
   }
 
   const mergeJobs = () => {
-      let rows = reactGrid?.dataView.getItems().filter((item:any) => item.selected) || [];
-      if(rows && rows.length <= 1) {
-        toast.info(`Select atleast two jobs.`);
-        return false;
-      }
+    let rows = reactGrid?.dataView.getItems().filter((item: any) => item.selected) || [];
+    if (rows && rows.length <= 1) {
+      toast.info(`Select atleast two jobs.`);
+      return false;
+    }
 
-      setLoader(true);
-      let userid = rows[0].createdBy;
-      let selectedIds = rows.map((sel:any) => sel.id) || [];
-      JobService.mergeJobs(selectedIds, userid, user.id, user.companyId).then((response: any) => {
-        if (response.isSuccess) {
-          toast.success(`Jobs Merged successfully.`);
-          search();
-        }
-      }).catch(() => {
-        setLoader(false);
-      }).finally(() => {
-        setLoader(false);
-      });
+    setLoader(true);
+    let userid = rows[0].createdBy;
+    let selectedIds = rows.map((sel: any) => sel.id) || [];
+    JobService.mergeJobs(selectedIds, userid, user.id, user.companyId).then((response: any) => {
+      if (response.isSuccess) {
+        toast.success(`Jobs Merged successfully.`);
+        search();
+      }
+    }).catch(() => {
+      setLoader(false);
+    }).finally(() => {
+      setLoader(false);
+    });
   }
 
   let getUsers = async () => {
@@ -678,9 +675,9 @@ const JobsList = () => {
   let getStatus = async () => {
     const response: any = await LookupService.getStatus('status');
     if (response.isSuccess) {
-    let status = response.data.map((item: any) => {
-      return { 'value': item.id, 'label': item.value };
-    });
+      let status = response.data.map((item: any) => {
+        return { 'value': item.id, 'label': item.value };
+      });
       setStatus(status)
     }
   }
@@ -693,66 +690,83 @@ const JobsList = () => {
     // loadData(false)
   };
 
-  const onClientChange = (newValue: any, actionMeta: any) => {    
-    let selClients = newValue ? newValue.map((val: any, index: number) => val.label).join(',') : '';
+  const onClientChange = (newValue: any, actionMeta: any) => {
+    let selClients = newValue ? newValue.map((val: any, index: number) => val.value).join(',') : '';
     setClientFilter(selClients);
   };
 
-  function downloadFile(fileInfo: any){
-    setLoader(true);
-    DownloadZipService.downlodFile(fileInfo, function() {
-      setLoader(false);
+  // function downloadFile(fileInfo: any){
+  //   setLoader(true);
+  //   DownloadZipService.downlodFile(fileInfo, function() {
+  //     setLoader(false);
+  //   });
+  // };
+  // const downloadFile = (fileInfo: any) => {
+  //   setShowProgress(true);
+  //   setLoader(true);
+
+  //   DownloadZipService.downlodFile(fileInfo, setProgress, () => {
+  //     setShowProgress(false); // Hide progress bar once download is complete
+  //     setProgress(0); // Reset progress bar
+  //     setLoader(false);
+
+  //   });
+  // };
+
+  const downloadFile = (fileInfo: any) => {
+    setShowProgressBar(true);
+    DownloadZipService.downlodFile(fileInfo, setProgress, () => {
+      setShowProgressBar(false);
+      setProgress(0);
     });
   };
 
-  function downloadZip(files:any, fileName:string){
-    setLoader(true);
-      DownloadZipService.createZip(files, fileName, function() {
-        setLoader(false);
-      });
+  function downloadZip(files: any, fileName: string) {
+    setShowProgressBar(true);
+    DownloadZipService.createZip(files, fileName, setProgress, function () {
+      setShowProgressBar(false);
+      setProgress(0);
+    });
   }
   useEffect(() => {
     loadData(false);
   }, [initialLoad]);
 
   useEffect(() => {
-    if(location.state){
+    if (location.state) {
       setclientJobId(location.state?.jobId)
     }
-  },[]);
+  }, []);
 
-  const updateJobStatus = (jobId:string, status: string) => {
+  const updateJobStatus = (jobId: string, status: string) => {
     JobService.updateJobStatus(jobId, user.id, status).then((response: any) => {
       if (response.isSuccess) {
         //toast.success(`Job ${status} successfully.`);
         reloadGridData();
       }
     }).finally(() => {
-      
+
     });
   }
-  useEffect(() => {
-    loadData(false);
-  }, [selectedStatus,selectedClient, fromDate, toDate, filename, jobId]); 
 
-function search() {
-  if (initialLoad) {
-    setInitialLoad(false);
-  } else {
-    // if (jobId.trim() !== '') {
-    //   const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
-    //   setFilteredData(filteredData);
-    //   setData(filteredData);
-    // } else if (selectedStatus === '') {
-    //   setData(dataset);
-    // } else {
-    //   const filteredData = dataset.filter(item => selectedStatus.split(',').includes(item.statusId));
-    //   setFilteredData(filteredData);
-    //   setData(filteredData);
-    // }
-    loadData(false)
+  function search() {
+    if (initialLoad) {
+      setInitialLoad(false);
+    } else {
+      // if (jobId.trim() !== '') {
+      //   const filteredData = dataset.filter(item => item.jobId.toString().includes(jobId.trim()));
+      //   setFilteredData(filteredData);
+      //   setData(filteredData);
+      // } else if (selectedStatus === '') {
+      //   setData(dataset);
+      // } else {
+      //   const filteredData = dataset.filter(item => selectedStatus.split(',').includes(item.statusId));
+      //   setFilteredData(filteredData);
+      //   setData(filteredData);
+      // }
+      loadData(false)
+    }
   }
-}
 
   // useEffect(() => {
   //   loadData(false);
@@ -801,12 +815,14 @@ function search() {
   return (
 
     <>
-      {showloader && <PageLoader></PageLoader>}
+      {showloader}
+
+
       <div>
         <section className="content">
           <div className="container-fluid">
             <div className="card">
-            <div className="card-header d-flex">
+              <div className="card-header d-flex">
                 <div className='col-md-4'>
                 <h3 className="card-title" style={{ fontSize: "1.8rem" }}><i className="fa fa-arrow-left pointer ml-1 mr-2" style={{fontSize:"26px"}} onClick={() => navigate("/client-list")} aria-hidden="true"></i><strong>Jobs</strong></h3>
                 </div>
@@ -819,29 +835,29 @@ function search() {
               <div className="card-body">
                 <div className='row'>
 
-                <div className="col-md-2">
-                  <div className="form-group">
+                  <div className="col-md-2">
+                    <div className="form-group">
                       <label>Select Status</label>
-                      <Select options={statusList} isClearable={true} onChange={onStatusChange} isMulti={true}  closeMenuOnSelect={false}/>
+                      <Select options={statusList} isClearable={true} onChange={onStatusChange} isMulti={true} closeMenuOnSelect={false} />
+                    </div>
                   </div>
-                </div>  
 
-                <div className="col-md-2">
-                  <div className="form-group">
+                  <div className="col-md-2">
+                    <div className="form-group">
                       <label>Select Client </label>
-                      <Select options={usersList} isClearable={true} onChange={onClientChange} isMulti={true} closeMenuOnSelect={true}/>
+                      <Select options={usersList} isClearable={true} onChange={onClientChange} isMulti={true} closeMenuOnSelect={true} />
+                    </div>
                   </div>
-                </div>  
-                
 
-                <div className="col-md-2">
-                  <div className="form-group">
+
+                  <div className="col-md-2">
+                    <div className="form-group">
                       <label>File Name </label>
-                      <input  className="form-control" type='text' name='txtFilename' onChange={(e) => setFilename(e.target.value)} value={filename} />
+                      <input className="form-control" type='text' name='txtFilename' onChange={(e) => setFilename(e.target.value)} value={filename} />
+                    </div>
                   </div>
-                </div>  
 
-                {/* <div className="col-md-1">
+                  {/* <div className="col-md-1">
                     <div className="form-group">
                       <label>Job Id</label>
                       <input
@@ -855,31 +871,31 @@ function search() {
                   </div> */}
 
 
-                <div className="col-md-2">
-                  <div className="form-group">
+                  <div className="col-md-2">
+                    <div className="form-group">
                       <label>From Date </label><br></br>
-                      <DatePicker id="txtFromDate" name='txtFromDate' onChange={(date:any) => setFromDate(date)}  selected={fromDate}  className="form-control" dateFormat="MM/dd/yyyy"/>
+                      <DatePicker id="txtFromDate" name='txtFromDate' onChange={(date: any) => setFromDate(date)} selected={fromDate} className="form-control" dateFormat="MM/dd/yyyy" />
+                    </div>
                   </div>
-                </div>  
 
-                <div className="col-md-2">
-                  <div className="form-group">
+                  <div className="col-md-2">
+                    <div className="form-group">
                       <label>To Date </label>
-                      <DatePicker id="txtToDate" name='txtToDate' onChange={(date:any) => setToDate(date)}  selected={toDate}  className="form-control" dateFormat="MM/dd/yyyy"/>
+                      <DatePicker id="txtToDate" name='txtToDate' onChange={(date: any) => setToDate(date)} selected={toDate} className="form-control" dateFormat="MM/dd/yyyy" />
+                    </div>
                   </div>
-                </div> 
 
-                <div className="col-md-1">
-                  <div className="form-group">
+                  <div className="col-md-1">
+                    <div className="form-group">
                       <label>&nbsp; </label><br></br>
                       <Button variant="primary" onClick={(e) => search()}><strong>Search</strong></Button>
+                    </div>
                   </div>
-                </div>  
                 </div>
                <div className='row'>
                 <div className='col-md-12'>
                 <Button className='btn-sm btn-success' onClick={mergeJobs}>
-                   <strong>Merge Selected Jobs</strong> 
+                    Merge Selected Jobs
                   </Button>
                 </div>
                
@@ -900,6 +916,19 @@ function search() {
           </div>
         </section>
       </div>
+      {showProgressBar && (
+        <div id="progressBar"></div>
+      )}
+      <div className={`progress ${showProgressBar ? 'progress-center' : ''}`}>
+        <div
+          className="progress-bar"
+          role="progressbar"
+          style={{ width: `${progress}%` }}
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >{progress}%</div>
+      </div>
 
       <Modal show={show} onHide={handleClose} centered={false}>
         <Modal.Body className='p-1'>
@@ -918,10 +947,10 @@ function search() {
 
       <Modal show={showUpload} onHide={handleUploadClose} centered={false}>
         <ModalHeader placeholder={undefined}>
-            Upload File
+          Upload File
         </ModalHeader>
         <Modal.Body className='p-1'>
-            <UppyUpload admin={true} onCompleteCallback={uploadFiles} filePreference={fileType} />
+          <UppyUpload admin={true} onCompleteCallback={uploadFiles} filePreference={fileType} />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleUploadClose} className='btn-sm'>
@@ -942,7 +971,7 @@ function search() {
               type="text"
               value={pageCount}
               onChange={(event) => setPageCount(event.target.value)}
-              // placeholder="Enter some text"
+            // placeholder="Enter some text"
             />
           </Form>
         </Modal.Body>
