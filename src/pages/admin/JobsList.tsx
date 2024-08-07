@@ -91,7 +91,18 @@ const JobsList = () => {
   const navigate = useNavigate();
   const handlePageCountSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const pageCount = (event.target as HTMLFormElement).pageCount.value;
+    ApiService.requests.patch('Upload/UpdatePageCount', { jobId: jobId, pageCount: pageCount })
+    .then((response) => {
+      if (response.status === 200) {
+        toast.success("Page Count Updated Successfully");
+        setShowPageCount(false);
+        setJobId('');
+        setPageCount('');
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
   const handlePageCount = (pageCount: any) => {
     setShowPageCount(false);
@@ -102,7 +113,6 @@ const JobsList = () => {
 
   }
   const handlePageCountShow = (id:any, pageCount:any) => {
-    console.log(pageCount)
     setShowPageCount(true);
     setId(id);
     setPageCount(pageCount);
@@ -365,6 +375,7 @@ const JobsList = () => {
 
             action: (_e, args) => {
               handlePageCountShow(args.dataContext.id, formatPageCount(args.dataContext.files));
+              setJobId(args.dataContext.id);
             },
           },
           {
@@ -733,7 +744,7 @@ const JobsList = () => {
   }
   useEffect(() => {
     loadData(false);
-  }, [selectedStatus,selectedClient, fromDate, toDate, filename, jobId]); 
+  }, [selectedStatus,selectedClient, fromDate, toDate, filename]); 
 
 function search() {
   if (initialLoad) {
