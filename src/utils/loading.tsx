@@ -1,4 +1,7 @@
-const PageLoader = () => {
+const PageLoader = (showProgressBar:any) => {
+    if(showProgressBar.showProgressBar){
+        return null
+    }
     return(
 <>
 <div id="overlay">
