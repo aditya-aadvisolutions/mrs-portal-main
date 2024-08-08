@@ -95,11 +95,11 @@ const JobsList = () => {
     ApiService.requests.patch('Upload/UpdatePageCount', { jobId: jobId, pageCount: pageCount })
     .then((response) => {
       if (response.status === 200) {
-        toast.success("Page Count Updated Successfully");
         setShowPageCount(false);
         setJobId('');
         setPageCount('');
         loadData(false)
+        toast.success("Page Count Updated Successfully");
       }
     })
     .catch((error) => {

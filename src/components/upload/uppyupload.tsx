@@ -137,6 +137,14 @@ export default function UppyUpload(props: any) {
       }
       props.onCompleteCallback();
     })
+    uppy.on('upload-error', () => {
+      uppy.cancelAll()
+      dispatch(removeUploadedFiles());  
+    });
+    uppy.on('upload-error', () => {
+      uppy.cancelAll()
+      dispatch(removeUploadedFiles());  
+    });
 
     uppy.on('files-added', async (files: any) => {
       setDuplicateFileError(false)
@@ -160,8 +168,14 @@ export default function UppyUpload(props: any) {
         let pageCount = 0;
         const buffer = await file?.data?.arrayBuffer?.();
         if (file?.extension === 'pdf') {
-          const pdf = await PDFDocument.load(buffer);
-          pageCount = pdf.getPageCount();
+          // const pdf = await PDFDocument.load(buffer);
+          // pageCount = pdf.getPageCount();
+          try {
+            const pdf = await PDFDocument.load(buffer);
+            pageCount = pdf.getPageCount();
+          } catch (error) {
+            pageCount = 0;
+          }
         } else if (['doc', 'docx'].includes(file?.extension)){
           pageCount = await getWordPageCount(buffer);
         }
@@ -169,40 +183,16 @@ export default function UppyUpload(props: any) {
         if(file?.meta) file.meta.pageCount = pageCount;
         const extension = originalName.slice(originalName.lastIndexOf('.'));
         const nameWithoutExtension = originalName.slice(0, originalName.lastIndexOf('.'));
-        const newFileName = `${folderStructure} - ${nameWithoutExtension}${extension}`;
-
+        const newClientFileName = `${folderStructure} - ${nameWithoutExtension}${extension}`;
+        const newAdminFileName = `${nameWithoutExtension}${extension}`
         if (Role === 'Admin') {
-          file.name = "/admin" + '/' + newFileName;
+          file.name = "/admin" + '/' + newAdminFileName;
         } else {
-          file.name = "/client" + '/' + newFileName;
+          file.name = "/client" + '/' + newClientFileName;
         }
-
-        //  if(!isSingle){
-        //   if (fileNames.includes(nameWithoutExtension + extension)) {
-        //     toast.error(`File ${nameWithoutExtension + extension} already exists.`);
-        //     uppy.removeFile(file.id);
-        //     setDuplicateFileError(true);
-        //     return;
-        //   }}
-        //   if (!isSingle) {
-        //     if (fileNames.includes(nameWithoutExtension + extension)) {
-        //       const confirmUpload = window.confirm(`File ${nameWithoutExtension + extension} already exists. Do you want to continue uploading?`);
-        //       if (confirmUpload) {
-        //         // Continue uploading the file
-        //         // toast.success(`Uploading ${nameWithoutExtension + extension}`)
-        //         console.log("Continue uploading the file")
-        //       } else {
-        //         uppy.removeFile(file.id);
-        //         setDuplicateFileError(true);
-        //         return;
-        //       }
-        //     }
-
-        // }
 
         if (!isSingle) {
           if (fileNames.includes(nameWithoutExtension + extension)) {
-            // Show the modal instead of using window.confirm
             setShowModal(true);
             setModalFile(file);
             return;
@@ -216,7 +206,7 @@ export default function UppyUpload(props: any) {
         restrictions: {
           allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',') : ['.pdf', '.doc', '.docx', '.tif', '.tiff'],
           maxNumberOfFiles: (props.admin && props.admin === true ? 1 : undefined),
-          maxFileSize: 1073741824
+          maxFileSize: 3073741824
         },
       });
       setUppyInstance(uppy);
@@ -224,13 +214,7 @@ export default function UppyUpload(props: any) {
 
   }, []);
 
-
-  
-
-
   const handleModalConfirm = () => {
-    // Continue uploading the file
-    console.log("Continue uploading the file");
     setShowModal(false);
   };
 
@@ -238,7 +222,6 @@ export default function UppyUpload(props: any) {
     if (modalFile && uppyInstance) {
       uppyInstance.removeFile(modalFile.id);
     }
-    setDuplicateFileError(true);
     setShowModal(false);
   };
   useEffect(() => {
@@ -255,7 +238,7 @@ export default function UppyUpload(props: any) {
       </ModalHeader>
 
       <Modal.Body>
-        <p>File {modalFile.name} already exists. Do you want to continue uploading?</p>
+        <p><strong>File already exists.</strong> Do you want to continue uploading?</p>
       </Modal.Body>
 
       <Modal.Footer>
