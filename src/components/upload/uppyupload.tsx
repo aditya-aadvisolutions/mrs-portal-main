@@ -206,7 +206,7 @@ export default function UppyUpload(props: any) {
         restrictions: {
           allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',') : ['.pdf', '.doc', '.docx', '.tif', '.tiff'],
           maxNumberOfFiles: (props.admin && props.admin === true ? 1 : undefined),
-          maxFileSize: 1073741824
+          maxFileSize: 3073741824
         },
       });
       setUppyInstance(uppy);
