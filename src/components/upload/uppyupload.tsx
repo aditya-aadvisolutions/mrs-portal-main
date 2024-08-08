@@ -35,6 +35,7 @@ const [modalFile, setModalFile] = useState<any>('');
 
   const [fileTypes, setFileTypes] = useState([]);
   const dispatch = useDispatch();
+  const [uppyInstance, setUppyInstance] = useState<Uppy | null>(null);
   const { isSingle } = useLocation().state || { isSingle: []};  
   const uploadedFiles = useSelector(
     (state: Array<IUploadFiles>) => store.getState().uploadfile
@@ -197,6 +198,8 @@ const [modalFile, setModalFile] = useState<any>('');
           maxFileSize: 1073741824
         },
       });
+      setUppyInstance(uppy);
+    return () => uppy.close(); 
 
   }, []);
 
@@ -211,7 +214,9 @@ const handleModalConfirm = () => {
 };
 
   const handleModalCancel = () => {
-    uppy.removeFile(modalFile.id);
+    if (modalFile && uppyInstance) {
+      uppyInstance.removeFile(modalFile.id);
+    }
     setDuplicateFileError(true);
     setShowModal(false);
   };
