@@ -91,12 +91,14 @@ const JobsList = () => {
   const navigate = useNavigate();
   const handlePageCountSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoader(true);
     ApiService.requests.patch('Upload/UpdatePageCount', { jobId: jobId, pageCount: pageCount })
     .then((response) => {
       if (response.status === 200) {
         setShowPageCount(false);
         setJobId('');
         setPageCount('');
+        loadData(false)
         toast.success("Page Count Updated Successfully");
       }
     })
