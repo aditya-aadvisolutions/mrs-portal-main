@@ -14,7 +14,8 @@ export const fileUploadSlice = createSlice({
         fileId: action.payload.fileId,
         size: action.payload.size,
         fileextension: action.payload.fileextension,
-        filepath: action.payload.filepath
+        filepath: action.payload.filepath,
+        pageCount: action.payload.pageCount
       })
     },
     removeUploadedFiles: (state: Array<IUploadFiles>) => {

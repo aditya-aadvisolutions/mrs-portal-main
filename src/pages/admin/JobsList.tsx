@@ -93,6 +93,7 @@ const JobsList = () => {
   const navigate = useNavigate();
   const handlePageCountSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoader(true);
     ApiService.requests.patch('Upload/UpdatePageCount', { jobId: jobId, pageCount: pageCount })
     .then((response) => {
       if (response.status === 200) {
@@ -100,6 +101,7 @@ const JobsList = () => {
         setShowPageCount(false);
         setJobId('');
         setPageCount('');
+        loadData(false)
       }
     })
     .catch((error) => {

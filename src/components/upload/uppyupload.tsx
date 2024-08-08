@@ -21,13 +21,15 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Header from "react-bootstrap/ModalHeader";
 import ModalHeader from "react-bootstrap/ModalHeader";
+import { PDFDocument } from 'pdf-lib';
+import { extractRawText } from "mammoth";
 
 export default function UppyUpload(props: any) {
   let uppy: any;
   const [uploading, setUploading] = useState(false);
   const [duplicateFileError, setDuplicateFileError] = useState(false);
   const [showModal, setShowModal] = useState(false);
-const [modalFile, setModalFile] = useState<any>('');
+  const [modalFile, setModalFile] = useState<any>('');
 
   const uploadUrl = import.meta.env.VITE_S3_URL;
   const Role = localStorage.getItem("authentication") ? JSON.parse(localStorage.getItem("authentication") as string).roleName : "";
@@ -47,16 +49,24 @@ const [modalFile, setModalFile] = useState<any>('');
     }
   }
 
+  const getWordPageCount = async (arrayBuffer: any) => {
+    const result = await extractRawText({ arrayBuffer });
+    const text = result.value;
+    const lines = text.split(/\r?\n/);
+    const linesPerPage = 45; // Average lines per page assumption
+    return Math.ceil(lines.length / linesPerPage);
+  }
+
+
   useEffect(() => {
     if (props.admin && props.admin === true) {
       getFileTypes();
     }
   }, [props.admin]);
   useEffect(() => {
-
     const uppy = new Uppy({
       restrictions: {
-        allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',') : ['.pdf', '.doc', '.docx', '.tif','.tiff']
+        allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',') : ['.pdf', '.doc', '.docx', '.tif', '.tiff']
       },
       id: "uppyloader",
       autoProceed: false,
@@ -120,14 +130,15 @@ const [modalFile, setModalFile] = useState<any>('');
             filename: filenameWithOutFolder,
             size: files[i].size,
             fileextension: props.filePreference && props.filePreference != '' ? props.filePreference : extension,
-            filepath: files[i].uploadURL
+            filepath: files[i].uploadURL,
+            pageCount: files?.[i]?.meta?.pageCount ?? 0
           })
         );
       }
       props.onCompleteCallback();
     })
 
-    uppy.on('files-added', (files: any) => {
+    uppy.on('files-added', async (files: any) => {
       setDuplicateFileError(false)
       let clientName = sessionStorage.getItem('username');
       const date = new Date();
@@ -146,6 +157,16 @@ const [modalFile, setModalFile] = useState<any>('');
 
         const file = files[prop];
         const originalName = file.name;
+        let pageCount = 0;
+        const buffer = await file?.data?.arrayBuffer?.();
+        if (file?.extension === 'pdf') {
+          const pdf = await PDFDocument.load(buffer);
+          pageCount = pdf.getPageCount();
+        } else if (['doc', 'docx'].includes(file?.extension)){
+          pageCount = await getWordPageCount(buffer);
+        }
+        
+        if(file?.meta) file.meta.pageCount = pageCount;
         const extension = originalName.slice(originalName.lastIndexOf('.'));
         const nameWithoutExtension = originalName.slice(0, originalName.lastIndexOf('.'));
         const newFileName = `${folderStructure} - ${nameWithoutExtension}${extension}`;
@@ -156,44 +177,44 @@ const [modalFile, setModalFile] = useState<any>('');
           file.name = "/client" + '/' + newFileName;
         }
 
-      //  if(!isSingle){
-      //   if (fileNames.includes(nameWithoutExtension + extension)) {
-      //     toast.error(`File ${nameWithoutExtension + extension} already exists.`);
-      //     uppy.removeFile(file.id);
-      //     setDuplicateFileError(true);
-      //     return;
-      //   }}
-      //   if (!isSingle) {
-      //     if (fileNames.includes(nameWithoutExtension + extension)) {
-      //       const confirmUpload = window.confirm(`File ${nameWithoutExtension + extension} already exists. Do you want to continue uploading?`);
-      //       if (confirmUpload) {
-      //         // Continue uploading the file
-      //         // toast.success(`Uploading ${nameWithoutExtension + extension}`)
-      //         console.log("Continue uploading the file")
-      //       } else {
-      //         uppy.removeFile(file.id);
-      //         setDuplicateFileError(true);
-      //         return;
-      //       }
-      //     }
+        //  if(!isSingle){
+        //   if (fileNames.includes(nameWithoutExtension + extension)) {
+        //     toast.error(`File ${nameWithoutExtension + extension} already exists.`);
+        //     uppy.removeFile(file.id);
+        //     setDuplicateFileError(true);
+        //     return;
+        //   }}
+        //   if (!isSingle) {
+        //     if (fileNames.includes(nameWithoutExtension + extension)) {
+        //       const confirmUpload = window.confirm(`File ${nameWithoutExtension + extension} already exists. Do you want to continue uploading?`);
+        //       if (confirmUpload) {
+        //         // Continue uploading the file
+        //         // toast.success(`Uploading ${nameWithoutExtension + extension}`)
+        //         console.log("Continue uploading the file")
+        //       } else {
+        //         uppy.removeFile(file.id);
+        //         setDuplicateFileError(true);
+        //         return;
+        //       }
+        //     }
 
-      // }
+        // }
 
-      if (!isSingle) {
-        if (fileNames.includes(nameWithoutExtension + extension)) {
-          // Show the modal instead of using window.confirm
-          setShowModal(true);
-          setModalFile(file);
-          return;
+        if (!isSingle) {
+          if (fileNames.includes(nameWithoutExtension + extension)) {
+            // Show the modal instead of using window.confirm
+            setShowModal(true);
+            setModalFile(file);
+            return;
+          }
         }
-      }
 
       }
     })
 
       .setOptions({
         restrictions: {
-          allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',') : ['.pdf', '.doc', '.docx', '.tif','.tiff'],
+          allowedFileTypes: props.filePreference ? props.filePreference === '.pdflnk' ? ['.pdf'] : props.filePreference.split(',') : ['.pdf', '.doc', '.docx', '.tif', '.tiff'],
           maxNumberOfFiles: (props.admin && props.admin === true ? 1 : undefined),
           maxFileSize: 1073741824
         },
@@ -207,11 +228,11 @@ const [modalFile, setModalFile] = useState<any>('');
   
 
 
-const handleModalConfirm = () => {
-  // Continue uploading the file
-  console.log("Continue uploading the file");
-  setShowModal(false);
-};
+  const handleModalConfirm = () => {
+    // Continue uploading the file
+    console.log("Continue uploading the file");
+    setShowModal(false);
+  };
 
   const handleModalCancel = () => {
     if (modalFile && uppyInstance) {
@@ -228,24 +249,24 @@ const handleModalConfirm = () => {
 
 
   return <><div id="uppyUpload">
-     <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <ModalHeader placeholder={undefined}>
-          <Modal.Title>Duplicate File Detected</Modal.Title>
-        </ModalHeader>
+    <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <ModalHeader placeholder={undefined}>
+        <Modal.Title>Duplicate File Detected</Modal.Title>
+      </ModalHeader>
 
-        <Modal.Body>
-          <p>File {modalFile.name} already exists. Do you want to continue uploading?</p>
-        </Modal.Body>
+      <Modal.Body>
+        <p>File {modalFile.name} already exists. Do you want to continue uploading?</p>
+      </Modal.Body>
 
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalCancel}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleModalConfirm}>
-            Continue Uploading
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleModalCancel}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={handleModalConfirm}>
+          Continue Uploading
+        </Button>
+      </Modal.Footer>
+    </Modal>
   </div>
   </>
 }
