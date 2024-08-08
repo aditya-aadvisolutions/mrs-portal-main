@@ -22,6 +22,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
 import { DateTime } from 'luxon';
+import ProgressBar from "@ramonak/react-progress-bar";
+import { FaFileDownload } from "react-icons/fa";
 
 //let reactGrid!: SlickgridReactInstance;
 let grid1!: SlickGrid;
@@ -51,6 +53,7 @@ const ClientJobList = () => {
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [progress, setProgress] = useState<any>(0);
   const [showProgress, setShowProgress] = useState(false);
+  const [FileData, setFileData]=useState<any>()
 
 
 //  const [mergeFileName, setMergeFileName] = useState('');
@@ -418,6 +421,7 @@ const ClientJobList = () => {
 
   function downloadFile(fileInfo: any){
     setShowProgressBar(true);
+    setFileData(fileInfo)
     DownloadZipService.downlodFile(fileInfo, setProgress, () => {
       setShowProgressBar(false);
       setProgress(0);
@@ -426,6 +430,7 @@ const ClientJobList = () => {
 
   function downloadZip(mergeFileList: any [], mergeFileName: string){
       setShowProgressBar(true);
+      setFileData(mergeFileName)
       DownloadZipService.createZip(mergeFileList, mergeFileName, setProgress,function() {
         setShowProgressBar(false); 
       setProgress(0);
@@ -643,20 +648,58 @@ const ClientJobList = () => {
         </section>
       </div>
 
-      <div className={`progress ${showProgressBar ? 'progress-center' : ''}`}>
-        {showProgressBar && (
-          <div id="progressBar">
-          </div>
-        )}
-        <div
-          className="progress-bar"
-          role="progressbar"
-          style={{ width: `${progress}%` }} 
-          aria-valuenow={progress}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        >{progress}%</div>
-      </div>
+      {showProgressBar && (
+
+<div>
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      zIndex: 999999,
+    }}
+  >
+    <div
+      style={{
+        width: "400px",
+        padding: "20px",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        borderRadius: "8px",
+        backgroundColor: "#ffffff",
+        textAlign: "center",
+      }}
+    >
+      <FaFileDownload
+        size={50}
+        style={{ marginBottom: "20px", color: "#6a1b9a" }}
+      />
+      <p><strong>FileName:</strong>{FileData.FileName ?? FileData}</p>
+      <ProgressBar
+        completed={progress}
+        bgColor="#6a1b9a"
+        height="20px"
+        labelColor="#ffffff"
+        baseBgColor="#e0e0df"
+        labelAlignment="center"
+        borderRadius="5px"
+      />
+      {/* <Button
+        variant="danger"
+        style={{ marginTop: "20px", width: "100%" }}
+        onClick={handleCancel}
+      >
+        Cancel
+      </Button> */}
+    </div>
+  </div>
+</div>
+)}
 
       <Modal show={show} onHide={handleClose} centered={false}>
         <Modal.Body className='p-1'>
