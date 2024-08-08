@@ -27,6 +27,8 @@ import moment from 'moment';
 import { useLocation, useNavigate } from "react-router-dom";
 import confirm from '@app/components/confirm/confirmService';
 import { Form, FormControl } from 'react-bootstrap';
+import DownloadProgress from './Processbar';
+import { FaTimes } from 'react-icons/fa';
 
 
 interface Props { }
@@ -64,7 +66,7 @@ const JobsList = () => {
   const [showNotification, setShowNotification] = useState();
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [id, setId] = useState(null);
-  const [progress, setProgress] = useState<any>(0);
+  const [progress, setProgress] = useState(50);
   const [showProgressBar, setShowProgressBar] = useState(false);
 
 
@@ -118,6 +120,10 @@ const JobsList = () => {
     setId(id);
     setPageCount(pageCount);
   };
+
+  const handleCancel = () => {
+    setShowProgressBar(false);
+};
 
   const { submittedValues } = location.state || { submittedValues: [] };
 
@@ -727,6 +733,7 @@ const JobsList = () => {
 
   const downloadFile = (fileInfo: any) => {
     setShowProgressBar(true);
+    console.log(fileInfo)
     DownloadZipService.downlodFile(fileInfo, setProgress, () => {
       setShowProgressBar(false);
       setProgress(0);
@@ -830,7 +837,6 @@ const JobsList = () => {
     <>
       {showloader&& <PageLoader  showProgressBar={showProgressBar}></PageLoader>}
 
-
       <div>
         <section className="content">
           <div className="container-fluid">
@@ -923,16 +929,17 @@ const JobsList = () => {
                     />
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
         </section>
       </div>
       {showProgressBar && (
-        <div id="progressBar"></div>
-      )}
-      <div className={`progress ${showProgressBar ? 'progress-center' : ''}`}>
+                <div>
+                    <DownloadProgress progress={progress}  onCancel={handleCancel}  />
+                </div>
+            )}
+      {/* <div className={`progress ${showProgressBar ? 'progress-center' : ''}`}>
         <div
           className="progress-bar"
           role="progressbar"
@@ -941,7 +948,7 @@ const JobsList = () => {
           aria-valuemin={0}
           aria-valuemax={100}
         >{progress}%</div>
-      </div>
+      </div> */}
 
       <Modal show={show} onHide={handleClose} centered={false}>
         <Modal.Body className='p-1'>
@@ -973,7 +980,6 @@ const JobsList = () => {
       </Modal>
 
       <NorificationModal title='alert' okBottonText='OK' cancelBottonText='Close' details={showNotification} ref={childRef} reloadGridData={reloadGridData}></NorificationModal>
-
       <Modal show={showPageCount} onHide={handleClose}>
         <ModalHeader placeholder={undefined}>
           <Modal.Title>Update Page Count</Modal.Title>
