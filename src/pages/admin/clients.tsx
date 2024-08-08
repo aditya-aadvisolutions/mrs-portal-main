@@ -313,7 +313,7 @@ const ClientsList = () => {
                     variant="primary"
                     onClick={() => navigate("/client-registration")}
                   >
-                    Add Clients
+                    <strong>Add Clients </strong>
                   </Button>
                 </div>
               </div>
@@ -366,7 +366,7 @@ const ClientsList = () => {
                   <div className="col-md-1">
                   <div className="form-group">
                       <label>&nbsp; </label><br></br>
-                      <Button variant="secondary" onClick={(e) => reset()}>Reset</Button>
+                      <Button variant="secondary" onClick={(e) => reset()}><strong>Reset</strong></Button>
                   </div>
                 </div>  
                 </div>

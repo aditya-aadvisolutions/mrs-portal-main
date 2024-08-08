@@ -232,7 +232,7 @@ const RegistrationForm = () => {
                   value={values.email}
                   isValid={touched.email && !errors.email}
                   isInvalid={touched.email && !!errors.email}
-                  tabIndex={5}
+                  tabIndex={3}
                 />
                 {touched.email && errors.email ? (
                   <div
@@ -264,7 +264,7 @@ const RegistrationForm = () => {
                   value={values.companyName}
                   isValid={touched.companyName && !errors.companyName}
                   isInvalid={touched.companyName && !!errors.companyName}
-                  tabIndex={3}
+                  tabIndex={5}
                 />
                 {touched.companyName && errors.companyName && (
                   <div
@@ -350,6 +350,7 @@ const RegistrationForm = () => {
                       value={type}
                       onChange={handleChange}
                       checked={values.filePreference.includes(type)}
+                      tabIndex={11}
                     />
                     <label className="form-check-label" htmlFor={type}>
                       {type.toUpperCase()}
@@ -519,6 +520,7 @@ const RegistrationForm = () => {
                     setFieldValue("logo", event.currentTarget.files[0])
                   }
                   isInvalid={touched.logo && !!errors.logo}
+                  tabIndex={12}
                 />
                 {touched.logo && errors.logo && (
                   <div
@@ -551,7 +553,7 @@ const RegistrationForm = () => {
                       value={values.loginName}
                       isValid={touched.loginName && !errors.loginName}
                       isInvalid={touched.loginName && !!errors.loginName}
-                      tabIndex={3}
+                      tabIndex={13}
                     />
                     {touched.loginName && errors.loginName && (
                       <div
@@ -578,7 +580,7 @@ const RegistrationForm = () => {
                       value={values.passwordRetype}
                       isValid={touched.passwordRetype && !errors.passwordRetype}
                       isInvalid={touched.passwordRetype && !!errors.passwordRetype}
-                      tabIndex={12}
+                      tabIndex={15}
                     />
                     {touched.passwordRetype && errors.passwordRetype ? (
                       <div
@@ -613,7 +615,7 @@ const RegistrationForm = () => {
                       value={values.password}
                       isValid={touched.password && !errors.password}
                       isInvalid={touched.password && !!errors.password}
-                      tabIndex={11}
+                      tabIndex={14}
                     />
                     {touched.password && errors.password ? (
                       <div
@@ -644,8 +646,9 @@ const RegistrationForm = () => {
                 loading={isAuthLoading}
                 disabled={isGoogleAuthLoading || isFacebookAuthLoading}
                 onClick={handleSubmit as any}
+                tabIndex={16}
               >
-                Submit
+                <strong>Submit</strong>
               </Button>
             </div>
           </div>

@@ -49,12 +49,15 @@ const ClientJobList = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [fileNames, setFileNames] = useState([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [progress, setProgress] = useState<any>(0);
+  const [showProgress, setShowProgress] = useState(false);
 
 
 //  const [mergeFileName, setMergeFileName] = useState('');
   // const [defaultStatus, setDefaultStatus] = useState([]);
   // Files Modal 
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);  const [showProgressBar, setShowProgressBar] = useState(false);
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -414,21 +417,26 @@ const ClientJobList = () => {
   };
 
   function downloadFile(fileInfo: any){
-    setLoader(true);
-    DownloadZipService.downlodFile(fileInfo, function(){
-      setLoader(false);
+    setShowProgressBar(true);
+    DownloadZipService.downlodFile(fileInfo, setProgress, () => {
+      setShowProgressBar(false);
+      setProgress(0);
     });
   };
 
   function downloadZip(mergeFileList: any [], mergeFileName: string){
-      setLoader(true);
-      DownloadZipService.createZip(mergeFileList, mergeFileName, function() {
-        setLoader(false);
+      setShowProgressBar(true);
+      DownloadZipService.createZip(mergeFileList, mergeFileName, setProgress,function() {
+        setShowProgressBar(false); 
+      setProgress(0);
       });
   }
 
   function downloadZipPopUp(){
-    DownloadZipService.createZip(fileList, mergeFileName, function() {});
+    setShowProgressBar(true);
+    DownloadZipService.createZip(fileList, mergeFileName, setProgress,function() {});
+    setShowProgressBar(false); 
+    setProgress(0);
   }
 
   function diff_hours(modifiedDate: Date,todayDate: Date) {
@@ -613,7 +621,7 @@ const ClientJobList = () => {
                 <div className="col-md-2">
                   <div className="form-group">
                       <label>&nbsp; </label><br></br>
-                     <Button variant="primary" onClick={(e) => search()}>Search</Button>
+                     <Button variant="primary" onClick={(e) => search()}><strong>Search</strong></Button>
                   </div>
                 </div>  
                  
@@ -633,6 +641,21 @@ const ClientJobList = () => {
             </div>
           </div>
         </section>
+      </div>
+
+      <div className={`progress ${showProgressBar ? 'progress-center' : ''}`}>
+        {showProgressBar && (
+          <div id="progressBar">
+          </div>
+        )}
+        <div
+          className="progress-bar"
+          role="progressbar"
+          style={{ width: `${progress}%` }} 
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >{progress}%</div>
       </div>
 
       <Modal show={show} onHide={handleClose} centered={false}>
