@@ -43,6 +43,8 @@ const JobList = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [jobStatus, setJobStatus] = useState<string>('Pending');
   const [selectedJobId, setSelectedJobId] = useState<string>('');
+  const [showProgressBar, setShowProgressBar] = useState(false);
+  const [progress, setProgress] = useState<any>(0);
   
 //  const [mergeFileName, setMergeFileName] = useState('');
   // const [defaultStatus, setDefaultStatus] = useState([]);
@@ -319,24 +321,31 @@ const JobList = () => {
     setStatusFilter(selStatus);
   };
 
-  function downloadFile(fileInfo: any){
+  function downloadFile(fileInfo: any) {
     setLoader(true);
-    DownloadZipService.downlodFile(fileInfo, function(){
+    setShowProgressBar(true);
+    DownloadZipService.downlodFile(fileInfo, setProgress, function () {
       setLoader(false);
+      setShowProgressBar(false);
       updateJobStatus(fileInfo.jobId, 'In Progress');
     });
   };
 
-  function downloadZip(mergeFileList: any [], mergeFileName: string){
-      setLoader(true);
-      DownloadZipService.createZip(mergeFileList, mergeFileName, function() {
-        setLoader(false);
-        updateJobStatus(mergeFileList[0].jobId, 'In Progress');
-      });
+  function downloadZip(mergeFileList: any[], mergeFileName: string) {
+    setLoader(true);
+    setShowProgressBar(true);
+    DownloadZipService.createZip(mergeFileList, mergeFileName, setProgress, function () {
+      setLoader(false);
+      setShowProgressBar(false);
+      updateJobStatus(mergeFileList[0].jobId, 'In Progress');
+    });
   }
 
-  function downloadZipPopUp(){
-    DownloadZipService.createZip(fileList, mergeFileName, function() {});
+  function downloadZipPopUp() {
+    setShowProgressBar(true);
+    DownloadZipService.createZip(fileList, mergeFileName, setProgress, function () { });
+    setShowProgressBar(false);
+
   }
   const getFileIcon = (fileExt:string) => {
     //['pdf','.pdf','pdflink',''].indexOf(value[0].FileExtension) > -1 ?  '<i class="fa fa-file-pdf-o text-danger" aria-hidden="true"></i>' : '<i class="fa fa-file-word-o text-primary" aria-hidden="true"></i>';
@@ -485,6 +494,20 @@ const JobList = () => {
             </div>
           </div>
         </section>
+      </div>
+      <div className={`progress ${showProgressBar ? 'progress-center' : ''}`}>
+        {showProgressBar && (
+          <div id="progressBar">
+          </div>
+        )}
+        <div
+          className="progress-bar"
+          role="progressbar"
+          style={{ width: `${progress}%` }} 
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >{progress}%</div>
       </div>
 
       <Modal show={show} onHide={handleClose} centered={false}>
