@@ -828,7 +828,7 @@ const JobsList = () => {
   return (
 
     <>
-      {showloader}
+      {showloader&& <PageLoader  showProgressBar={showProgressBar}></PageLoader>}
 
 
       <div>
