@@ -12,8 +12,10 @@ import APIService from '@app/services/Api.service';
 
 // Define types for the authentication data
 interface Authentication {
+  id: string;
   loginName: string;
   roleName: string;
+  
 }
 const Dashboard: React.FC = () => {
   console.log(import.meta.env);
@@ -29,9 +31,20 @@ const Dashboard: React.FC = () => {
     downloadedJobsCount: 0,
   });
   const authData = localStorage.getItem('authentication');
+
+  console.log('localStorage',localStorage)
+  console.log('authData....',authData)
+
   const username: Authentication = authData ? JSON.parse(authData) : { loginName: '' };
+
+  console.log('username....',username);
+
   const role=username.roleName
-  console.log(username, "username");
+  console.log('role...', role);
+
+  const userid=username.id
+  localStorage.setItem('userId',userid);
+  console.log('userId',userid);
 
   localStorage.setItem('roleName', role);
   localStorage.getItem('roleName');
@@ -41,7 +54,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await APIService.requests.get(`dashboard?username=${username.loginName}`);
+        //const response = await APIService.requests.get(`dashboard?username=${username.loginName}`);
+        const response = await APIService.requests.get(`dashboard?username=${userid}`);
         const { ClientsCount, CompletedJobsCount, PendingJobsCount,EmployeesCount,InProgressJobsCount,VoidJobsCount,DuplicateJobsCount, DownloadedJobsCount,} = response.data;
         setDashboardData({
           pendingJobsCount: PendingJobsCount,
