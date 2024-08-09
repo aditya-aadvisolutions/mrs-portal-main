@@ -27,12 +27,12 @@ import { FaFileDownload } from "react-icons/fa";
 
 //let reactGrid!: SlickgridReactInstance;
 let grid1!: SlickGrid;
-let downloadCount=0;
-let fileCount=0;
+let downloadCount = 0;
+let fileCount = 0;
 let modifiedDate;
 let todayDate;
-let firstDownload=0;
-let isFilesVisible=false;
+let firstDownload = 0;
+let isFilesVisible = false;
 
 const ClientJobList = () => {
 
@@ -53,13 +53,13 @@ const ClientJobList = () => {
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [progress, setProgress] = useState<any>(0);
   const [showProgress, setShowProgress] = useState(false);
-  const [FileData, setFileData]=useState<any>()
+  const [FileData, setFileData] = useState<any>()
 
 
-//  const [mergeFileName, setMergeFileName] = useState('');
+  //  const [mergeFileName, setMergeFileName] = useState('');
   // const [defaultStatus, setDefaultStatus] = useState([]);
   // Files Modal 
-  const [show, setShow] = useState(false);  const [showProgressBar, setShowProgressBar] = useState(false);
+  const [show, setShow] = useState(false); const [showProgressBar, setShowProgressBar] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -76,11 +76,15 @@ const ClientJobList = () => {
   sessionStorage.getItem('roleName');
 
   const columns: Column[] = [
-    { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:80 },
+    { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth: 80,
+      formatter: (row, cell, value, colDef, dataContext) => {
+        return value || '-'
+      }
+     },
     // { id: 'notes', name: 'Notes', field: 'notes', sortable: true },
     // { id: 'createdDateTime', name: 'Date', field: 'createdDateTime', sortable: true, formatter: Formatters.dateUs, maxWidth: 100 },
     {
-      id: 'files', name: 'FILE NAME <i class="fa fa-upload text-success ml-1" aria-hidden="true"></i>', field: 'files',minWidth:150, sortable: true,
+      id: 'files', name: 'FILE NAME <i class="fa fa-upload text-success ml-1" aria-hidden="true"></i>', field: 'files', minWidth: 150, sortable: true,
       formatter: (row, cell, value, colDef, dataContext) => {
         if (dataContext.isSingleJob) {
           let title = dataContext.name ? dataContext.name : dataContext.jobId;
@@ -88,8 +92,8 @@ const ClientJobList = () => {
           return value.length > 0 ? `<i class="fa fa-file-archive-o text-info" aria-hidden="true"></i> <a href="#" class="pointer" title=${title}>${fileName}</a>` : '';
         }
         else {
-          let icon = getFileIcon(value[0].FileExtension);
-          return value.length > 0 ? `<i class="fa ${icon}" aria-hidden="true"></i> <a href="#" class="pointer" title="${dataContext.name}">${dataContext.name}</a>` : '';
+          let icon = getFileIcon(value?.[0]?.FileExtension);
+          return `<i class="fa ${icon}" aria-hidden="true"></i> <a href="#" class="pointer" title="${dataContext?.name ?? '-'}">${dataContext?.name ?? '-'}`;
         }
       },
       onCellClick: (e: Event, args: OnEventArgs) => {
@@ -114,11 +118,12 @@ const ClientJobList = () => {
       },
       cssClass: 'text-left px-4'
     },
-    { id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 60,
+    {
+      id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 60,
       formatter: (row, cell, value, colDef, dataContext) => {
         let pageCount = 0;
-        value.forEach((item:any) => {
-            pageCount += item.PageCount ? item.PageCount : 0;
+        value.forEach((item: any) => {
+          pageCount += item.PageCount ? item.PageCount : 0;
         });
         return pageCount.toString();
       },
@@ -129,78 +134,77 @@ const ClientJobList = () => {
       formatter: (row, cell, value, colDef, dataContext) => {
         if (value.length == 0)
           return '';
-        else{
-          
+        else {
           let content = '';
-          
-          if(value)
-          value.forEach((file:any) => {
-             if(dataContext.statusName==='Downloaded' || dataContext.statusName==='Completed' ){
-              let timeDiff =0;
-                 if(firstDownload==1){                
+          if (value)
+            value.forEach((file: any) => {
+              if (dataContext.statusName === 'Downloaded' || dataContext.statusName === 'Completed') {
+                let timeDiff = 0;
+                if (firstDownload == 1) {
                   modifiedDate = new Date(dataContext.modifiedDateTime);
-                  console.log('** modifiedDate..',modifiedDate);
+                  console.log('** modifiedDate..', modifiedDate);
                   todayDate = new Date();
-                  console.log('** todayDate..',todayDate)
-                  timeDiff = diff_hours(modifiedDate,todayDate);
-                  console.log('** timeDiff in Hours..',timeDiff);
+                  console.log('** todayDate..', todayDate)
+                  timeDiff = diff_hours(modifiedDate, todayDate);
+                  console.log('** timeDiff in Hours..', timeDiff);
                 }
-                  if(timeDiff>48 && !isFilesVisible){
-                    content += ``;
-                  }else if(isFilesVisible){
-                    console.log('inside files visible....')
-                    let fileicon = getFileIcon(file.FileExtension);
-                    content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
-                  }else{
-                    console.log('inside files visible elsee....')
-                    let fileicon = getFileIcon(file.FileExtension);
-                    content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
-                  }
+                if (timeDiff > 48 && !isFilesVisible) {
+                  content += ``;
+                } else if (isFilesVisible) {
+                  console.log('inside files visible....')
+                  let fileicon = getFileIcon(file.FileExtension);
+                  content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
+                } else {
+                  console.log('inside files visible elsee....')
+                  let fileicon = getFileIcon(file.FileExtension);
+                  content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
                 }
-                // else if(isFilesVisible){
-                //   let fileicon = getFileIcon(file.FileExtension);
-                //   content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
-                // }
-                
-                
-                // else if(dataContext.statusName==='Completed'){
-                //  let fileicon = getFileIcon(file.FileExtension);
-                //  content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
-                // }
-          });
+              }
+              // else if(isFilesVisible){
+              //   let fileicon = getFileIcon(file.FileExtension);
+              //   content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
+              // }
+
+
+              // else if(dataContext.statusName==='Completed'){
+              //  let fileicon = getFileIcon(file.FileExtension);
+              //  content += `<i class="fa ${fileicon} fa-2 pointer" aria-hidden="true" title="${file.FileName}" data-id="${file.Id}"></i>&nbsp;`;
+              // }
+            });
 
           return content;
         }
-          
+
       },
       onCellClick: (e: any, args: OnEventArgs) => {
         let fileid = e.target.attributes['data-id'];
         fileCount = args.dataContext.uploadFiles.length;
-        if(fileid.value){
+        if (fileid.value) {
           downloadCount++;
-          let fileinfo = args.dataContext.uploadFiles.find((item:any) => item.Id == fileid.value);
+          let fileinfo = args.dataContext.uploadFiles.find((item: any) => item.Id == fileid.value);
           downloadFile(fileinfo);
         }
-        if(fileCount === downloadCount && args.dataContext.statusName==='Completed'){
-          updateJobStatus(args.dataContext.id,'Downloaded');
-          firstDownload=1;
-          fileCount=0;
-          downloadCount=0;
+        if (fileCount === downloadCount && args.dataContext.statusName === 'Completed') {
+          updateJobStatus(args.dataContext.id, 'Downloaded');
+          firstDownload = 1;
+          fileCount = 0;
+          downloadCount = 0;
 
         }
-        
+
       }
     },
-    { id: 'statusName', name: 'STATUS', field: 'statusName',  maxWidth: 180},
-    { id: 'tat', name: 'TAT', field: 'tat', maxWidth: 100
-    ,formatter: (row, cell, value, colDef, dataContext) => {
-      if (typeof value === 'string' && value.endsWith("Hours")) {
-        return value.replace("Hours", "Hrs");
-      } else {
-        return value.toString();
+    { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 180 },
+    {
+      id: 'tat', name: 'TAT', field: 'tat', maxWidth: 100
+      , formatter: (row, cell, value, colDef, dataContext) => {
+        if (typeof value === 'string' && value.endsWith("Hours")) {
+          return value.replace("Hours", "Hrs");
+        } else {
+          return value?.toString?.() ?? '';
+        }
       }
-    }
-     },
+    },
     {
       id: 'notification',
       field: 'unReadMessages',
@@ -233,14 +237,14 @@ const ClientJobList = () => {
       field: 'statusName',
       maxWidth: 100,
       formatter: (row, cell, value, colDef, dataContext) => {
-        if(value == 'Pending')
-          return `<div class="btn btn-default btn-xs" >Action <i class="fa fa-caret-down"></i></div>`;  
+        if (value == 'Pending')
+          return `<div class="btn btn-default btn-xs" >Action <i class="fa fa-caret-down"></i></div>`;
         else
           return '';
       },
       cellMenu: {
         menuUsabilityOverride: function (args) {
-          return (args.dataContext.statusName === 'Pending'); 
+          return (args.dataContext.statusName === 'Pending');
         },
         //commandTitle: 'Commands',
         // width: 200,
@@ -254,9 +258,9 @@ const ClientJobList = () => {
             //   return (args.dataContext.statusName == 'Pending' || args.dataContext.statusName == 'InProgress' )
             // },
             action: (_e, args) => {
-              confirm('Are you sure you want to Void this record?', { title: 'Confirm', cancelLabel: 'No', okLabel: 'Yes' }).then((res:boolean) => {
-                if(res)
-                  deleteJob(args.dataContext.id,'Void'); 
+              confirm('Are you sure, you want to Void this record?', { title: 'Confirm', cancelLabel: 'No', okLabel: 'Yes' }).then((res: boolean) => {
+                if (res)
+                  deleteJob(args.dataContext.id, 'Void');
               });
             },
           },
@@ -276,7 +280,7 @@ const ClientJobList = () => {
       }
     }
   ];
-  
+
   // this._darkModeGrid1 = this.isBrowserDarkModeEnabled();
   const gridOptions: GridOption = {
     ...ConfigSettings.gridOptions,
@@ -294,66 +298,67 @@ const ClientJobList = () => {
   const loadData = (isreload: boolean) => {
     setLoader(true);
 
+
     let fDate = fromDate ? moment(fromDate).format('YYYY-MM-DD') : '';
     let tDate = toDate ? moment(toDate).format('YYYY-MM-DD') : '';
     JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
-        if (response.isSuccess) {
-            let data = response.data.map((item: any) => {
-                item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => !item.IsUploadFile) : [];
-                item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => item.IsUploadFile) : [];
-                item.uid = crypto.randomUUID();
-                return item;
-            });
-            const file = response.data.filter((item:any) =>!item.isSingleJob).map((item:any) => item.name);
-            const fileNames = file.map((filename:any) => filename.split(' - ').slice(2).join(' - '))
-            setFileNames(fileNames)
-            data.sort((a: any, b: any) => b.jobId - a.jobId);
-            console.log(data);
-            if (reactGrid && isreload) {
-                reactGrid.dataView.setItems(data);
-            } else {
-                setData(data);
-            }
+      if (response.isSuccess) {
+        let data = response.data.map((item: any) => {
+          item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => !item.IsUploadFile) : [];
+          item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => item.IsUploadFile) : [];
+          item.uid = crypto.randomUUID();
+          return item;
+        });
+        const file = response.data.filter((item: any) => !item.isSingleJob).map((item: any) => item.name);
+        const fileNames = file.map((filename: any) => filename?.split?.(' - ')?.slice?.(2).join?.(' - '))
+        setFileNames(fileNames);
+        data.sort((a: any, b: any) => b.jobId - a.jobId); 
+        if (reactGrid && isreload) {
+          reactGrid.dataView.setItems(data);
+        } else {
+          setData(data);
         }
-    }).catch(() => {
-        setLoader(false);
-//     let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : '';
-//     let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : '';
-//     JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {      
-//       if (response.isSuccess) {
-//         let data = response.data.map((item: any) => {
-//           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];
-//           item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => item.IsUploadFile) : [];
-//           item.uid = crypto.randomUUID();
-      
-//           return item;
-//         });
+      }
+    }).catch((error) => {
+      setLoader(false);
+      console.log("Load Data error", { error });
+      //     let fDate = fromDate ? moment(fromDate).format('MM-DD-YYYY') : '';
+      //     let tDate = toDate ? moment(toDate).format('MM-DD-YYYY') : '';
+      //     JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {      
+      //       if (response.isSuccess) {
+      //         let data = response.data.map((item: any) => {
+      //           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => !item.IsUploadFile) : [];
+      //           item.uploadFiles = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item:any) => item.IsUploadFile) : [];
+      //           item.uid = crypto.randomUUID();
 
-//         const fiveMinutesAgo = moment().subtract(48, 'hours');
-//         if (!selectedStatus.includes('Completed' || 'Downloaded')) {
-//           data = data.filter((item: any) => {
-//             if (item.statusName === 'Completed' || item.statusName === 'Downloaded') {
-//               const modifiedTime = moment(item.modifiedDateTime);
-//               return modifiedTime.isAfter(fiveMinutesAgo);
-//             }
-//             return true;
-//           });
-//         }
-//         data.sort((a: any, b: any) => b.jobId - a.jobId);
+      //           return item;
+      //         });
 
-//         console.log(data);
-//         if(reactGrid && isreload)
-//           reactGrid.dataView.setItems(data)
-//         else
-//           setData(data);
-//       }
+      //         const fiveMinutesAgo = moment().subtract(48, 'hours');
+      //         if (!selectedStatus.includes('Completed' || 'Downloaded')) {
+      //           data = data.filter((item: any) => {
+      //             if (item.statusName === 'Completed' || item.statusName === 'Downloaded') {
+      //               const modifiedTime = moment(item.modifiedDateTime);
+      //               return modifiedTime.isAfter(fiveMinutesAgo);
+      //             }
+      //             return true;
+      //           });
+      //         }
+      //         data.sort((a: any, b: any) => b.jobId - a.jobId);
+
+      //         console.log(data);
+      //         if(reactGrid && isreload)
+      //           reactGrid.dataView.setItems(data)
+      //         else
+      //           setData(data);
+      //       }
     }).finally(() => {
-        setLoader(false);
+      setLoader(false);
     });
-}
+  }
 
 
-  const deleteJob = (jobId:string, status: string) => {
+  const deleteJob = (jobId: string, status: string) => {
     JobService.deleteJob(jobId, user.id, status).then((response: any) => {
       if (response.isSuccess) {
         toast.success(`Job ${status} successfully.`);
@@ -361,18 +366,16 @@ const ClientJobList = () => {
         reloadGridData();
       }
     }).finally(() => {
-      
     });
   }
 
-  const updateJobStatus = (jobId:string, status: string) => {
+  const updateJobStatus = (jobId: string, status: string) => {
     JobService.updateJobStatus(jobId, user.id, status).then((response: any) => {
       if (response.isSuccess) {
         //toast.success(`Job ${status} successfully.`);
         reloadGridData();
       }
     }).finally(() => {
-      
     });
   }
 
@@ -385,41 +388,38 @@ const ClientJobList = () => {
           setStatus(response.data.map((item: any) => {
             return { 'value': item.id, 'label': item.value };
           }));
-          let status = response.data.map((item: any) =>   {
-            if (item.value == 'Pending' || item.value == 'In Progress') 
-                return item.id 
+          let status = response.data.map((item: any) => {
+            if (item.value == 'Pending' || item.value == 'In Progress')
+              return item.id
           }).join(',');
-          status = status.split(',').filter((x: any) => { if (x.trim() != '') return x}).join(',');
-          let dStatus = response.data.map((item: any) => { 
-            if (item.value == 'Pending' || item.value == 'In Progress') 
-              return { 'value': item.id, 'label': item.value } 
+          status = status.split(',').filter((x: any) => { if (x.trim() != '') return x }).join(',');
+          let dStatus = response.data.map((item: any) => {
+            if (item.value == 'Pending' || item.value == 'In Progress')
+              return { 'value': item.id, 'label': item.value }
           });
-
-          
 
           dStatus = dStatus.filter((element: any) => !!element);
           //setStatusFilter(status);
-        
-      }});
-    
+        }
+      });
   }
 
   const onStatusChange = (newValue: any, actionMeta: any) => {
     let selStatus = newValue ? newValue.map((val: any, index: number) => val.value).join(',') : '';
 
-    if(selStatus =='12F5B379-A6E9-48A2-81E2-6E7249B4895E'){//Completed
-       isFilesVisible = true;
-       console.log('**selStatus',selStatus,' Label: Completed  isFilesVisible',isFilesVisible);
-    }
-   if(selStatus == '23503D95-B250-4185-AFC3-081B3D4051D6'){ //Downloaded
+    if (selStatus == '12F5B379-A6E9-48A2-81E2-6E7249B4895E') {//Completed
       isFilesVisible = true;
-      console.log('**selStatus',selStatus,' label: Downloaded  isFilesVisible',isFilesVisible);
-   }
-    
+      console.log('**selStatus', selStatus, ' Label: Completed  isFilesVisible', isFilesVisible);
+    }
+    if (selStatus == '23503D95-B250-4185-AFC3-081B3D4051D6') { //Downloaded
+      isFilesVisible = true;
+      console.log('**selStatus', selStatus, ' label: Downloaded  isFilesVisible', isFilesVisible);
+    }
+
     setStatusFilter(selStatus);
   };
 
-  function downloadFile(fileInfo: any){
+  function downloadFile(fileInfo: any) {
     setShowProgressBar(true);
     setFileData(fileInfo)
     DownloadZipService.downlodFile(fileInfo, setProgress, () => {
@@ -428,34 +428,34 @@ const ClientJobList = () => {
     });
   };
 
-  function downloadZip(mergeFileList: any [], mergeFileName: string){
-      setShowProgressBar(true);
-      setFileData(mergeFileName)
-      DownloadZipService.createZip(mergeFileList, mergeFileName, setProgress,function() {
-        setShowProgressBar(false); 
+  function downloadZip(mergeFileList: any[], mergeFileName: string) {
+    setShowProgressBar(true);
+    setFileData(mergeFileName)
+    DownloadZipService.createZip(mergeFileList, mergeFileName, setProgress, function () {
+      setShowProgressBar(false);
       setProgress(0);
-      });
+    });
   }
 
-  function downloadZipPopUp(){
+  function downloadZipPopUp() {
     setShowProgressBar(true);
-    DownloadZipService.createZip(fileList, mergeFileName, setProgress,function() {});
-    setShowProgressBar(false); 
+    DownloadZipService.createZip(fileList, mergeFileName, setProgress, function () { });
+    setShowProgressBar(false);
     setProgress(0);
   }
 
-  function diff_hours(modifiedDate: Date,todayDate: Date) {
-      // Calculate the difference in milliseconds between the two provided Date objects by subtracting the milliseconds value of dt1 from the milliseconds value of dt2
-        var diff =(todayDate.getTime() - modifiedDate.getTime()) / 1000;
-      // Convert the difference from milliseconds to hours by dividing it by the number of seconds in an hour (3600)
-         diff /= (60 * 60);
-      // Return the absolute value of the rounded difference in hours
-        return Math.abs(Math.round(diff));
- }
-  const getFileIcon = (fileExt:string) => {
-    //['pdf','.pdf','pdflink',''].indexOf(value[0].FileExtension) > -1 ?  '<i class="fa fa-file-pdf-o text-danger" aria-hidden="true"></i>' : '<i class="fa fa-file-word-o text-primary" aria-hidden="true"></i>';
+  function diff_hours(modifiedDate: Date, todayDate: Date) {
+    // Calculate the difference in milliseconds between the two provided Date objects by subtracting the milliseconds value of dt1 from the milliseconds value of dt2
+    var diff = (todayDate.getTime() - modifiedDate.getTime()) / 1000;
+    // Convert the difference from milliseconds to hours by dividing it by the number of seconds in an hour (3600)
+    diff /= (60 * 60);
+    // Return the absolute value of the rounded difference in hours
+    return Math.abs(Math.round(diff));
+  }
+  const getFileIcon = (fileExt: string) => {
+    //['pdf','.pdf','pdflink',''].indexOf(value?.[0]?.FileExtension) > -1 ?  '<i class="fa fa-file-pdf-o text-danger" aria-hidden="true"></i>' : '<i class="fa fa-file-word-o text-primary" aria-hidden="true"></i>';
 
-    switch(fileExt){
+    switch (fileExt) {
       case 'pdf':
       case '.pdf':
       case 'pdflink':
@@ -505,12 +505,13 @@ const ClientJobList = () => {
     }
   }
   useEffect(() => {
+    if(selectedStatus || fromDate || toDate || filename)
     loadData(false);
-  }, [selectedStatus, fromDate, toDate, filename, jobId]); 
+  }, [selectedStatus, fromDate, toDate, filename, jobId]);
 
-  useEffect(() => {
-    loadData(false);
-  }, [initialLoad]);
+  // useEffect(() => {
+  //   loadData(false);
+  // }, [initialLoad]);
 
   useEffect(() => {
     getStatus();
@@ -518,7 +519,7 @@ const ClientJobList = () => {
   }, []);
 
   // useEffect(() => {
-    
+
   // }, [selectedStatus]);
 
   const FileBody = () => {
@@ -565,38 +566,41 @@ const ClientJobList = () => {
             <div className="card">
               <div className="card-header d-flex">
                 <div className='col-md-4'>
-                  <h3 className="card-title"style={{ fontSize: "1.8rem" }}>
-                 <strong>Jobs</strong></h3>
+                  <h3 className="card-title" style={{ fontSize: "1.8rem" }}>
+                    <strong>Jobs</strong></h3>
                 </div>
                 <div className='col-md-8 d-flex flex-row-reverse'>
-                  <Button style={{ backgroundColor:'#b8f9d3', color:'black', marginLeft:'5px'}} className='btn-sm' onClick={(e) => navigate('/intake', 
-                    { state: 
-                    { 
-                      isSingle: true,
-                      fileNames:fileNames} })}>
+                  <Button style={{ backgroundColor: '#b8f9d3', color: 'black', marginLeft: '5px' }} className='btn-sm' onClick={(e) => navigate('/intake',
+                    {
+                      state:
+                      {
+                        isSingle: true,
+                        fileNames: fileNames
+                      }
+                    })}>
                     Merge Upload
                   </Button>
-                  <Button  style={{ backgroundColor:'#dce9ff', color:'black' }} className='btn-sm' onClick={(e) => navigate('/intake', { state: { isSingle: false, fileNames:fileNames } })}>
+                  <Button style={{ backgroundColor: '#dce9ff', color: 'black' }} className='btn-sm' onClick={(e) => navigate('/intake', { state: { isSingle: false, fileNames: fileNames } })}>
                     Single Upload
                   </Button>
                 </div>
               </div>
               <div className="card-body">
                 <div className='row'>
-                <div className="col-md-3">
-                  <div className="form-group">
+                  <div className="col-md-3">
+                    <div className="form-group">
                       <label>Select Status </label>
-                      <Select options={statusList} isClearable={true} onChange={onStatusChange} isMulti={true}  closeMenuOnSelect={false}/>
+                      <Select options={statusList} isClearable={true} onChange={onStatusChange} isMulti={true} closeMenuOnSelect={false} />
+                    </div>
                   </div>
-                </div>  
 
-                <div className="col-md-3">
-                  <div className="form-group">
+                  <div className="col-md-3">
+                    <div className="form-group">
                       <label>File Name </label>
                       <input className="form-control" type='text' name='txtFilename' onChange={(e) => setFilename(e.target.value)} value={filename} />
+                    </div>
                   </div>
-                </div>  
-                {/* <div className="col-md-2">
+                  {/* <div className="col-md-2">
                     <div className="form-group">
                       <label>Job Id</label>
                       <input
@@ -610,26 +614,26 @@ const ClientJobList = () => {
                   </div> */}
 
 
-                <div className="col-md-2">
-                  <div className="form-group">
+                  <div className="col-md-2">
+                    <div className="form-group">
                       <label>From Date </label><br></br>
-                      <DatePicker id="txtFromDate" name='txtFromDate' onChange={(date:any) => setFromDate(date)}  selected={fromDate}  className="form-control" dateFormat="MM/dd/yyyy"/>
+                      <DatePicker id="txtFromDate" name='txtFromDate' onChange={(date: any) => setFromDate(date)} selected={fromDate} className="form-control" dateFormat="MM/dd/yyyy" />
+                    </div>
                   </div>
-                </div>  
 
-                <div className="col-md-2">
-                  <div className="form-group">
+                  <div className="col-md-2">
+                    <div className="form-group">
                       <label>To Date </label><br></br>
-                      <DatePicker id="txtToDate" name='txtToDate' onChange={(date:any) => setToDate(date)}  selected={toDate}  className="form-control" dateFormat="MM/dd/yyyy"/>
+                      <DatePicker id="txtToDate" name='txtToDate' onChange={(date: any) => setToDate(date)} selected={toDate} className="form-control" dateFormat="MM/dd/yyyy" />
+                    </div>
                   </div>
-                </div>  
-                <div className="col-md-2">
-                  <div className="form-group">
+                  <div className="col-md-2">
+                    <div className="form-group">
                       <label>&nbsp; </label><br></br>
-                     <Button variant="primary" onClick={(e) => search()}><strong>Search</strong></Button>
+                      <Button variant="primary" onClick={(e) => search()}><strong>Search</strong></Button>
+                    </div>
                   </div>
-                </div>  
-                 
+
                 </div>
                 <div className='row pt-4'>
                   <div className='col-md-12' style={{ zIndex: '0' }}>
@@ -650,56 +654,56 @@ const ClientJobList = () => {
 
       {showProgressBar && (
 
-<div>
-  <div
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      zIndex: 999999,
-    }}
-  >
-    <div
-      style={{
-        width: "400px",
-        padding: "20px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        borderRadius: "8px",
-        backgroundColor: "#ffffff",
-        textAlign: "center",
-      }}
-    >
-      <FaFileDownload
-        size={50}
-        style={{ marginBottom: "20px", color: "#6a1b9a" }}
-      />
-      <p><strong>FileName:</strong>{FileData.FileName ?? FileData}</p>
-      <ProgressBar
-        completed={progress}
-        bgColor="#6a1b9a"
-        height="20px"
-        labelColor="#ffffff"
-        baseBgColor="#e0e0df"
-        labelAlignment="center"
-        borderRadius="5px"
-      />
-      {/* <Button
+        <div>
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 999999,
+            }}
+          >
+            <div
+              style={{
+                width: "400px",
+                padding: "20px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                borderRadius: "8px",
+                backgroundColor: "#ffffff",
+                textAlign: "center",
+              }}
+            >
+              <FaFileDownload
+                size={50}
+                style={{ marginBottom: "20px", color: "#6a1b9a" }}
+              />
+              <p><strong>FileName:</strong>{FileData.FileName ?? FileData}</p>
+              <ProgressBar
+                completed={progress}
+                bgColor="#6a1b9a"
+                height="20px"
+                labelColor="#ffffff"
+                baseBgColor="#e0e0df"
+                labelAlignment="center"
+                borderRadius="5px"
+              />
+              {/* <Button
         variant="danger"
         style={{ marginTop: "20px", width: "100%" }}
         onClick={handleCancel}
       >
         Cancel
       </Button> */}
-    </div>
-  </div>
-</div>
-)}
+            </div>
+          </div>
+        </div>
+      )}
 
       <Modal show={show} onHide={handleClose} centered={false}>
         <Modal.Body className='p-1'>
