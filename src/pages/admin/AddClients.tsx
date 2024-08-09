@@ -155,8 +155,8 @@ const RegistrationForm = () => {
           .min(1, "Select at least one document type.")
           .required("File Preference is a required field"),
 
-        companyName: Yup.string()
-          .required("Company Name Is a required field")
+        // companyName: Yup.string()
+        //   .required("Company Name Is a required field")
 
         // Logo is required (commented out for now)
         // logo: Yup.mixed().required('Logo is a required field'),
@@ -251,7 +251,9 @@ const RegistrationForm = () => {
 
 
             <div className="mb-3">
-              <label className="form-label">Company Name<span className="text-danger">*</span></label>
+              <label className="form-label">Company Name
+                {/* <span className="text-danger">*</span> */}
+                </label>
               <InputGroup className="mb-3">
                 <Form.Control
                   id="companyName"
@@ -264,14 +266,14 @@ const RegistrationForm = () => {
                   isInvalid={touched.companyName && !!errors.companyName}
                   tabIndex={5}
                 />
-                {touched.companyName && errors.companyName && (
+                {/* {touched.companyName && errors.companyName && (
                   <div
                     className="position-absolute top-100 start-0 text-danger small"
                     style={{ marginTop: "2.30rem" }}
                   >
                     {errors.companyName}
                   </div>
-                )}
+                )} */}
               </InputGroup>
             </div>
 
@@ -483,7 +485,7 @@ const RegistrationForm = () => {
                   id="country"
                   name="country"
                   onChange={handleChange}
-                  value={values.country}
+                  value={values.country || 'US'}
                   isValid={touched.country && !errors.country}
                   isInvalid={touched.country && !!errors.country}
                   tabIndex={10}
