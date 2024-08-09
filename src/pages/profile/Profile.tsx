@@ -24,7 +24,7 @@ const Profile = () => {
   const toggle = (tab: string) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
-  
+  const loginName = location.state.loginName
   useEffect(() => {
     if(location.state){
         setActiveTab(location.state?.tab);
@@ -51,7 +51,7 @@ const Profile = () => {
                     />
                   </div>
                   <h3 className="profile-username text-center">
-                    <strong>Client</strong>
+                    <strong>{loginName}</strong>
                   </h3>
                 </div>
               </div>

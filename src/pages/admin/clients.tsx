@@ -174,7 +174,10 @@ const ClientsList = () => {
       maxWidth: 40,
       onCellClick: (e: Event, args: OnEventArgs) => {
         navigate("/profile", {
-          state: {userId: args.dataContext.UserId}
+          state: {
+            userId: args.dataContext.UserId,
+            loginName: args.dataContext.loginName
+          }
         });
       }
     },
@@ -220,22 +223,6 @@ const ClientsList = () => {
     loadData(false);
   }, []);
 
-  // const search = () => {
-  //   if (initialLoad) {
-  //     setInitialLoad(false);
-  //   } else {
-  //     const filteredData = dataset.filter((item) => {
-  // console.log(item,"iiiiiiiiiiiiii");
-  
-  //       const matchesEmail = selectedEmail.length ? selectedEmail.includes(item.Email) : true;
-  //       const matchesClient = selectedClient.length ? selectedClient.includes(item.FirstName + ' ' + item.LastName) : true;
-  //       const matchesPhone = selectedPhone.length ? selectedPhone.includes(item.PhoneNo) : true;
-  //       return matchesEmail && matchesClient && matchesPhone;
-  //     });
-  //     setFilteredData(filteredData);
-  //     setData(filteredData)
-  //   }
-  // };
 
   const search = () => {
     if (initialLoad) {

@@ -157,7 +157,10 @@ import { roleList } from "@app/constants/role.constants";
         minWidth: 30,
         onCellClick: (_e, args) => {
           navigate("/employee-profile", {
-            state: {userId: args.dataContext.UserId}
+            state: {
+              userId: args.dataContext.UserId,
+              loginName: args.dataContext.loginName
+            }
           });
         }
       },
