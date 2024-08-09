@@ -59,7 +59,8 @@ const ClientsList = () => {
       company:item.CompanyName,
       createdDateTime: item.CreatedDateTime,
       defaultTAT: item.DefaultTAT,
-      filePreferences: item.FilePreference
+      filePreferences: item.FilePreference,
+      isActive: item.IsActive
     };
   });
 
@@ -70,14 +71,14 @@ const ClientsList = () => {
   const MenuCommandItems: MenuCommandItem[] = Array<MenuCommandItem>();
 
   const columns: Column[] = [
-    {
-      id: "company",
-      name: "COMPANY NAME",
-      field: "company",
-      sortable: true,
+    // {
+    //   id: "company",
+    //   name: "COMPANY NAME",
+    //   field: "company",
+    //   sortable: true,
       // maxWidth: 150,
       // cssClass:'text-left'
-    },
+    // },
     {
       id: "clientName",
       name: "CLIENT NAME",
@@ -113,7 +114,7 @@ const ClientsList = () => {
       field: "email",
       sortable: true,
       // maxWidth: 150,
-        minWidth:90,
+        // minWidth:90,
       formatter: (row, cell, value) => `<div title="${value}">${value}</div>`,
     },
     {
@@ -132,6 +133,15 @@ const ClientsList = () => {
       sortable: true,
        minWidth: 50,
        formatter: (row, cell, value) => `<div style="padding-left: 10px;">${value}</div>`, // Adding padding-left for gap
+    },
+    {
+      id: "isActive",
+      name: "STATUS",
+      field: "isActive",
+      sortable: true,
+      minWidth: 50,
+      maxWidth: 100,
+      formatter: (row, cell, value) => `<div style = 'text-align:left'>${value ? 'ACTIVE' : 'INACTIVE'}</div>`,
     },
 
     // {

@@ -286,7 +286,7 @@ const AddEmployees = () => {
             </div>
             <div className="mb-3">
               <label className="form-label">
-                Address 1
+                Address 1<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
@@ -312,7 +312,7 @@ const AddEmployees = () => {
             </div>
             <div className="mb-3">
               <label className="form-label">
-                City
+                City<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
@@ -340,7 +340,7 @@ const AddEmployees = () => {
 
             <div className="mb-3">
               <label className="form-label">
-                Country
+                Country<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
@@ -355,7 +355,7 @@ const AddEmployees = () => {
                 >
                   <option value="" label="Select country" />
                   {countryList.map((state, index) => (
-                    <option key={index} value={state.value}>
+                    <option key={index} value={state.value || 'US'}>
                       {state.label}
                     </option>
                   ))}
@@ -488,7 +488,7 @@ const AddEmployees = () => {
             </div>
             <div className="mb-3">
               <label className="form-label">
-                State
+                State<span className="text-danger">*</span>
               </label>
               <InputGroup className="mb-3">
                 <Form.Control
