@@ -32,7 +32,7 @@ const Header = () => {
     }
     return classes;
   }, [navbarVariant, headerBorder]);
-
+  const RoleName = localStorage.getItem("authentication") ? JSON.parse(localStorage.getItem("authentication") as string).loginName : null
   return (
     <nav className={getContainerClasses()}>
       <ul className="navbar-nav">
@@ -60,6 +60,7 @@ const Header = () => {
         {/* <MessagesDropdown />
         <NotificationsDropdown />
         <LanguagesDropdown /> */}
+        <div className='d-flex align-items-center justify-content-center'><strong>{RoleName}</strong></div>
         <UserDropdown />
         {/* <li className="nav-item">
           <button
