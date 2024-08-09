@@ -36,7 +36,6 @@ const RegistrationForm = () => {
     password: string,
     firstName: string,
     lastName: string,
-    loginName: string,
     address1: string,
     address2: string,
     city: string,
@@ -53,7 +52,7 @@ const RegistrationForm = () => {
       const numericPhoneNumber = phoneNo.replace(/^\+1|[\D]+/g, '');
       const user = {
         firstName,
-        loginName,
+        loginName:email,
         lastName,
         email,
         phoneNo: parseInt(numericPhoneNumber, 10),
@@ -83,7 +82,6 @@ const RegistrationForm = () => {
     useFormik({
       initialValues: {
         firstName: "",
-        loginName: "",
         lastName: "",
         companyName:"",
         email: "",
@@ -104,7 +102,6 @@ const RegistrationForm = () => {
         firstName: Yup.string().required("First Name is a required field"),
 
         // Middle name is optional and can be any string
-        loginName: Yup.string().required("Login Name is a required field"),
 
         // Last name is required and must be a string
         lastName: Yup.string().required("Last Name is a required field"),
@@ -141,14 +138,17 @@ const RegistrationForm = () => {
 
         // Password is required, must be a string, and must be between 5 and 30 characters long
         password: Yup.string()
-          .min(5, "Password must be at least 5 characters long.")
-          .max(30, "Password must be at most 30 characters long.")
-          .required("Password is a required field"),
-
+          .min(8, "Password must be at least 8 characters long.")
+          .matches(/(?=.*[A-Z])/, "Password must contain at least one uppercase letter.")
+          .matches(/(?=.*\d)/, "Password must contain at least one numeric character.")
+          .matches(/(?=.*\W)/, "Password must contain at least one special character.")
+          .matches(/^[A-Za-z\d\W]*$/, "Password must be alphanumeric and may include special characters.")
+          .required("Password must be At least 8 characters including 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.")
+,
         // Password retype is required, must be a string, and must match the password field
         passwordRetype: Yup.string()
           .oneOf([Yup.ref("password")], "Passwords must match.")
-          .required("Password retype is a required field"),
+          .required("Confirm Password is a required field"),
 
         // File preference is required, must be an array, and must have at least one item
         filePreference: Yup.array()
@@ -167,7 +167,6 @@ const RegistrationForm = () => {
           values.password,
           values.firstName,
           values.lastName,
-          values.loginName,
           values.address1,
           values.address2,
           values.city,
@@ -182,7 +181,6 @@ const RegistrationForm = () => {
         );
       },
     });
-  console.log(values);
   return (
     <div className="max-w-4xl mx-auto p-4 border rounded shadow-lg bg-white">
       <div style={{ display: "flex", justifyContent: 'space-between'}}>
@@ -535,7 +533,7 @@ const RegistrationForm = () => {
           </div>
         </div>
 
-        <div className="container border p-3 mb-3" style={{ width: '100%' }}>
+        <div className="container border ml-1 mb-3" style={{ width: '100%' }}>
           <form onSubmit={handleSubmit}>
             <div className="row">
               <div className="col-md-6">
@@ -549,20 +547,10 @@ const RegistrationForm = () => {
                       name="loginName"
                       type="text"
                       placeholder="Login Name"
-                      onChange={handleChange}
-                      value={values.loginName}
-                      isValid={touched.loginName && !errors.loginName}
-                      isInvalid={touched.loginName && !!errors.loginName}
+                      disabled
+                      value={values.email}
                       tabIndex={13}
                     />
-                    {touched.loginName && errors.loginName && (
-                      <div
-                        className="position-absolute top-100 start-0 text-danger small"
-                        style={{ marginTop: "2.30rem" }}
-                      >
-                        {errors.loginName}
-                      </div>
-                    )}
                   </InputGroup>
                 </div>
 
