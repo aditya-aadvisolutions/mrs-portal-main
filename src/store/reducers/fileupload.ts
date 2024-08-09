@@ -19,13 +19,14 @@ export const fileUploadSlice = createSlice({
       })
     },
     removeUploadedFiles: (state: Array<IUploadFiles>) => {
-      while(state.length > 0){
-        state.pop();
-      }
+        state?.pop?.();
+    },
+    removeAllUploadedFiles: (state: Array<IUploadFiles>) => {
+        state.length = 0;
     }
   },
 });
 
-export const { setUploadedFiles, removeUploadedFiles } = fileUploadSlice.actions;
+export const { setUploadedFiles, removeUploadedFiles, removeAllUploadedFiles } = fileUploadSlice.actions;
 
 export default fileUploadSlice.reducer;

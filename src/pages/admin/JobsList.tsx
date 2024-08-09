@@ -197,7 +197,7 @@ const JobsList = () => {
           args.dataContext.selected = e.target.checked;
       },
     },
-    // { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:50 },
+    { id: 'jobId', name: 'ID', field: 'jobId', sortable: true, maxWidth:50 },
     {
       id: "createdDateTime",
       name: "DATE",
@@ -256,7 +256,7 @@ const JobsList = () => {
             ? `<i class="fa fa-file-archive-o text-info" aria-hidden="true"></i> <a href="#" class="pointer" title=${title}>${fileName}</a>`
             : "";
         } else {
-          let icon = getFileIcon(value[0].FileExtension);
+          let icon = getFileIcon(value?.[0]?.FileExtension);
           return value.length > 0
             ? `<i class="fa ${icon}" aria-hidden="true"></i> <a href="#" class="pointer" title="${dataContext.name}">${dataContext.name}</a>`
             : "";
@@ -397,7 +397,7 @@ const JobsList = () => {
         if (typeof value === "string" && value.endsWith("Hours")) {
           return value.replace("Hours", "Hrs");
         } else {
-          return value.toString();
+          return value?.toString?.() ?? '';
         }
       },
     },

@@ -160,9 +160,8 @@ export default function UppyUpload(props: any) {
       } else {
         folderStructure = "Client name is not available";
       }
-
+      let isDuplicateFile = false;
       for (const prop in files) {
-
         const file = files[prop];
         const originalName = file.name;
         let pageCount = 0;
@@ -193,12 +192,14 @@ export default function UppyUpload(props: any) {
 
         if (!isSingle) {
           if (fileNames.includes(nameWithoutExtension + extension)) {
-            setShowModal(true);
-            setModalFile(file);
-            return;
+            isDuplicateFile = file;
           }
         }
-
+      }
+      if(isDuplicateFile){
+        setShowModal(true);
+        setModalFile(isDuplicateFile);
+        return;
       }
     })
 
