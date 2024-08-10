@@ -613,6 +613,7 @@ const JobsList = () => {
             title: "Duplicate",
             iconCssClass: "fa fa-files-o text-info",
             positionOrder: 66,
+            itemVisibilityOverride: (args) => args.dataContext.statusName !== "Completed",
             action: (_e, args) => {
               confirm("Are you sure you want to Duplicate this record?", {
                 title: "Confirm",
@@ -734,6 +735,7 @@ const JobsList = () => {
     let tDate = toDate ? moment(toDate).format("MM-DD-YYYY") : null;
     JobService.getJobs(
       user.id,
+      jobId,
       selectedStatus,
       selectedClient,
       filename,
@@ -1011,6 +1013,12 @@ const JobsList = () => {
               </div>
               <div className="card-body">
                 <div className="row">
+                <div className="col-md-2">
+                    <div className="form-group">
+                      <label>Job ID </label>
+                      <input placeholder='Enter Job ID' className="form-control" type='text' name='jobId' onChange={(e) => setJobId(e.target.value)} value={jobId} />
+                    </div>
+                  </div>
                   <div className="col-md-2">
                     <div className="form-group">
                       <label>Select Status</label>
@@ -1042,6 +1050,7 @@ const JobsList = () => {
                       <label>File Name </label>
                       <input
                         className="form-control"
+                        placeholder="Enter File Name"
                         type="text"
                         name="txtFilename"
                         onChange={(e) => setFilename(e.target.value)}
@@ -1070,6 +1079,7 @@ const JobsList = () => {
                       <DatePicker
                         id="txtFromDate"
                         name="txtFromDate"
+                        placeholderText="From Date"
                         onChange={(date: any) => setFromDate(date)}
                         selected={fromDate}
                         className="form-control"
@@ -1084,6 +1094,7 @@ const JobsList = () => {
                       <DatePicker
                         id="txtToDate"
                         name="txtToDate"
+                        placeholderText="To Date"
                         onChange={(date: any) => setToDate(date)}
                         selected={toDate}
                         className="form-control"
@@ -1092,21 +1103,21 @@ const JobsList = () => {
                     </div>
                   </div>
 
+                </div>
+                <div className="row">
+                  <div className="col-md-11">
+                    <br/>
+                    <Button className="btn-sm btn-success" onClick={mergeJobs}>
+                      Merge Selected Jobs
+                    </Button>
+                  </div>
                   <div className="col-md-1">
                     <div className="form-group">
                       <label>&nbsp; </label>
-                      <br></br>
                       <Button variant="primary" onClick={(e) => search()}>
                         <strong>Search</strong>
                       </Button>
                     </div>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-md-12">
-                    <Button className="btn-sm btn-success" onClick={mergeJobs}>
-                      Merge Selected Jobs
-                    </Button>
                   </div>
                 </div>
                 <div className="row pt-4">
