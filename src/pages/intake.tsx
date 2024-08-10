@@ -38,6 +38,7 @@ export default function Upload() {
     const [fromDate, setFromDate] = useState<Date>();
     const [toDate, setToDate] = useState<Date>();
     const [initialLoad, setInitialLoad] = useState(true);
+    const [jobId, setJobId] = useState('');
     const [fileNames, setFileNames] = useState([]);
     const [selectedStatus, setStatusFilter] = useState('');
     const [filename, setFilename] = useState('');
@@ -101,7 +102,7 @@ export default function Upload() {
 
         let fDate = fromDate ? moment(fromDate).format('YYYY-MM-DD') : '';
         let tDate = toDate ? moment(toDate).format('YYYY-MM-DD') : '';
-        JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
+        JobService.getJobs(user.id,jobId, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
             if (response.isSuccess) {
                 let data = response.data.map((item: any) => {
                     item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => !item.IsUploadFile) : [];
@@ -171,7 +172,7 @@ export default function Upload() {
                 <div className="container-fluid">
                     <div className="card">
                         <div className="card-header">
-                            <h3 className="card-title" style={{ fontSize: "1.8rem" }}><strong>Upload</strong></h3>
+                            <h3 className="card-title" style={{ fontSize: "1.8rem" }}><strong>{!showForm && isSingle ?"Upload":isSingle?"Merge Upload":"Single Upload"}</strong></h3>
                         </div>
                         <div className="card-body">
 

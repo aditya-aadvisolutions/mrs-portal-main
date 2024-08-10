@@ -194,7 +194,7 @@ const ClientJobList = () => {
 
       }
     },
-    { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 180 },
+    { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 180 }, // status
     {
       id: 'tat', name: 'TAT', field: 'tat', maxWidth: 100
       , formatter: (row, cell, value, colDef, dataContext) => {
@@ -301,7 +301,7 @@ const ClientJobList = () => {
 
     let fDate = fromDate ? moment(fromDate).format('YYYY-MM-DD') : '';
     let tDate = toDate ? moment(toDate).format('YYYY-MM-DD') : '';
-    JobService.getJobs(user.id, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
+    JobService.getJobs(user.id,jobId, selectedStatus, selectedClient, filename, fDate, tDate, initialLoad).then((response: any) => {
       if (response.isSuccess) {
         let data = response.data.map((item: any) => {
           item.files = item.jobFiles ? JSON.parse(item.jobFiles).JobFiles.filter((item: any) => !item.IsUploadFile) : [];
@@ -362,11 +362,12 @@ const ClientJobList = () => {
     JobService.deleteJob(jobId, user.id, status).then((response: any) => {
       if (response.isSuccess) {
         toast.success(`Job ${status} successfully.`);
-
+        loadData(false);
         reloadGridData();
       }
-    }).finally(() => {
-    });
+    }).catch((error) => {
+      console.log("Load Data error", { error });
+    })
   }
 
   const updateJobStatus = (jobId: string, status: string) => {
@@ -504,10 +505,10 @@ const ClientJobList = () => {
       loadData(false)
     }
   }
-  useEffect(() => {
-    if(selectedStatus || fromDate || toDate || filename)
-    loadData(false);
-  }, [selectedStatus, fromDate, toDate, filename, jobId]);
+  // useEffect(() => {
+  //   if(selectedStatus || fromDate || toDate || filename)
+  //   loadData(false);
+  // }, [selectedStatus, fromDate, toDate, filename, jobId]);
 
   // useEffect(() => {
   //   loadData(false);
@@ -587,17 +588,23 @@ const ClientJobList = () => {
               </div>
               <div className="card-body">
                 <div className='row'>
-                  <div className="col-md-3">
+                <div className="col-md-2">
+                    <div className="form-group">
+                      <label>Job ID </label>
+                      <input placeholder='Enter Job ID' className="form-control" type='text' name='jobId' onChange={(e) => setJobId(e.target.value)} value={jobId} />
+                    </div>
+                  </div>
+                  <div className="col-md-2">
                     <div className="form-group">
                       <label>Select Status </label>
                       <Select options={statusList} isClearable={true} onChange={onStatusChange} isMulti={true} closeMenuOnSelect={false} />
                     </div>
                   </div>
 
-                  <div className="col-md-3">
+                  <div className="col-md-2">
                     <div className="form-group">
                       <label>File Name </label>
-                      <input className="form-control" type='text' name='txtFilename' onChange={(e) => setFilename(e.target.value)} value={filename} />
+                      <input placeholder='Enter File Name' className="form-control" type='text' name='txtFilename' onChange={(e) => setFilename(e.target.value)} value={filename} />
                     </div>
                   </div>
                   {/* <div className="col-md-2">
@@ -617,20 +624,20 @@ const ClientJobList = () => {
                   <div className="col-md-2">
                     <div className="form-group">
                       <label>From Date </label><br></br>
-                      <DatePicker id="txtFromDate" name='txtFromDate' onChange={(date: any) => setFromDate(date)} selected={fromDate} className="form-control" dateFormat="MM/dd/yyyy" />
+                      <DatePicker placeholderText='From Date' id="txtFromDate" name='txtFromDate' onChange={(date: any) => setFromDate(date)} selected={fromDate} className="form-control" dateFormat="MM/dd/yyyy" />
                     </div>
                   </div>
 
                   <div className="col-md-2">
                     <div className="form-group">
                       <label>To Date </label><br></br>
-                      <DatePicker id="txtToDate" name='txtToDate' onChange={(date: any) => setToDate(date)} selected={toDate} className="form-control" dateFormat="MM/dd/yyyy" />
+                      <DatePicker placeholderText='To Date' id="txtToDate" name='txtToDate' onChange={(date: any) => setToDate(date)} selected={toDate} className="form-control" dateFormat="MM/dd/yyyy" />
                     </div>
                   </div>
                   <div className="col-md-2">
                     <div className="form-group">
                       <label>&nbsp; </label><br></br>
-                      <Button variant="primary" onClick={(e) => search()}><strong>Search</strong></Button>
+                      <Button  variant="primary" onClick={(e) => search()}><strong>Search</strong></Button>
                     </div>
                   </div>
 

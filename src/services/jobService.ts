@@ -2,6 +2,7 @@ import ApiService from '@app/services/Api.service';
 
 export const getJobs = (
   userId: string,
+  jobId: string ,
   jobStatus: string,
   createdBy: string,
   filename: string | null = null,
@@ -13,6 +14,7 @@ export const getJobs = (
     // Construct query parameters
     const params = new URLSearchParams();
     params.append('userId', userId);
+    if (jobId) params.append('jobId', jobId);
     if (jobStatus) params.append('jobStatus', jobStatus);
     if (createdBy) params.append('createdBy', createdBy);
     if (filename) params.append('filename', filename);
