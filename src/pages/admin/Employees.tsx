@@ -42,7 +42,8 @@ import { roleList } from "@app/constants/role.constants";
         createdDateTime: item.CreatedDateTime,
         defaultTAT: item.DefaultTAT,
         manager:item.Manager,
-        role:item.Role
+        role:item.Role,
+        isActive: item.IsActive
       };
     });
   
@@ -90,6 +91,16 @@ import { roleList } from "@app/constants/role.constants";
         sortable: true,
         maxWidth: 150,
       },
+      {
+        id: "isActive",
+        name: "STATUS",
+        field: "isActive",
+        sortable: true,
+        // minWidth: 50,
+        // maxWidth: 100,
+        formatter: (row, cell, value) => `<div style = 'text-align:left'> ${value ? 'ACTIVE' : 'INACTIVE'}</div>`,
+      },
+  
    
       // {
       //   id: "FirstName",

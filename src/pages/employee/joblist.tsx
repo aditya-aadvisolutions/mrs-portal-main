@@ -22,6 +22,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
 import Employees from './../admin/Employees';
+import { FaFileDownload } from 'react-icons/fa';
+import ProgressBar from '@ramonak/react-progress-bar';
 
 //let reactGrid!: SlickgridReactInstance;
 let grid1!: SlickGrid;
@@ -43,7 +45,9 @@ const JobList = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [jobStatus, setJobStatus] = useState<string>('Pending');
   const [selectedJobId, setSelectedJobId] = useState<string>('');
-  
+  const [progress, setProgress] = useState<any>(0);
+  const [showProgressBar, setShowProgressBar] = useState(false);
+  const [FileData, setFileData] = useState<any>()
 //  const [mergeFileName, setMergeFileName] = useState('');
   // const [defaultStatus, setDefaultStatus] = useState([]);
   // Files Modal 
@@ -319,24 +323,31 @@ const JobList = () => {
     setStatusFilter(selStatus);
   };
 
-  function downloadFile(fileInfo: any){
-    setLoader(true);
-    DownloadZipService.downlodFile(fileInfo, function(){
-      setLoader(false);
+  function downloadFile(fileInfo: any) {
+    setShowProgressBar(true);
+    setFileData(fileInfo)
+    DownloadZipService.downlodFile(fileInfo, setProgress, function () {
+      setShowProgressBar(false);
+      setProgress(0);
       updateJobStatus(fileInfo.jobId, 'In Progress');
     });
   };
 
-  function downloadZip(mergeFileList: any [], mergeFileName: string){
-      setLoader(true);
-      DownloadZipService.createZip(mergeFileList, mergeFileName, function() {
-        setLoader(false);
-        updateJobStatus(mergeFileList[0].jobId, 'In Progress');
-      });
+  function downloadZip(mergeFileList: any[], mergeFileName: string) {
+    setShowProgressBar(true);
+    setFileData(mergeFileName)
+    DownloadZipService.createZip(mergeFileList, mergeFileName, setProgress, function () {
+      setShowProgressBar(false);
+      setProgress(0);
+      updateJobStatus(mergeFileList[0].jobId, 'In Progress');
+    });
   }
 
-  function downloadZipPopUp(){
-    DownloadZipService.createZip(fileList, mergeFileName, function() {});
+  function downloadZipPopUp() {
+    setShowProgressBar(true);
+    DownloadZipService.createZip(fileList, mergeFileName, setProgress, function () { });
+    setShowProgressBar(false);
+    setProgress(0);
   }
   const getFileIcon = (fileExt:string) => {
     //['pdf','.pdf','pdflink',''].indexOf(value[0].FileExtension) > -1 ?  '<i class="fa fa-file-pdf-o text-danger" aria-hidden="true"></i>' : '<i class="fa fa-file-word-o text-primary" aria-hidden="true"></i>';
@@ -486,7 +497,58 @@ const JobList = () => {
           </div>
         </section>
       </div>
+      {showProgressBar && (
 
+<div>
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      zIndex: 999999,
+    }}
+  >
+    <div
+      style={{
+        width: "400px",
+        padding: "20px",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        borderRadius: "8px",
+        backgroundColor: "#ffffff",
+        textAlign: "center",
+      }}
+    >
+      <FaFileDownload
+        size={50}
+        style={{ marginBottom: "20px", color: "#6a1b9a" }}
+      />
+      <p><strong>FileName:</strong>{FileData.FileName ?? FileData}</p>
+      <ProgressBar
+        completed={progress}
+        bgColor="#6a1b9a"
+        height="20px"
+        labelColor="#ffffff"
+        baseBgColor="#e0e0df"
+        labelAlignment="center"
+        borderRadius="5px"
+      />
+      {/* <Button
+        variant="danger"
+        style={{ marginTop: "20px", width: "100%" }}
+        onClick={handleCancel}
+      >
+        Cancel
+      </Button> */}
+    </div>
+  </div>
+</div>
+)}
       <Modal show={show} onHide={handleClose} centered={false}>
         <Modal.Body className='p-1'>
           <FileBody></FileBody>
