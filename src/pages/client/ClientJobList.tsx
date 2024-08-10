@@ -194,7 +194,7 @@ const ClientJobList = () => {
 
       }
     },
-    { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 180 },
+    { id: 'statusName', name: 'STATUS', field: 'statusName', maxWidth: 180 }, // status
     {
       id: 'tat', name: 'TAT', field: 'tat', maxWidth: 100
       , formatter: (row, cell, value, colDef, dataContext) => {
