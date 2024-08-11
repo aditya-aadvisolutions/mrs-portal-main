@@ -1106,16 +1106,16 @@ const JobsList = () => {
                 </div>
                 <div className="row">
                   <div className="col-md-11">
-                    <br/>
-                    <Button className="btn-sm btn-success" onClick={mergeJobs}>
+                  <div className="form-group">
+                    <Button className="btn btn-success" onClick={mergeJobs}>
                       Merge Selected Jobs
                     </Button>
+                    </div>
                   </div>
                   <div className="col-md-1">
                     <div className="form-group">
-                      <label>&nbsp; </label>
-                      <Button variant="primary" onClick={(e) => search()}>
-                        <strong>Search</strong>
+                      <Button className="btn btn-primary" onClick={(e) => search()}>
+                        Search
                       </Button>
                     </div>
                   </div>
