@@ -184,11 +184,16 @@ export default function UppyUpload(props: any) {
         const nameWithoutExtension = originalName.slice(0, originalName.lastIndexOf('.'));
         const newClientFileName = `${folderStructure} - ${nameWithoutExtension}${extension}`;
         const newAdminFileName = `${nameWithoutExtension}${extension}`
+        const directoryName = 'mrs-prod';
+
+
         if (Role === 'Admin') {
-          file.name = "/admin" + '/' + newAdminFileName;
+          file.name = directoryName + "/admin" + '/' + newAdminFileName;
         } else {
-          file.name = "/client" + '/' + newClientFileName;
+          file.name = directoryName + "/client" + '/' + newClientFileName;
         }
+
+        console.log('file.name...',file.name);
 
         if (!isSingle) {
           if (fileNames.includes(nameWithoutExtension + extension)) {

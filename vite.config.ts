@@ -7,8 +7,8 @@ export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   return defineConfig({
-   // mode: 'development',
-   mode: 'production',
+    mode: 'development',
+   //mode: 'production',
     plugins: [react()],
     resolve: {
       alias: {
