@@ -394,9 +394,9 @@ const JobList = () => {
       loadData(false);  
   }
 
-  useEffect(() => {
-    loadData(false);
-  }, [initialLoad]);
+  // useEffect(() => {
+  //   loadData(false);
+  // }, [initialLoad]);
 
   useEffect(() => {
     // getStatus();
