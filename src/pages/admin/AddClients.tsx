@@ -90,7 +90,7 @@ const RegistrationForm = () => {
         address2: "",
         city: "",
         state: "",
-        country: "",
+        country: "US",
         password: "",
         passwordRetype: "",
         filePreference: "",
@@ -485,7 +485,7 @@ const RegistrationForm = () => {
                   id="country"
                   name="country"
                   onChange={handleChange}
-                  value={values.country || 'US'}
+                  value={values.country}
                   isValid={touched.country && !errors.country}
                   isInvalid={touched.country && !!errors.country}
                   tabIndex={10}

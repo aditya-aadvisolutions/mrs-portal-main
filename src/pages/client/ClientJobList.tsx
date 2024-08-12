@@ -119,7 +119,7 @@ const ClientJobList = () => {
       cssClass: 'text-left px-4'
     },
     {
-      id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 60,
+      id: 'pagecount', name: 'PAGES', field: 'files', sortable: true, minWidth: 60, maxWidth:80,
       formatter: (row, cell, value, colDef, dataContext) => {
         let pageCount = 0;
         value.forEach((item: any) => {
@@ -127,7 +127,7 @@ const ClientJobList = () => {
         });
         return pageCount.toString();
       },
-      cssClass: 'text-left px-4'
+      cssClass: 'text-right px-4'
     },
     {
       id: 'uploadFiles', name: 'FILES <i class="fa fa-download text-success ml-1" aria-hidden="true"></i>', field: 'uploadFiles', sortable: true, maxWidth: 100,
@@ -208,6 +208,7 @@ const ClientJobList = () => {
     {
       id: 'notification',
       field: 'unReadMessages',
+      name: `<a href="#" class="pointer" title="comments"><i class="fa fa-commenting pointer"></i></a>`,
       excludeFromColumnPicker: true,
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
@@ -233,7 +234,7 @@ const ClientJobList = () => {
     },
     {
       id: 'action',
-      name: '',
+      name: "ACTIONS",
       field: 'statusName',
       maxWidth: 100,
       formatter: (row, cell, value, colDef, dataContext) => {

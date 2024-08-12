@@ -95,7 +95,7 @@ const AddEmployees = () => {
         address2: "",
         city: "",
         state: "",
-        country: "",
+        country: "US",
         password: "",
         passwordRetype: "",
         logo: null,
@@ -355,7 +355,7 @@ const AddEmployees = () => {
                 >
                   <option value="" label="Select country" />
                   {countryList.map((state, index) => (
-                    <option key={index} value={state.value || 'US'}>
+                    <option key={index} value={state.value}>
                       {state.label}
                     </option>
                   ))}

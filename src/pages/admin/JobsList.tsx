@@ -404,10 +404,10 @@ const JobsList = () => {
     {
       id: "notification",
       field: "unReadMessages",
-      name: ` <a href="#" class="pointer" title="comments"><i class="fa fa-commenting pointer"></i></a>`,
       excludeFromColumnPicker: true,
       excludeFromGridMenu: true,
       excludeFromHeaderMenu: true,
+      toolTip: 'Notifications',
       formatter: (row, cell, value, colDef, dataContext) => {
         if (value == 0) {
           return '<div><i class="fa fa-commenting pointer"></i></div>';
