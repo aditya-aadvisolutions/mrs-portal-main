@@ -4,6 +4,7 @@ import path from 'path';
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default ({ mode }) => {
+  console.log('mode...',mode);
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   return defineConfig({
