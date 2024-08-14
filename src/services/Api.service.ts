@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 
 
-axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+axios.defaults.baseURL = import.meta.env.REACT_APP_API_URL;
 //axios.defaults.baseURL = "https://maxtransapi-dev.azurewebsites.net/api/";
 axios.defaults.headers.common = {
   'content-type': 'application/json',
