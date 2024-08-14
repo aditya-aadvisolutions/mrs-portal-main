@@ -32,6 +32,7 @@ export default function UppyUpload(props: any) {
   const [modalFile, setModalFile] = useState<any>('');
 
   const uploadUrl = import.meta.env.VITE_S3_URL;
+  console.log('Uppy uploadUrl..',uploadUrl);
   const Role = localStorage.getItem("authentication") ? JSON.parse(localStorage.getItem("authentication") as string).roleName : "";
   const { fileNames } = useLocation().state || { fileNames: [] };
 
