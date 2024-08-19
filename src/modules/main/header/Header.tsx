@@ -32,7 +32,7 @@ const Header = () => {
     }
     return classes;
   }, [navbarVariant, headerBorder]);
-  const RoleName = localStorage.getItem("authentication") ? JSON.parse(localStorage.getItem("authentication") as string).loginName : null
+  const RoleName = localStorage.getItem("authentication") ? JSON.parse(localStorage.getItem("authentication") as string).firstName + " " + JSON.parse(localStorage.getItem("authentication") as string).lastName : null; 
   return (
     <nav className={getContainerClasses()}>
       <ul className="navbar-nav">
